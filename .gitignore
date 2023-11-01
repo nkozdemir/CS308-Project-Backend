@@ -1,0 +1,22 @@
+# Logs
+logs
+*.log
+
+# Environment variables
+.env
+
+# Dependencies
+node_modules
+
+# Built output
+dist
+
+# IDE files
+.vscode
+.idea
+
+# Mac files
+.DS_Store
+
+# Windows files
+Thumbs.db
