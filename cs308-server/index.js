@@ -7,6 +7,7 @@ const port = process.env.APP_PORT || 3000;
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { validateRegister, validateLogin } = require('./schemaValidator');
 
 const mysql = require('mysql2');
 const connection = mysql.createConnection({
@@ -18,7 +19,7 @@ const connection = mysql.createConnection({
 })
 connection.connect((err) => {
   if (err) throw err;
-  console.log('Connected!');
+  console.log('Connected to db!');
 });
 
 app.get('/', (req, res) => {
@@ -26,13 +27,16 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  const { email, password, name } = req.body;
-  if (!email || !password) {
-    res.status(400).send('Email or password not provided');
+  const { error, value } = validateRegister(req.body);
+  if (error) {
+    res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
   }
+  const { email, password, name } = value;
   connection.query(`SELECT * FROM User WHERE Email='${email}'`, (err, result) => {
-    if (err) throw err;
-    if (result.length === 0) {
+    if (result.length > 0) {
+      res.status(400).send('User already exists');
+    }
+    else if (result.length === 0) {
       bcrypt.genSalt(10, (err, salt) => {
         if (err) throw err;
         bcrypt.hash(password, salt, (err, hash) => {
@@ -43,17 +47,17 @@ app.post('/register', (req, res) => {
           })
         })
       })
-    } else {
-      res.status(400).send('User already exists');
     }
+    if (err) throw err;
   })
 })
 
 app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    res.status(400).send('Email or password not provided');
+  const { error, value } = validateLogin(req.body);
+  if (error) {
+    res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
   }
+  const { email, password } = value;
   connection.query(`SELECT * FROM User WHERE Email='${email}'`, (err, result) => {
     if (err) throw err;
     if (result.length === 0) {
@@ -62,7 +66,7 @@ app.post('/login', (req, res) => {
       bcrypt.compare(password, result[0].Password, (err, result) => {
         if (err) throw err;
         if (result) {
-          const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET);
+          const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
           res.status(200).json({ accessToken: token });
         } else {
           res.status(400).send('Incorrect password');
