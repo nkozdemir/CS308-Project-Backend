@@ -1,21 +1,21 @@
 require('dotenv').config();
 
 const express = require('express')
-const app = express()
-app.use(express.json());
-const port = process.env.APP_PORT || 3000;
-
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { validateRegister, validateLogin } = require('./schemaValidator');
-
+const { validateRegister } = require('./schemaValidator');
 const mysql = require('mysql2');
+
+const app = express()
+app.use(express.json());
+const port = 3000;
+
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PSWD,
   database: process.env.DB_NAME,
-  port: process.env._DB_PORT,
+  port: process.env.DB_PORT,
 })
 connection.connect((err) => {
   if (err) throw err;
@@ -24,6 +24,33 @@ connection.connect((err) => {
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
+})
+
+const songData = [
+  {
+    userid: 1,
+    songid: 1,
+  },
+  {
+    userid: 1,
+    songid: 2,
+  },
+  {
+    userid: 1,
+    songid: 3,
+  },
+  {
+    userid: 2,
+    songid: 2,
+  },
+  {
+    userid: 2,
+    songid: 3,
+  },
+]
+
+app.get('/usersong', authenticateToken, (req, res) => {
+  res.json(songData.filter((data) => data.userid === req.user.UserID));
 })
 
 app.post('/register', (req, res) => {
@@ -52,29 +79,16 @@ app.post('/register', (req, res) => {
   })
 })
 
-app.post('/login', (req, res) => {
-  const { error, value } = validateLogin(req.body);
-  if (error) {
-    res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
-  }
-  const { email, password } = value;
-  connection.query(`SELECT * FROM User WHERE Email='${email}'`, (err, result) => {
-    if (err) throw err;
-    if (result.length === 0) {
-      res.status(400).send('User does not exist');
-    } else {
-      bcrypt.compare(password, result[0].Password, (err, result) => {
-        if (err) throw err;
-        if (result) {
-          const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-          res.status(200).json({ accessToken: token });
-        } else {
-          res.status(400).send('Incorrect password');
-        }
-      })
-    }
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+  if (token == null) return res.sendStatus(401);
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
   })
-})
+}
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
