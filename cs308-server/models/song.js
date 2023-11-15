@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const { connection } = require('../index'); // Assuming you have a MySQL connection setup
+const connection = require('../config/db'); // Assuming you have a MySQL connection setup
 
 const Song = connection.define('Song', {
   title: {

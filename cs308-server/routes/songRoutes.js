@@ -1,13 +1,38 @@
-const express = require('express');
-const router = express.Router();
-const songController = require('../controllers/songController');
-const authenticateToken = require('../authentication/authServer'); // middleware for authentication??
+const router = require('express').Router();
+//const songController = require('../controllers/songController');
+
+const songData = [
+  {
+    userid: 1,
+    songid: 1,
+  },
+  {
+    userid: 1,
+    songid: 2,
+  },
+  {
+    userid: 1,
+    songid: 3,
+  },
+  {
+    userid: 2,
+    songid: 2,
+  },
+  {
+    userid: 2,
+    songid: 3,
+  },
+]
 
 // Route to get all songs
-router.get('/songs', songController.getAllSongs);
+//router.get('/songs', songController.getAllSongs);
 
 // Route to get songs by user ID
-router.get('/user-songs', authenticateToken, songController.getSongsByUserId);
+
+// Example method
+router.get('/usersong', (req, res) => {
+  res.json(songData.filter((data) => data.userid === req.user.UserID));
+})
 
 // Add other routes as needed
 

@@ -1,5 +1,11 @@
-  require('dotenv').config();
+require('dotenv').config();
 
+const express = require('express')
+const jwt = require('jsonwebtoken');
+const connection = require('./config/db');
+const register = require('./routes/register')(connection);
+const spotifyApi = require('./config/spotify');
+const usersong = require('./routes/songRoutes');
   const express = require('express')
   const jwt = require('jsonwebtoken');
   const bcrypt = require('bcrypt');
@@ -10,36 +16,13 @@
   const fetch = require('node-fetch');
   const spotifyRoutes = require('./routes/spotifyRoutes');
 
-  const app = express()
-  app.use(express.json());
-  const port = 3000;
+const app = express()
+app.use(express.json());
+const port = 3000;
 
-  const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PSWD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
-  })
-  connection.connect((err) => {
-    if (err) throw err;
-    console.log('Connected to db!');
-  });
-
-  // Spotify API credentials
-  const spotifyClientId = process.env.SPOTIFY_CLIENT_ID;
-  const spotifyClientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  const spotifyRedirectUri = process.env.SPOTIFY_REDIRECT_URI;
-
-  const spotifyApi = new SpotifyWebApi({
-    clientId: spotifyClientId,
-    clientSecret: spotifyClientSecret,
-    redirectUri: spotifyRedirectUri,
-  });
-
-  app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 
   async function getToken() {
     const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -84,9 +67,9 @@
       "streaming"
     ];
 
-    const authorizeURL = spotifyApi.createAuthorizeURL(scopes);
-    res.redirect(authorizeURL);
-  });
+  const authorizeURL = spotifyApi.createAuthorizeURL(scopes);
+  res.redirect(authorizeURL);
+});
 
 // Spotify callback route
 app.get('/callback', async (req, res) => {
@@ -124,26 +107,26 @@ app.get('/callback', async (req, res) => {
   }
 });
 
-  // Function to refresh the Spotify access token
-  async function refreshSpotifyAccessToken() {
-    try {
-      const data = await spotifyApi.refreshAccessToken();
-      const accessToken = data.body['access_token'];
-      spotifyApi.setAccessToken(accessToken);
-      console.log('Spotify access token refreshed:', accessToken);
-    } catch (error) {
-      console.error('Error refreshing Spotify access token:', error);
-    }
+// Function to refresh the Spotify access token
+async function refreshSpotifyAccessToken() {
+  try {
+    const data = await spotifyApi.refreshAccessToken();
+    const accessToken = data.body['access_token'];
+    spotifyApi.setAccessToken(accessToken);
+    console.log('Spotify access token refreshed:', accessToken);
+  } catch (error) {
+    console.error('Error refreshing Spotify access token:', error);
   }
+}
 
-  // Schedule periodic refresh of the access token (e.g., every 50 minutes)
-  setInterval(refreshSpotifyAccessToken, 50 * 60 * 1000);
+// Schedule periodic refresh of the access token (e.g., every 50 minutes)
+setInterval(refreshSpotifyAccessToken, 50 * 60 * 1000);
 
-  // Sample route to demonstrate using the Spotify API
-  app.get('/spotify-profile', async (req, res) => {
-    try {
-      // Make a sample request to the Spotify API using the stored access token
-      const userProfileResponse = await spotifyApi.getMe();
+// Sample route to demonstrate using the Spotify API
+app.get('/spotify-profile', async (req, res) => {
+  try {
+    // Make a sample request to the Spotify API using the stored access token
+    const userProfileResponse = await spotifyApi.getMe();
 
       // Display user profile information (replace with your desired logic)
       res.json(userProfileResponse.body);
@@ -153,59 +136,20 @@ app.get('/callback', async (req, res) => {
     }
   }); */
 
-  const songData = [
-    {
-      userid: 1,
-      songid: 1,
-    },
-    {
-      userid: 1,
-      songid: 2,
-    },
-    {
-      userid: 1,
-      songid: 3,
-    },
-    {
-      userid: 2,
-      songid: 2,
-    },
-    {
-      userid: 2,
-      songid: 3,
-    },
-  ]
+app.post('/register', register);
 
-  app.get('/usersong', authenticateToken, (req, res) => {
-    res.json(songData.filter((data) => data.userid === req.user.UserID));
+app.get('/usersong', authenticateToken, usersong);
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+  if (token == null) return res.sendStatus(401);
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
   })
-
-  app.post('/register', (req, res) => {
-    const { error, value } = validateRegister(req.body);
-    if (error) {
-      res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
-    }
-    const { email, password, name } = value;
-    connection.query(`SELECT * FROM User WHERE Email='${email}'`, (err, result) => {
-      if (result.length > 0) {
-        res.status(400).send('User already exists');
-      }
-      else if (result.length === 0) {
-        bcrypt.genSalt(10, (err, salt) => {
-          if (err) throw err;
-          bcrypt.hash(password, salt, (err, hash) => {
-            if (err) throw err;
-            connection.query(`INSERT INTO User (Email, Password, Name) VALUES ('${email}', '${hash}', '${name}')`, (err, result) => {
-              if (err) throw err;
-              res.status(200).send('User registered successfully');
-            })
-          })
-        })
-      }
-      if (err) throw err;
-    })
-  })
-
+}
   function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
