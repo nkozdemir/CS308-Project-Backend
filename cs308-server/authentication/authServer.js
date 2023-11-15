@@ -3,25 +3,14 @@ require('dotenv').config();
 const express = require('express')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const connection = require('../config/db');
 const { validateLogin } = require('../schemaValidator');
-const mysql = require('mysql2');
-let { refreshTokens } = require('./refreshTokens');
 
 const app = express()
 app.use(express.json());
 const port = 4000;
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PSWD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-})
-connection.connect((err) => {
-  if (err) throw err;
-  console.log('Connected to db!');
-});
+let refreshTokens = [];
 
 app.post('/token' , (req, res) => {
   const refreshToken = req.body.token;
