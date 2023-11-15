@@ -7,7 +7,8 @@
   const { validateRegister } = require('./schemaValidator');
   const mysql = require('mysql2');
   const SpotifyWebApi = require('spotify-web-api-node');
-
+  const fetch = require('node-fetch');
+  const spotifyRoutes = require('./routes/spotifyRoutes');
 
   const app = express()
   app.use(express.json());
@@ -40,7 +41,26 @@
     res.send('Hello World!')
   })
 
-  // Spotify authentication route
+  async function getToken() {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      body: new URLSearchParams({
+        'grant_type': 'client_credentials',
+      }),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + (Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64')),
+      },
+    });
+  
+    return await response.json();
+  }
+  
+
+  
+  
+
+  /* // Spotify authentication route
   app.get('/spotify-auth', (req, res) => {
     const scopes = [
       "ugc-image-upload",
@@ -68,32 +88,41 @@
     res.redirect(authorizeURL);
   });
 
-  // Spotify callback route
-  app.get('/callback', async (req, res) => {
-    const code = req.query.code;
-    
-    try {
-      const data = await spotifyApi.authorizationCodeGrant(code);
+// Spotify callback route
+app.get('/callback', async (req, res) => {
+  const code = req.query.code;
 
-      // Use the access token and refresh token as needed
-      const accessToken = data.body['access_token'];
-      const refreshToken = data.body['refresh_token'];
+  try {
+    const data = await spotifyApi.authorizationCodeGrant(code);
 
-      // Set access and refresh tokens for future API requests
-      spotifyApi.setAccessToken(accessToken);
-      spotifyApi.setRefreshToken(refreshToken);
+    // Use the access token and refresh token as needed
+    const accessToken = data.body['access_token'];
+    const refreshToken = data.body['refresh_token'];
 
-      // Store the refresh token in the .env file
-      const fs = require('fs');
-      fs.writeFileSync('.env', `SPOTIFY_REFRESH_TOKEN=${refreshToken}\n`, { flag: 'a' });
+    // Read existing content from .env file
+    const fs = require('fs');
+    const envContent = fs.readFileSync('.env', 'utf-8');
 
-      // Redirect or send a response to the client
-      res.redirect('/'); // Redirect to the home page or another route
-    } catch (error) {
-      console.error('Error during Spotify callback:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+    // Replace existing refresh token or add a new line
+    const updatedEnvContent = envContent.replace(
+      /^SPOTIFY_REFRESH_TOKEN=.*$/m,
+      `SPOTIFY_REFRESH_TOKEN=${refreshToken}`
+    );
+
+    // Write the updated content back to the .env file
+    fs.writeFileSync('.env', updatedEnvContent);
+
+    // Set access and refresh tokens for future API requests
+    spotifyApi.setAccessToken(accessToken);
+    spotifyApi.setRefreshToken(refreshToken);
+
+    // Redirect or send a response to the client
+    res.redirect('/'); // Redirect to the home page or another route
+  } catch (error) {
+    console.error('Error during Spotify callback:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
   // Function to refresh the Spotify access token
   async function refreshSpotifyAccessToken() {
@@ -122,7 +151,7 @@
       console.error('Error during Spotify API request:', error);
       res.status(500).send('Internal Server Error');
     }
-  });
+  }); */
 
   const songData = [
     {
@@ -187,7 +216,13 @@
       next();
     })
   }
+  module.exports = {
+    getToken,
+    spotifyApi,
+  };
+  app.use('/spotifyapi', spotifyRoutes);
 
   app.listen(port, () => {
     console.log(`App listening on port ${port}`)
   })
+
