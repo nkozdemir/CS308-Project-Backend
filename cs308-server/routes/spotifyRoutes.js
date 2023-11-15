@@ -1,5 +1,5 @@
 const express = require('express');
-const { spotifyApi, setAccessToken } = require('../services/spotifyService');
+const { setAccessToken, spotifyApi } = require('../services/spotifyService');
 
 const router = express.Router();
 

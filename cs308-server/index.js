@@ -6,15 +6,13 @@ const connection = require('./config/db');
 const register = require('./routes/register')(connection);
 const spotifyApi = require('./config/spotify');
 const usersong = require('./routes/songRoutes');
-  const express = require('express')
-  const jwt = require('jsonwebtoken');
-  const bcrypt = require('bcrypt');
-  const axios = require('axios');
-  const { validateRegister } = require('./schemaValidator');
-  const mysql = require('mysql2');
-  const SpotifyWebApi = require('spotify-web-api-node');
-  const fetch = require('node-fetch');
-  const spotifyRoutes = require('./routes/spotifyRoutes');
+const bcrypt = require('bcrypt');
+const axios = require('axios');
+const { validateRegister } = require('./schemaValidator');
+const mysql = require('mysql2');
+const SpotifyWebApi = require('spotify-web-api-node');
+const fetch = require('node-fetch');
+const spotifyRoutes = require('./routes/spotifyRoutes');
 
 const app = express()
 app.use(express.json());
@@ -24,20 +22,20 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-  async function getToken() {
-    const response = await fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      body: new URLSearchParams({
-        'grant_type': 'client_credentials',
-      }),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + (Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64')),
-      },
-    });
+  // async function getToken() {
+  //   const response = await fetch('https://accounts.spotify.com/api/token', {
+  //     method: 'POST',
+  //     body: new URLSearchParams({
+  //       'grant_type': 'client_credentials',
+  //     }),
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded',
+  //       'Authorization': 'Basic ' + (Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64')),
+  //     },
+  //   });
   
-    return await response.json();
-  }
+  //   return await response.json();
+  // }
   
 
   
@@ -160,10 +158,7 @@ function authenticateToken(req, res, next) {
       next();
     })
   }
-  module.exports = {
-    getToken,
-    spotifyApi,
-  };
+ 
   app.use('/spotifyapi', spotifyRoutes);
 
   app.listen(port, () => {
