@@ -6,13 +6,12 @@ const bcrypt = require('bcrypt');
 const connection = require('../config/db');
 const { validateLogin } = require('../schemaValidator');
 
-const app = express()
-app.use(express.json());
-const port = 4000;
+const authMiddleware = express.Router();
+authMiddleware.use(express.json());
 
 let refreshTokens = [];
 
-app.post('/token' , (req, res) => {
+authMiddleware.post('/token' , (req, res) => {
   const refreshToken = req.body.token;
   if (refreshToken == null) return res.sendStatus(401);
   if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
@@ -23,7 +22,7 @@ app.post('/token' , (req, res) => {
   })
 })
 
-app.post('/login', (req, res) => {
+authMiddleware.post('/login', (req, res) => {
   const { error, value } = validateLogin(req.body);
   if (error) {
     res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
@@ -51,7 +50,7 @@ app.post('/login', (req, res) => {
   })
 })
 
-app.delete('/logout', (req, res) => {
+authMiddleware.delete('/logout', (req, res) => {
   refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
   res.sendStatus(204);
 })
@@ -60,6 +59,4 @@ function generateAccessToken(userData) {
   return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
 }
 
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`)
-})
+module.exports = authMiddleware;

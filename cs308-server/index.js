@@ -4,66 +4,66 @@ const express = require('express')
 const jwt = require('jsonwebtoken');
 const connection = require('./config/db');
 const register = require('./routes/register')(connection);
-const spotifyApi = require('./config/spotify');
+//const spotifyApi = require('./config/spotify');
 const usersong = require('./routes/songRoutes');
-const bcrypt = require('bcrypt');
-const axios = require('axios');
-const { validateRegister } = require('./schemaValidator');
-const mysql = require('mysql2');
-const SpotifyWebApi = require('spotify-web-api-node');
-const fetch = require('node-fetch');
+//const bcrypt = require('bcrypt');
+//const axios = require('axios');
+//const { validateRegister } = require('./schemaValidator');
+//const mysql = require('mysql2');
+//const SpotifyWebApi = require('spotify-web-api-node');
+//const fetch = require('node-fetch');
 const spotifyRoutes = require('./routes/spotifyRoutes');
+const authMiddleware = require('./authentication/authServer');
 
 const app = express()
 app.use(express.json());
+app.use(authMiddleware);
 const port = 3000;
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-  // async function getToken() {
-  //   const response = await fetch('https://accounts.spotify.com/api/token', {
-  //     method: 'POST',
-  //     body: new URLSearchParams({
-  //       'grant_type': 'client_credentials',
-  //     }),
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded',
-  //       'Authorization': 'Basic ' + (Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64')),
-  //     },
-  //   });
-  
-  //   return await response.json();
-  // }
-  
+/*
+async function getToken() {
+  const response = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    body: new URLSearchParams({
+      'grant_type': 'client_credentials',
+    }),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': 'Basic ' + (Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64')),
+    },
+  });
 
-  
-  
+  return await response.json();
+}
+*/
 
-  /* // Spotify authentication route
-  app.get('/spotify-auth', (req, res) => {
-    const scopes = [
-      "ugc-image-upload",
-      "user-read-recently-played",
-      "user-read-playback-state",
-      "user-top-read",
-      "app-remote-control",
-      "playlist-modify-public",
-      "user-modify-playback-state",
-      "playlist-modify-private",
-      "user-follow-modify",
-      "user-read-currently-playing",
-      "user-follow-read",
-      "user-library-modify",
-      "user-read-playback-position",
-      "playlist-read-private",
-      "user-read-email",
-      "user-read-private",
-      "user-library-read",
-      "playlist-read-collaborative",
-      "streaming"
-    ];
+/* // Spotify authentication route
+app.get('/spotify-auth', (req, res) => {
+  const scopes = [
+    "ugc-image-upload",
+    "user-read-recently-played",
+    "user-read-playback-state",
+    "user-top-read",
+    "app-remote-control",
+    "playlist-modify-public",
+    "user-modify-playback-state",
+    "playlist-modify-private",
+    "user-follow-modify",
+    "user-read-currently-playing",
+    "user-follow-read",
+    "user-library-modify",
+    "user-read-playback-position",
+    "playlist-read-private",
+    "user-read-email",
+    "user-read-private",
+    "user-library-read",
+    "playlist-read-collaborative",
+    "streaming"
+  ];
 
   const authorizeURL = spotifyApi.createAuthorizeURL(scopes);
   res.redirect(authorizeURL);
@@ -126,13 +126,14 @@ app.get('/spotify-profile', async (req, res) => {
     // Make a sample request to the Spotify API using the stored access token
     const userProfileResponse = await spotifyApi.getMe();
 
-      // Display user profile information (replace with your desired logic)
-      res.json(userProfileResponse.body);
-    } catch (error) {
-      console.error('Error during Spotify API request:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  }); */
+    // Display user profile information (replace with your desired logic)
+    res.json(userProfileResponse.body);
+  } catch (error) {
+    console.error('Error during Spotify API request:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+*/
 
 app.post('/register', register);
 
@@ -148,20 +149,9 @@ function authenticateToken(req, res, next) {
     next();
   })
 }
-  function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-    if (token == null) return res.sendStatus(401);
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-      if (err) return res.sendStatus(403);
-      req.user = user;
-      next();
-    })
-  }
  
-  app.use('/spotifyapi', spotifyRoutes);
+app.use('/spotifyapi', spotifyRoutes);
 
-  app.listen(port, () => {
-    console.log(`App listening on port ${port}`)
-  })
-
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`)
+})
