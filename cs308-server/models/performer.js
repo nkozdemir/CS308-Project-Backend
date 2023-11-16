@@ -1,19 +1,11 @@
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 
-const User = connection.define('User', {
-  UserID: {
+const Performer = connection.define('Performer', {
+  PerformerID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-  },
-  Password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  Email: {
-    type: DataTypes.STRING,
-    allowNull: false,
   },
   Name: {
     type: DataTypes.STRING,
@@ -21,4 +13,4 @@ const User = connection.define('User', {
   },
 });
 
-module.exports = User;
+module.exports = Performer;

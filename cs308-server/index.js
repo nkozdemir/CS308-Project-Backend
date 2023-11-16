@@ -24,23 +24,6 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-/*
-async function getToken() {
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    body: new URLSearchParams({
-      'grant_type': 'client_credentials',
-    }),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Basic ' + (Buffer.from(spotifyClientId + ':' + spotifyClientSecret).toString('base64')),
-    },
-  });
-
-  return await response.json();
-}
-*/
-
 /* // Spotify authentication route
 app.get('/spotify-auth', (req, res) => {
   const scopes = [

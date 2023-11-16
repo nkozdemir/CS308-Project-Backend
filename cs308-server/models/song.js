@@ -1,28 +1,26 @@
 const { DataTypes } = require('sequelize');
-const connection = require('../config/db'); // Assuming you have a MySQL connection setup
+const connection = require('../config/db');
 
 const Song = connection.define('Song', {
-  songid: {
+  SongID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  title: {
+  Title: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  performer: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  album: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  length: {
+  ReleaseYear: {
     type: DataTypes.INTEGER,
   },
-  // Add other fields for extra features
+  Album: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  Length: {
+    type: DataTypes.INTEGER,
+  },
 });
 
 module.exports = Song;
