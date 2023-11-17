@@ -18,6 +18,7 @@ const authMiddleware = require('./authentication/authServer');
 const app = express()
 app.use(express.json());
 app.use(authMiddleware);
+app.use(spotifyRoutes);
 const port = 3000;
 
 app.get('/', (req, res) => {
