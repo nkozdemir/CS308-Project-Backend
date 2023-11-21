@@ -1,8 +1,3 @@
-/*
-Todo
-- Change name of the file, e.g. authMiddleware.js
-- Change name of the directory to 'middleware'
-*/
 require('dotenv').config();
 
 const express = require('express');

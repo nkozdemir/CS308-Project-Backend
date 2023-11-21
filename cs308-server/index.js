@@ -8,11 +8,10 @@ const usersong = require('./routes/songRoutes');
 //const bcrypt = require('bcrypt');
 //const axios = require('axios');
 //const { validateRegister } = require('./schemaValidator');
-//const mysql = require('mysql2');
 //const SpotifyWebApi = require('spotify-web-api-node');
 //const fetch = require('node-fetch');
 const spotifyRoutes = require('./routes/spotifyRoutes');
-const authMiddleware = require('./authentication/authServer');
+const authMiddleware = require('./middleware/authMiddleware');
 
 const app = express()
 app.use(express.json());
