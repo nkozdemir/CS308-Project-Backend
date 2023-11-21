@@ -19,6 +19,8 @@ const User = connection.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+}, {
+  freezeTableName: true,
 });
 
 module.exports = User;

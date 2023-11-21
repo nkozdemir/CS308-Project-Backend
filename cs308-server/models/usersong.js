@@ -27,6 +27,8 @@ const UserSong = connection.define('UserSong', {
   RatingDate: {
     type: DataTypes.DATE,
   },
+}, {
+  freezeTableName: true,
 });
 
 module.exports = UserSong;

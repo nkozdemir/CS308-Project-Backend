@@ -1,22 +1,22 @@
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 
-const Performer = connection.define('Performer', {
-  PerformerID: {
+const songGenre = connection.define('SongGenre', {
+  SongGenreID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  Name: {
-    type: DataTypes.STRING,
+  SongID: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  SpotifyID: {
-    type: DataTypes.STRING,
+  GenreID: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 }, {
   freezeTableName: true,
 });
 
-module.exports = Performer;
+module.exports = songGenre;

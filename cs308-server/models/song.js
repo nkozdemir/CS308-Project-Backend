@@ -1,3 +1,9 @@
+/* 
+Todo 
+- ReleaseDate should be a date instead of a string
+- Length is in milliseconds, should be in seconds
+- May add url field for track images in the future
+*/
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 
@@ -11,8 +17,9 @@ const Song = connection.define('Song', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  ReleaseYear: {
-    type: DataTypes.INTEGER,
+  ReleaseDate: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   Album: {
     type: DataTypes.STRING,
@@ -20,7 +27,13 @@ const Song = connection.define('Song', {
   },
   Length: {
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
+  SpotifyID: {
+    type: DataTypes.STRING,
+  }, 
+}, {
+  freezeTableName: true,
 });
 
 module.exports = Song;

@@ -1,5 +1,13 @@
+/*
+Todo
+- Seperate routes into different files
+- Add authentication to routes
+- /getTopTracksFromPlaylist should take user id as a parameter (keep it as is for now, for testing purposes)
+*/
 const express = require('express');
 const { setAccessToken, spotifyApi } = require('../services/spotifyService');
+const { getArtistGenres } = require('../helpers/spotifyHelpers');
+const { addSongsToDatabase } = require('../helpers/dbHelpers');
 
 const router = express.Router();
 
@@ -69,43 +77,43 @@ router.get('/getTopTracksFromPlaylist', async (req, res) => {
     // Check if there are tracks in the response
     if (data.body.items && data.body.items.length > 0) {
       // check if requested number of tracks is valid
-      if (numberOfResults > data.body.items.length) return res.status(400).send('Requested number of tracks is greater than number of tracks in playlist');
+      if (numberOfResults > data.body.items.length) return res.status(400).send('Requested number of tracks is greater than the number of tracks in the playlist');
 
       // Extract the first few tracks
       const trackResults = data.body.items.slice(0, numberOfResults);
 
       // Extract relevant information for each track
-      const formattedResults = trackResults.map(track => ({
-        Id: track.track.id,
-        Title: track.track.name,
-        Performer: track.track.artists.map(artist => ({ 
-          name: artist.name, 
-          id: artist.id 
-        })),
-        Album: {
-          id: track.track.album.id, 
-          name: track.track.album.name,
-          artists: track.track.album.artists.map(artist => ({
-            name: artist.name,
-            id: artist.id,
-            type: artist.type
-          })), 
-          type: track.track.album.album_type, 
-          release_date: track.track.album.release_date,
-          images: track.track.album.images 
-        },
-        Length: track.track.duration_ms,
+      const formattedResults = await Promise.all(trackResults.map(async (track) => {
+        const artistInfo = track.track.artists.map(artist => ({
+          name: artist.name,
+          id: artist.id,
+        }));
+
+        const artistIds = artistInfo.map(artist => artist.id);
+        const genres = await getArtistGenres(artistIds);
+
+        return {
+          Id: track.track.id,
+          Title: track.track.name,
+          Performer: artistInfo,
+          Album: {
+            id: track.track.album.id,
+            name: track.track.album.name,
+            artists: track.track.album.artists.map(artist => ({
+              name: artist.name,
+              id: artist.id,
+              type: artist.type
+            })),
+            type: track.track.album.album_type,
+            release_date: track.track.album.release_date,
+            images: track.track.album.images
+          },
+          Length: track.track.duration_ms,
+          Genres: genres, // Associate genres with each track
+        };
       }));
-      
-      // Add genres to each track
-      const artistIds = formattedResults.map(track => track.Performer.map(artist => artist.id)).flat();
-      const genres = await getArtistGenres(artistIds);
-      // check if genres are valid
-      if (genres.length === 0) return res.status(400).send('No genres found for artists in playlist');
-      formattedResults.forEach(track => {
-        track.Genres = genres;
-      });
-      
+
+      await addSongsToDatabase(formattedResults, 1); // Specify user id here (1 for now)
       res.json(formattedResults);
     } else {
       res.status(404).send('No matching tracks found.');
@@ -115,17 +123,5 @@ router.get('/getTopTracksFromPlaylist', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
-// A function to get genres of an artist given the artist's id
-async function getArtistGenres(artistIds) {
-  try {
-    const data = await spotifyApi.getArtists(artistIds);
-    console.log(data.body.artists.map(artist => artist.genres).flat());
-    return data.body.artists.map(artist => artist.genres).flat();
-  } catch (error) {
-    console.error('Error during Spotify API request:', error);
-    return [];
-  }
-}
 
 module.exports = router;

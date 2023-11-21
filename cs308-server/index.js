@@ -2,8 +2,7 @@ require('dotenv').config();
 
 const express = require('express')
 const jwt = require('jsonwebtoken');
-const connection = require('./config/db');
-const register = require('./routes/register')(connection);
+const register = require('./routes/register');
 //const spotifyApi = require('./config/spotify');
 const usersong = require('./routes/songRoutes');
 //const bcrypt = require('bcrypt');
@@ -19,6 +18,7 @@ const app = express()
 app.use(express.json());
 app.use(authMiddleware);
 app.use(spotifyRoutes);
+app.use(register)
 const port = 3000;
 
 app.get('/', (req, res) => {

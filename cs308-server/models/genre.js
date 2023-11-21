@@ -10,6 +10,8 @@ const Genre = connection.define('Genre', {
   Name: {
     type: DataTypes.STRING,
   },
+}, {
+  freezeTableName: true,
 });
 
 module.exports = Genre;

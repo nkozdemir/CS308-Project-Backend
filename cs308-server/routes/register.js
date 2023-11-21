@@ -1,30 +1,38 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const connection = require('../config/db');
 const { validateRegister } = require('../schemaValidator');
+const User = require('../models/user');
 
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
+  try {
     const { error, value } = validateRegister(req.body);
-    if (error) res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
-    const { email, password, name } = value;
-    connection.query(`SELECT * FROM User WHERE Email='${email}'`, (err, result) => {
-        if (result.length > 0) res.status(400).send('User already exists');
-        else if (result.length === 0) {
-            bcrypt.genSalt(10, (err, salt) => {
-                if (err) throw err;
-                bcrypt.hash(password, salt, (err, hash) => {
-                    if (err) throw err;
-                    connection.query(`INSERT INTO User (Email, Password, Name) VALUES ('${email}', '${hash}', '${name}')`, (err, result) => {
-                        if (err) throw err;
-                        res.status(200).send('User registered successfully');
-                    })
-                })
-            })
-        }
-        if (err) throw err;
-    })
-})
+    if (error) return res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
 
-module.exports = app => {
-    return router;
-};
+    const { email, password, name } = value;
+
+    // Check if the user already exists
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (existingUser) {
+      return res.status(400).send('User already exists');
+    }
+
+    // Hash the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Create a new user using Sequelize model
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      name,
+    });
+
+    res.status(200).send('User registered successfully');
+  } catch (error) {
+    console.error('Error during user registration:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+module.exports = router;
