@@ -21,17 +21,10 @@ Install dependencies
   npm install
 ```
 
-Start the MAIN server
+Start the server
 
 ```bash
   npm run dev
-```
-
-Start the AUTHENTICATION server, in new terminal
-
-```bash
-  cd authentication
-  npm run devAuth
 ```
 
 ## Environment Variables
@@ -45,7 +38,7 @@ To run this project, you will need to add the following environment variables to
 #### Login
 
 ```http
-  POST http://localhost:4000/login
+  POST http://localhost:3000/login
 ```
 
 | Parameter | Type     | Description                |
@@ -68,7 +61,7 @@ To run this project, you will need to add the following environment variables to
 #### Logout
 
 ```http
-  DELETE http://localhost:4000/logout
+  DELETE http://localhost:3000/logout
 ```
 
 ## Database Diagram
