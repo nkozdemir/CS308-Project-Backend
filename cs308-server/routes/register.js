@@ -23,9 +23,9 @@ router.post('/register', async (req, res) => {
 
     // Create a new user using Sequelize model
     const newUser = await User.create({
-      email,
-      password: hashedPassword,
-      name,
+      Email: email,
+      Password: hashedPassword,
+      Name: name,
     });
 
     res.status(200).send('User registered successfully');
