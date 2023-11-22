@@ -30,7 +30,7 @@ router.get('/getTrackById', async (req, res) => {
 
 router.get('/filterSongByArtist', async (req, res) => {
   try {
-    const { trackName, artistName } = req.query;
+    const { trackName, artistName } = req.body;
 
     if (!trackName || !artistName) {
       return res.status(400).send('Missing required parameters: trackName and artistName');
@@ -48,9 +48,10 @@ router.get('/filterSongByArtist', async (req, res) => {
 
       // Extract relevant information for each track
       const formattedResults = trackResults.map(track => ({
-        name: track.name,
-        artist: track.artists.map(artist => artist.name).join(', '),
-        album: track.album.name,
+        SpotifyId: track.id,
+        Title: track.name,
+        Performer: track.artists.map(artist => artist.name).join(', '),
+        Album: track.album.name,
       }));
 
       res.json(formattedResults);
@@ -93,7 +94,7 @@ router.get('/getTopTracksFromPlaylist', async (req, res) => {
         const genres = await getArtistGenres(artistIds);
 
         return {
-          Id: track.track.id,
+          SpotifyId: track.track.id,
           Title: track.track.name,
           Performer: artistInfo,
           Album: {

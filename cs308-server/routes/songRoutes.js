@@ -8,6 +8,8 @@ const router = express.Router();
 const songController = require('../controllers/songController');
 const { removeSongFromDatabase, addSongsToDatabase } = require('../helpers/dbHelpers');
 const { getTopTracksFromPlaylist } = require('../helpers/spotifyHelpers');
+const { authenticateToken } = require('../index');
+
 
 // Route to add songs linked to specific user, to database
 router.post('/addSong', async (req, res) => {
@@ -86,6 +88,38 @@ router.get('/getSong/spotifyID', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+const userSongController = require('../controllers/userSongController'); // Import the userSongController
+
+// Endpoint to get all songs for the logged-in user
+router.get('/getAllUserSongs', /* authenticateToken, */ async (req, res) => {
+  try {
+    //const userId = req.user.id; // Assuming the user ID is stored in the 'id' field of the authentication token
+    const { userId } = req.body;
+
+    // Get user-song links for the user
+    const userSongLinks = await userSongController.getLinkByUser(userId);
+    // Extract song IDs from the user-song links
+    const songIds = userSongLinks.map(userSongLink => userSongLink.SongID);
+
+    // Get songs based on the extracted song IDs
+    const songs = [];
+    for (const songId of songIds) {
+      const song = await songController.getSongByID(songId);
+      if (song) {
+        songs.push(song);
+      }
+    }
+
+    res.json(songs);
+  } catch (error) {
+    console.error('Error getting user songs:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+module.exports = router;
+
 
 // Add more routes as needed for other operations
 

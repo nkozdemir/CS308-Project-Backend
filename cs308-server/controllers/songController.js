@@ -1,4 +1,5 @@
 const songModel = require('../models/song');
+const PerformerModel = require('../models/performer');
 
 async function createSong(songData) {
   try {
@@ -30,19 +31,28 @@ async function getSongByTitle(title) {
   }
 }
 
-async function getSongByID(songId) {
+const getSongByID = async (songId) => {
   try {
     const song = await songModel.findOne({
       where: {
         SongID: songId,
       },
+      include: [
+        {
+          model: PerformerModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+      ],
     });
+
     return song;
   } catch (error) {
     console.error('Error getting song by ID:', error);
     throw error;
   }
-}
+};
+
 
 async function getSongBySpotifyID(spotifyID) {
   try {

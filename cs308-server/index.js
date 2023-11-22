@@ -16,7 +16,7 @@ const songRoutes = require('./routes/songRoutes');
 const app = express()
 app.use(express.json());
 app.use(authMiddleware);
-app.use(spotifyRoutes);
+app.use('/spotifyapi', spotifyRoutes);
 app.use(register);
 app.use('/song', songRoutes);
 const port = 3000;
@@ -116,7 +116,7 @@ app.get('/spotify-profile', async (req, res) => {
     console.error('Error during Spotify API request:', error);
     res.status(500).send('Internal Server Error');
   }
-});
+}); 
 */
 
 app.post('/register', register);
@@ -128,11 +128,15 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
+    console.log("User", user);
     next();
   })
 }
- 
-app.use('/spotifyapi', spotifyRoutes);
+
+module.exports = {
+  authenticateToken,
+  // other exports if needed
+};
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)

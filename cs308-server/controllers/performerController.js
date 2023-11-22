@@ -1,4 +1,5 @@
 const performerModel = require('../models/performer');
+const songPerformerModel = require('../models/songPerformer');
 
 async function createPerformer(name, spotifyID) {
   try {
@@ -41,9 +42,44 @@ async function getPerformerBySpotifyID(spotifyID) {
   }
 }
 
+async function deletePerformer(spotifyID) { 
+  try {
+    // Check if the performer exists
+    const performer = await performerModel.findOne({
+      where: {
+        SpotifyID: spotifyID,
+      },
+    });
+
+    if (!performer) {
+      throw new Error(`Performer with ID ${performerID} not found`);
+    }
+
+    // Delete the performer from the SongPerformer table
+    await songPerformerModel.destroy({
+      where: {
+        SpotifyID: spotifyID,
+      },
+    });
+
+    // Delete the performer ??? Should we ???
+  /*   const deletedPerformer = await performerModel.destroy({
+      where: {
+        SpotifyID: spotifyID,
+      },
+    }); */
+
+    return deletedPerformer;
+  } catch (error) {
+    console.error('Error deleting performer:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   createPerformer,
   getPerformerByName,
   getPerformerBySpotifyID,
+  deletePerformer,
   // Add other Performer-related controller functions here
 };
