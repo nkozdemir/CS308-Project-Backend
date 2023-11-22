@@ -1,4 +1,47 @@
-const userSongModel = require('../models/usersong.js');
+const userSongModel = require('../models/usersong');
+
+async function getUserSongLink(userID, songID) {
+  try {
+    const userSongLink = await userSongModel.findOne({
+      where: {
+        UserID: userID,
+        SongID: songID,
+      },
+    });
+    return userSongLink;
+  } catch (error) {
+    console.error('Error getting user-song link:', error);
+    throw error;
+  }
+}
+
+async function getLinkByUser(userID) {
+  try {
+    const userSongLink = await userSongModel.findAll({
+      where: {
+        UserID: userID,
+      },
+    });
+    return userSongLink;
+  } catch (error) {
+    console.error('Error getting user-song link:', error);
+    throw error;
+  }
+}
+
+async function getLinkBySong(songID) {
+  try {
+    const userSongLink = await userSongModel.findAll({
+      where: {
+        SongID: songID,
+      },
+    });
+    return userSongLink;
+  } catch (error) {
+    console.error('Error getting user-song link:', error);
+    throw error;
+  }
+}
 
 async function linkUserSong(userID, songID) {
   try {
@@ -24,7 +67,26 @@ async function linkUserSong(userID, songID) {
   }
 }
 
+async function deleteUserSong(userID, songID) {
+  try {
+    const deletedUserSong = await userSongModel.destroy({
+      where: {
+        UserID: userID,
+        SongID: songID,
+      },
+    });
+    return deletedUserSong;
+  } catch (error) {
+    console.error('Error deleting user-song link:', error);
+    throw error;
+  }
+}
+
 module.exports = {
-    linkUserSong,
-    // Add other UserSong-related controller functions here
+  getUserSongLink,
+  getLinkByUser,
+  getLinkBySong,
+  linkUserSong,
+  deleteUserSong,
+  // Add other UserSong-related controller functions here
 };

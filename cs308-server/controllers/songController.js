@@ -30,6 +30,20 @@ async function getSongByTitle(title) {
   }
 }
 
+async function getSongByID(songId) {
+  try {
+    const song = await songModel.findOne({
+      where: {
+        SongID: songId,
+      },
+    });
+    return song;
+  } catch (error) {
+    console.error('Error getting song by ID:', error);
+    throw error;
+  }
+}
+
 async function getSongBySpotifyID(spotifyID) {
   try {
     const song = await songModel.findOne({
@@ -44,9 +58,25 @@ async function getSongBySpotifyID(spotifyID) {
   }
 }
 
+async function deleteSong(songId) {
+  try {
+    const deletedSong = await songModel.destroy({
+      where: {
+        SongID: songId,
+      },
+    });
+    return deletedSong;
+  } catch (error) {
+    console.error('Error deleting song by ID:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   createSong,
   getSongByTitle,
+  getSongByID,
   getSongBySpotifyID,
+  deleteSong,
   // Add other Song-related controller functions here
 };

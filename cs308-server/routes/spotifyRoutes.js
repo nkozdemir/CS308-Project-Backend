@@ -113,7 +113,6 @@ router.get('/getTopTracksFromPlaylist', async (req, res) => {
         };
       }));
 
-      await addSongsToDatabase(formattedResults, 1); // Specify user id here (1 for now)
       res.json(formattedResults);
     } else {
       res.status(404).send('No matching tracks found.');

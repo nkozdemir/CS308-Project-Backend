@@ -4,7 +4,6 @@ const express = require('express')
 const jwt = require('jsonwebtoken');
 const register = require('./routes/register');
 //const spotifyApi = require('./config/spotify');
-const usersong = require('./routes/songRoutes');
 //const bcrypt = require('bcrypt');
 //const axios = require('axios');
 //const { validateRegister } = require('./schemaValidator');
@@ -12,12 +11,14 @@ const usersong = require('./routes/songRoutes');
 //const fetch = require('node-fetch');
 const spotifyRoutes = require('./routes/spotifyRoutes');
 const authMiddleware = require('./middleware/authMiddleware');
+const songRoutes = require('./routes/songRoutes');
 
 const app = express()
 app.use(express.json());
 app.use(authMiddleware);
 app.use(spotifyRoutes);
-app.use(register)
+app.use(register);
+app.use('/song', songRoutes);
 const port = 3000;
 
 app.get('/', (req, res) => {
@@ -119,8 +120,6 @@ app.get('/spotify-profile', async (req, res) => {
 */
 
 app.post('/register', register);
-
-app.get('/usersong', authenticateToken, usersong);
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
