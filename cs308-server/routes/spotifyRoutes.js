@@ -7,7 +7,6 @@ Todo
 const express = require('express');
 const { setAccessToken, spotifyApi } = require('../services/spotifyService');
 const { getArtistGenres } = require('../helpers/spotifyHelpers');
-const { addSongsToDatabase } = require('../helpers/dbHelpers');
 
 const router = express.Router();
 
@@ -30,7 +29,7 @@ router.get('/getTrackById', async (req, res) => {
 
 router.get('/filterSongByArtist', async (req, res) => {
   try {
-    const { trackName, artistName } = req.query;
+    const { trackName, artistName } = req.body;
 
     if (!trackName || !artistName) {
       return res.status(400).send('Missing required parameters: trackName and artistName');
@@ -48,9 +47,10 @@ router.get('/filterSongByArtist', async (req, res) => {
 
       // Extract relevant information for each track
       const formattedResults = trackResults.map(track => ({
-        name: track.name,
-        artist: track.artists.map(artist => artist.name).join(', '),
-        album: track.album.name,
+        SpotifyId: track.id,
+        Title: track.name,
+        Performer: track.artists.map(artist => artist.name).join(', '),
+        Album: track.album.name,
       }));
 
       res.json(formattedResults);
@@ -93,7 +93,7 @@ router.get('/getTopTracksFromPlaylist', async (req, res) => {
         const genres = await getArtistGenres(artistIds);
 
         return {
-          Id: track.track.id,
+          SpotifyId: track.track.id,
           Title: track.track.name,
           Performer: artistInfo,
           Album: {
@@ -113,7 +113,6 @@ router.get('/getTopTracksFromPlaylist', async (req, res) => {
         };
       }));
 
-      await addSongsToDatabase(formattedResults, 1); // Specify user id here (1 for now)
       res.json(formattedResults);
     } else {
       res.status(404).send('No matching tracks found.');
