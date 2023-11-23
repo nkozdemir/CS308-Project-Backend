@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express')
+const cors = require('cors');
 //const jwt = require('jsonwebtoken');
 const registerRoute = require('./routes/register');
 //const spotifyApi = require('./config/spotify');
@@ -17,6 +18,8 @@ const app = express()
 const port = 3000;
 
 app.use(express.json());
+
+app.use(cors());
 
 app.use('/auth', authMiddleware);
 
