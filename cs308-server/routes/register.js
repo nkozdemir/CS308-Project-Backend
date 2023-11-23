@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const { validateRegister } = require('../schemaValidator');
+const { validateRegister } = require('../helpers/schemaValidator');
 const User = require('../models/user');
 
-router.post('/register', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { error, value } = validateRegister(req.body);
     if (error) return res.status(400).send(error.details.map((detail) => detail.message).join('\n'));

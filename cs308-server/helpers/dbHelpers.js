@@ -10,7 +10,7 @@ const SongPerformerController = require('../controllers/songPerformerController.
 const UserSongController = require('../controllers/userSongController.js');
 const UserController = require('../controllers/userController.js');
 
-async function addSongsToDatabase(songData, userID) {
+async function addSongsToUser(songData, userID) {
   try {
     // check if userID is valid
     const user = await UserController.getUserById(userID);
@@ -76,7 +76,7 @@ async function addSongsToDatabase(songData, userID) {
   }
 }
 
-async function removeSongFromDatabase(songID, userID) {
+async function removeSongFromUser(songID, userID) {
   try {
     // check if songId and userId are valid
     const song = await SongController.getSongByID(songID);
@@ -109,7 +109,7 @@ async function removeSongFromDatabase(songID, userID) {
 }
 
 module.exports = {
-  addSongsToDatabase,
-  removeSongFromDatabase,
+  addSongsToUser,
+  removeSongFromUser,
   // Add other helper functions here
 };

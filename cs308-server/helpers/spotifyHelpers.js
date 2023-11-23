@@ -1,6 +1,7 @@
 /* 
 Todo:
-- Create a schema to validate song data
+- Create a schema to validate song data.
+- Modify getTopTracksFromPlaylist to fetch genres by album id.
 */
 const spotifyApi = require('../config/spotify.js');
 

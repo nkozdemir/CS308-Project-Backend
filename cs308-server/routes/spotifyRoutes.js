@@ -7,7 +7,6 @@ Todo
 const express = require('express');
 const { setAccessToken, spotifyApi } = require('../services/spotifyService');
 const { getArtistGenres } = require('../helpers/spotifyHelpers');
-const { addSongsToDatabase } = require('../helpers/dbHelpers');
 
 const router = express.Router();
 

@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 const express = require('express')
-const jwt = require('jsonwebtoken');
-const register = require('./routes/register');
+//const jwt = require('jsonwebtoken');
+const registerRoute = require('./routes/register');
 //const spotifyApi = require('./config/spotify');
 //const bcrypt = require('bcrypt');
 //const axios = require('axios');
@@ -14,12 +14,17 @@ const authMiddleware = require('./middleware/authMiddleware');
 const songRoutes = require('./routes/songRoutes');
 
 const app = express()
-app.use(express.json());
-app.use(authMiddleware);
-app.use('/spotifyapi', spotifyRoutes);
-app.use(register);
-app.use('/song', songRoutes);
 const port = 3000;
+
+app.use(express.json());
+
+app.use('/auth', authMiddleware);
+
+app.use('/spotifyapi', spotifyRoutes);
+
+app.use('/register', registerRoute);
+
+app.use('/song', songRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -118,25 +123,6 @@ app.get('/spotify-profile', async (req, res) => {
   }
 }); 
 */
-
-app.post('/register', register);
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-  if (token == null) return res.sendStatus(401);
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    console.log("User", user);
-    next();
-  })
-}
-
-module.exports = {
-  authenticateToken,
-  // other exports if needed
-};
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)

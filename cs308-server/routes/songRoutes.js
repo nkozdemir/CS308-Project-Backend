@@ -6,13 +6,18 @@ Notes:
 const express = require('express');
 const router = express.Router();
 const songController = require('../controllers/songController');
-const { removeSongFromDatabase, addSongsToDatabase } = require('../helpers/dbHelpers');
+const userSongController = require('../controllers/userSongController'); 
+const { removeSongFromUser, addSongsToUser } = require('../helpers/dbHelpers');
 const { getTopTracksFromPlaylist } = require('../helpers/spotifyHelpers');
-const { authenticateToken } = require('../index');
-
+const authenticateToken = require('../helpers/authToken');
 
 // Route to add songs linked to specific user, to database
 router.post('/addSong', async (req, res) => {
+  /*
+    For testing purposes, userId is passed in the request body
+    In the future, userId will be extracted from the authentication token
+    In the future, songData will be extracted from the request body, corresponding song will be searched in spotify, and then added to the database
+  */
   const { userId } = req.body;
   const request = {
     playlistId: '37i9dQZF1DXcBWIGoYBM5M', // Today's top hits https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M
@@ -31,7 +36,7 @@ router.post('/addSong', async (req, res) => {
     }
   }
   try {
-    await addSongsToDatabase(songData, userId);
+    await addSongsToUser(songData, userId);
     res.status(200).json({ message: 'Songs added to the database successfully' });
   } catch (error) {
     if (error.message.startsWith('User with ID')) {
@@ -46,6 +51,8 @@ router.post('/addSong', async (req, res) => {
 router.get('/getSong/title', async (req, res) => {
   try {
     const title = req.body.title;
+    if (!title) throw new Error('Title is a required parameter.');
+
     const song = await songController.getSongByTitle(title);
     if (song) {
       res.status(200).json(song);
@@ -53,7 +60,11 @@ router.get('/getSong/title', async (req, res) => {
       res.status(404).json({ error: 'Song not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (error.message === 'Title is a required parameter.') {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 });
 
@@ -61,7 +72,7 @@ router.get('/getSong/title', async (req, res) => {
 router.delete('/deleteSong', async (req, res) => {
   const { songId, userId } = req.body;
   try {
-    await removeSongFromDatabase(songId, userId);
+    await removeSongFromUser(songId, userId);
     res.status(200).json({ message: 'Song deleted successfully' });
   } catch (error) {
     if (error.message.startsWith('User is not linked to the song')) {
@@ -78,6 +89,8 @@ router.delete('/deleteSong', async (req, res) => {
 router.get('/getSong/spotifyID', async (req, res) => {
   try {
     const spotifyId = req.body.spotifyId;
+    if (!spotifyId) throw new Error('Spotify ID is a required parameter.');
+
     const song = await songController.getSongBySpotifyID(spotifyId);
     if (song) {
       res.status(200).json(song);
@@ -85,17 +98,18 @@ router.get('/getSong/spotifyID', async (req, res) => {
       res.status(404).json({ error: 'Song not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (error.message === 'Spotify ID is a required parameter.') {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 });
 
-const userSongController = require('../controllers/userSongController'); // Import the userSongController
-
 // Endpoint to get all songs for the logged-in user
-router.get('/getAllUserSongs', /* authenticateToken, */ async (req, res) => {
+router.get('/getAllUserSongs', authenticateToken, async (req, res) => {
   try {
-    //const userId = req.user.id; // Assuming the user ID is stored in the 'id' field of the authentication token
-    const { userId } = req.body;
+    const userId = req.user.id; // Assuming the user ID is stored in the 'id' field of the authentication token
 
     // Get user-song links for the user
     const userSongLinks = await userSongController.getLinkByUser(userId);
@@ -111,15 +125,12 @@ router.get('/getAllUserSongs', /* authenticateToken, */ async (req, res) => {
       }
     }
 
-    res.json(songs);
+    res.status(200).json(songs);
   } catch (error) {
     console.error('Error getting user songs:', error);
     res.status(500).send('Internal Server Error');
   }
 });
-
-module.exports = router;
-
 
 // Add more routes as needed for other operations
 

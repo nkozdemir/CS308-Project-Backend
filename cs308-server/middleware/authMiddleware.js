@@ -4,7 +4,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user'); 
-const { validateLogin } = require('../schemaValidator');
+const { validateLogin } = require('../helpers/schemaValidator');
 
 const authMiddleware = express.Router();
 authMiddleware.use(express.json());
@@ -73,7 +73,7 @@ authMiddleware.delete('/logout', (req, res) => {
 });
 
 function generateAccessToken(userData) {
-  return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
+  return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
 }
 
 module.exports = authMiddleware;
