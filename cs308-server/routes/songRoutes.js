@@ -13,12 +13,7 @@ const authenticateToken = require('../helpers/authToken');
 
 // Route to add songs linked to specific user, to database
 router.post('/addSong', async (req, res) => {
-  /*
-    For testing purposes, userId is passed in the request body
-    In the future, userId will be extracted from the authentication token
-    In the future, songData will be extracted from the request body, corresponding song will be searched in spotify, and then added to the database
-  */
-  const { userId } = req.body;
+  const userId = req.user.id;
   const request = {
     playlistId: '37i9dQZF1DXcBWIGoYBM5M', // Today's top hits https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M
     numberOfResults: 3,
@@ -109,7 +104,7 @@ router.get('/getSong/spotifyID', async (req, res) => {
 // Endpoint to get all songs for the logged-in user
 router.get('/getAllUserSongs', authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id; // Assuming the user ID is stored in the 'id' field of the authentication token
+    const userId = req.user.id;
 
     // Get user-song links for the user
     const userSongLinks = await userSongController.getLinkByUser(userId);

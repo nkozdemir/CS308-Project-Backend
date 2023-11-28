@@ -9,6 +9,7 @@ async function createSong(songData) {
       Album: songData.album, // string
       Length: songData.length, // integer
       SpotifyID: songData.spotifyID, // string
+      Image: songData.image, //json
     });
     return song;
   } catch (error) {

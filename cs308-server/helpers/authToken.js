@@ -13,9 +13,7 @@ function authenticateToken(req, res, next) {
     if (err) {
       return res.sendStatus(403); // Forbidden
     }
-
     req.user = decoded; 
-    console.log("User", req.user);
     next();
   });
 }

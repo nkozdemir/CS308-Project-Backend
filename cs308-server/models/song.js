@@ -32,6 +32,9 @@ const Song = connection.define('Song', {
   SpotifyID: {
     type: DataTypes.STRING,
   }, 
+  Image: {
+    type: DataTypes.JSON,
+  }, 
 }, {
   freezeTableName: true,
 });

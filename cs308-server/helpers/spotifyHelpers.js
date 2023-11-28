@@ -31,23 +31,18 @@ async function getTopTracksFromPlaylist(playlistId, numberOfResults) {
         const genres = await getArtistGenres(artistIds);
 
         return {
-          Id: track.track.id,
+          SpotifyId: track.track.id,
           Title: track.track.name,
           Performer: artistInfo,
           Album: {
             id: track.track.album.id,
             name: track.track.album.name,
-            artists: track.track.album.artists.map(artist => ({
-              name: artist.name,
-              id: artist.id,
-              type: artist.type
-            })),
             type: track.track.album.album_type,
             release_date: track.track.album.release_date,
             images: track.track.album.images
           },
           Length: track.track.duration_ms,
-          Genres: genres, // Associate genres with each track
+          Genres: track.track.album.genres, // Associate album genres with each track
         };
       }));
 
@@ -64,7 +59,6 @@ async function getTopTracksFromPlaylist(playlistId, numberOfResults) {
 async function getArtistGenres(artistIds) {
   try {
     const data = await spotifyApi.getArtists(artistIds);
-    //console.log(data.body.artists.map(artist => artist.genres).flat());
     return data.body.artists.map(artist => artist.genres).flat();
   } catch (error) {
     console.error('Error during Spotify API request:', error);
