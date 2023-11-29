@@ -14,7 +14,7 @@ const Performer = connection.define('Performer', {
   },
   SpotifyID: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 }, {
   freezeTableName: true,

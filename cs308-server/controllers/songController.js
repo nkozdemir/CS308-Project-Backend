@@ -9,7 +9,7 @@ async function createSong(songData) {
       Album: songData.album, // string
       Length: songData.length, // integer
       SpotifyID: songData.spotifyID, // string
-      Image: songData.image, //json
+      Image: JSON.stringify(songData.image), //json
     });
     return song;
   } catch (error) {
@@ -69,6 +69,21 @@ async function getSongBySpotifyID(spotifyID) {
   }
 }
 
+async function getSongByTitleAndAlbum(title, album) {
+  try {
+    const song = await songModel.findOne({
+      where: {
+        Title: title,
+        Album: album,
+      },
+    });
+    return song;
+  } catch (error) {
+    console.error('Error getting song by title and album:', error);
+    throw error;
+  }
+}
+
 async function deleteSong(songId) {
   try {
     const deletedSong = await songModel.destroy({
@@ -88,6 +103,7 @@ module.exports = {
   getSongByTitle,
   getSongByID,
   getSongBySpotifyID,
+  getSongByTitleAndAlbum,
   deleteSong,
   // Add other Song-related controller functions here
 };
