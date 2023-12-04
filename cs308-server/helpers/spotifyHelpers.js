@@ -66,8 +66,80 @@ async function getArtistGenres(artistIds) {
   }
 }
 
+const searchSong = async (trackName, performerName, albumName) => {
+  try {
+    // Construct the search query based on the provided parameters
+    let searchQuery = `track:${trackName}`;
+    if (performerName) {
+      searchQuery += ` artist:${performerName}`;
+    }
+    if (albumName) {
+      searchQuery += ` album:${albumName}`;
+    }
+
+    // Use the Spotify API to search for tracks
+    const data = await spotifyApi.searchTracks(searchQuery);
+
+    // Check if there are tracks in the response
+    if (data.body.tracks && data.body.tracks.items.length > 0) {
+      const numberOfResults = 3;
+
+      // Extract the first few tracks
+      const trackResults = data.body.tracks.items.slice(0, numberOfResults);
+
+      // Extract relevant information for each track
+      const formattedResults = await Promise.all(trackResults.map(async (track) => {
+        const artistInfo = track.artists.map(artist => ({
+          name: artist.name,
+          id: artist.id,
+        }));
+
+        // Get album genres, if empty get artist genres
+        const albumGenres = track.album.genres;
+        const artistIds = artistInfo.map(artist => artist.id);
+        const artistGenres = await getArtistGenres(artistIds);
+        const genresToUse = albumGenres && albumGenres.length > 0 ? albumGenres : artistGenres;
+      
+        // Extract additional information about the track
+        const trackInfo = {
+          SpotifyId: track.id,
+          Title: track.name,
+          Performer: artistInfo,
+          Album: {
+            id: track.album.id,
+            name: track.album.name,
+            type: track.album.album_type,
+            release_date: track.album.release_date,
+            images: track.album.images,
+          },
+          Length: track.duration_ms,
+          Genres: genresToUse,
+          // Add more properties as needed
+        };
+      
+        return trackInfo;
+      }));
+      
+      return {
+        status: 'success',
+        data: formattedResults,
+      };
+      
+    } else {
+      return {
+        status: 'success',
+        data: null, // No matching tracks found
+      };
+    }
+  } catch (error) {
+    console.error('Error during Spotify API request:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   getTopTracksFromPlaylist,
   getArtistGenres,
+  searchSong,
   // Add other Spotify-related helper functions here
 };

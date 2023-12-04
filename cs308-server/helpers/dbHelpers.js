@@ -108,8 +108,32 @@ async function removeSongFromUser(songID, userID) {
   }
 }
 
+async function deleteSongsByAlbum(albumName, userId) {
+  try {
+    // Get all songs with the specified album name
+    const songsToDelete = await SongController.getSongsByAlbum(albumName);
+
+    // Check if any songs were found
+    if (songsToDelete.length === 0) {
+      console.log(`No songs found for album ${albumName}`);
+      return;
+    }
+
+    // Loop through each song and call removeSongFromUser
+    for (const song of songsToDelete) {
+      const songID = song.SongID;
+      await removeSongFromUser(songID, userID);
+    }
+
+    console.log(`All songs from album ${albumName} deleted successfully`);
+  } catch (error) {
+    console.error(`Error deleting songs from album ${albumName}:`, error);
+  }
+}
+
 module.exports = {
   addSongsToUser,
   removeSongFromUser,
+  deleteSongsByAlbum,
   // Add other helper functions here
 };
