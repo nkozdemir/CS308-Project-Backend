@@ -29,7 +29,7 @@ router.get('/getAllPerformers', async (req, res) => {
 });
 
 // Route to get performer by id
-router.get('/getPerformerById', async (req, res) => {
+router.get('/getPerformer/Id', async (req, res) => {
   try {
     const { performerId } = req.body;
     // Check if performer id is valid
@@ -68,7 +68,7 @@ router.get('/getPerformerById', async (req, res) => {
 });
 
 // Route to get performer by spotify id
-router.get('/getPerformerBySpotifyId', async (req, res) => {
+router.get('/getPerformer/SpotifyId', async (req, res) => {
   try {
     const { spotifyId } = req.body;
     // Check if spotify id is valid
@@ -156,7 +156,7 @@ router.get('/getPerformerFromSpotify', async (req, res) => {
 });
 
 // Route to get performer by name
-router.get('/getPerformerByName', async (req, res) => {
+router.get('/getPerformer/Name', async (req, res) => {
   try {
     const { performerName } = req.body;
     // Check if performer name is valid
