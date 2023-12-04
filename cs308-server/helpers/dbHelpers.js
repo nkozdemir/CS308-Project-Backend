@@ -9,6 +9,8 @@ const SongGenreController = require('../controllers/songGenreController.js');
 const SongPerformerController = require('../controllers/songPerformerController.js');
 const UserSongController = require('../controllers/userSongController.js');
 const UserController = require('../controllers/userController.js');
+const ExternalSongController = require('../controllers/externalSongController.js')
+const externalDB  = require('../config/externalDb');
 
 async function addSongsToUser(songData, userID) {
   try {
@@ -131,9 +133,91 @@ async function deleteSongsByAlbum(albumName, userId) {
   }
 }
 
+const transferDataFromExternalDB = async (userId) => {
+  try {
+    // Connect to the external database
+    await externalDB.authenticate();
+    console.log('Connected to the external database.');
+
+    // Retrieve data from the external database
+    const externalSongs = await ExternalSongController.getAllSongs();
+
+    // Transfer data to the internal database
+    for (const externalSong of externalSongs) {
+      // Check if the song already exists in the internal database
+      const existingSong = await SongController.getSongByTitleAndAlbum(externalSong.Title, externalSong.Album);
+
+      if (!existingSong) {
+        // Create a new song
+        const newSong = {
+          title: externalSong.Title,
+          releaseDate: externalSong.ReleaseDate,
+          album: externalSong.Album,
+          length: externalSong.Length,
+          spotifyID: externalSong.SpotifyID,
+          image: externalSong.Image, // Adjust the format if needed
+        };
+        // Save the new song to the internal database and link to the user
+        const createdSong = await SongController.createSong(newSong);
+        await UserSongController.linkUserSong(userId, createdSong.SongID);
+
+        // Link performers
+        for (const externalPerformer of externalSong.Performers) {
+          // Check if the performer already exists in the internal database based on SpotifyID
+          let internalPerformer;
+          if(externalPerformer.spotifyID != null) {
+            internalPerformer = await PerformerController.getPerformerBySpotifyID(externalPerformer.spotifyId);
+          }
+
+          // If not found, check based on Name
+          if (!internalPerformer) {
+            internalPerformer = await PerformerController.getPerformerByName(externalPerformer.name);
+
+            // If still not found, create a new performer
+            if (!internalPerformer) {
+              internalPerformer = await PerformerController.createPerformer(externalPerformer.name, externalPerformer.spotifyId);
+            }
+          }
+
+          // Link song and performer
+          await SongPerformerController.linkSongPerformer(createdSong.SongID, internalPerformer.PerformerID);
+        }
+
+        // Link genres
+        for (const externalGenre of externalSong.Genres) {
+          // Check if the genre already exists in the internal database
+          let internalGenre = await GenreController.getGenreByName(externalGenre);
+
+          if (!internalGenre) {
+            // Create a new genre
+            internalGenre = await GenreController.createGenre(externalGenre);
+          }
+
+          // Link song and genre
+          await SongGenreController.linkSongGenre(createdSong.SongID, internalGenre.GenreID);
+        }
+
+        console.log(`Song "${createdSong.Title}" added to the internal database.`);
+      } 
+      else {
+        // If the song already exists, link the user to the existing song
+        await UserSongController.linkUserSong(userId, existingSong.SongID);
+        console.log('Song linked to the user successfully');
+      }
+    }
+
+    console.log('Data transfer completed.');
+  } catch (error) {
+    console.error('Error transferring data:', error);
+  } 
+};
+
+
+
 module.exports = {
   addSongsToUser,
   removeSongFromUser,
   deleteSongsByAlbum,
+  transferDataFromExternalDB,
   // Add other helper functions here
 };
