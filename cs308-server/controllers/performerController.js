@@ -1,6 +1,16 @@
 const performerModel = require('../models/performer');
 //const songPerformerModel = require('../models/songPerformer');
 
+async function getAllPerformers() {
+  try {
+    const performers = await performerModel.findAll();
+    return performers;
+  } catch (error) {
+    console.error('Error getting all performers:', error);
+    throw error;
+  }
+}
+
 async function createPerformer(name, spotifyID) {
   try {
     const performer = await performerModel.create({
@@ -85,6 +95,7 @@ async function deletePerformerByPerformerId(performerID) {
 }
 
 module.exports = {
+  getAllPerformers,
   createPerformer,
   getPerformerByName,
   getPerformerBySpotifyID,
