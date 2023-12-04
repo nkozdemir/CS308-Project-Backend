@@ -82,11 +82,26 @@ async function deleteUserSong(userID, songID) {
   }
 }
 
+async function deleteUserSongBySongId(songID) {
+  try {
+    const deletedUserSong = await userSongModel.destroy({
+      where: {
+        SongID: songID,
+      },
+    });
+    return deletedUserSong;
+  } catch (error) {
+    console.error('Error deleting user-song link:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   getUserSongLink,
   getLinkByUser,
   getLinkBySong,
   linkUserSong,
   deleteUserSong,
+  deleteUserSongBySongId,
   // Add other UserSong-related controller functions here
 };

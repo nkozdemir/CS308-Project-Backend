@@ -1,5 +1,5 @@
 const performerModel = require('../models/performer');
-const songPerformerModel = require('../models/songPerformer');
+//const songPerformerModel = require('../models/songPerformer');
 
 async function createPerformer(name, spotifyID) {
   try {
@@ -42,36 +42,44 @@ async function getPerformerBySpotifyID(spotifyID) {
   }
 }
 
-async function deletePerformer(spotifyID) { 
+async function getPerformerById(performerID) {
   try {
-    // Check if the performer exists
     const performer = await performerModel.findOne({
       where: {
-        SpotifyID: spotifyID,
+        PerformerID: performerID,
       },
     });
-
-    if (!performer) {
-      throw new Error(`Performer with ID ${performerID} not found`);
-    }
-
-    // Delete the performer from the SongPerformer table
-    await songPerformerModel.destroy({
-      where: {
-        SpotifyID: spotifyID,
-      },
-    });
-
-    // Delete the performer ??? Should we ???
-  /*   const deletedPerformer = await performerModel.destroy({
-      where: {
-        SpotifyID: spotifyID,
-      },
-    }); */
-
-    return deletedPerformer;
+    return performer;
   } catch (error) {
-    console.error('Error deleting performer:', error);
+    console.error('Error getting performer by ID:', error);
+    throw error;
+  }
+}
+
+async function deletePerformerBySpotifyId(spotifyID) {
+  try {
+    const performer = await performerModel.destroy({
+      where: {
+        SpotifyID: spotifyID,
+      },
+    });
+    return performer;
+  } catch (error) {
+    console.error('Error deleting performer by spotifyID:', error);
+    throw error;
+  }
+}
+
+async function deletePerformerByPerformerId(performerID) {
+  try {
+    const performer = await performerModel.destroy({
+      where: {
+        PerformerID: performerID,
+      },
+    });
+    return performer;
+  } catch (error) {
+    console.error('Error deleting performer by ID:', error);
     throw error;
   }
 }
@@ -80,6 +88,8 @@ module.exports = {
   createPerformer,
   getPerformerByName,
   getPerformerBySpotifyID,
-  deletePerformer,
+  getPerformerById,
+  deletePerformerBySpotifyId,
+  deletePerformerByPerformerId,
   // Add other Performer-related controller functions here
 };
