@@ -5,6 +5,14 @@ const csvParser = require('csv-parser');
 const fs = require('fs');
 const path = require('path');
 
+const songController = require('../controllers/songController');
+const userController = require('../controllers/userController');
+const userSongController = require('../controllers/userSongController'); 
+const performerController = require('../controllers/performerController'); 
+const songPerformerController = require('../controllers/songPerformerController'); 
+const genreController = require('../controllers/genreController'); 
+const songGenreController = require('../controllers/songGenreController'); 
+
 // Set up the storage for Multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -57,7 +65,6 @@ const parseCSV = (filePath) => {
             }
         });
         */
-
         resolve(results);
       })
       .on('error', (error) => {
@@ -68,37 +75,83 @@ const parseCSV = (filePath) => {
 
 // Set up a route for file uploading
 router.post('/', upload.single('file'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).send({
-        status: 'error',
-        code: 400,
-        message: 'No file uploaded',
-    });
-  }
+    const { userId } = req.body;
+    // Check userId is valid and user with that ID exists
+    if (userController.validateUser(userId) === false) {
+        return res.status(400).send({
+            status: 'error',
+            code: 400,
+            message: 'Invalid userId',
+        });
+    }
 
-  // Get the path of the uploaded file
-  const filePath = req.file.path;
+    if (!req.file) {
+        return res.status(400).send({
+            status: 'error',
+            code: 400,
+            message: 'No file uploaded',
+        });
+    }
 
-  try {
-    // Parse the CSV file and extract fields
-    const parsedData = await parseCSV(filePath);
+    // Get the path of the uploaded file
+    const filePath = req.file.path;
 
-    // Further processing with the extracted fields
-    console.log('Extracted Fields:', parsedData);
-    res.status(200).send({
-        status: 'success',
-        code: 200,
-        message: 'File parsed successfully',
-        data: parsedData,
-    })
-  } catch (error) {
-    console.error('Error parsing CSV:', error);
-    res.status(500).send({
-        status: 'error',
-        code: 500,
-        message: 'Internal Server Error',
-    })
-  }
+    try {
+        // Parse the CSV file and extract fields
+        const parsedData = await parseCSV(filePath);
+
+        // Further processing with the extracted fields
+        console.log('Extracted Fields:', parsedData);
+
+        // Add each song inside parsedData to the database
+        for (const song of parsedData) {
+            // Check if song already exists in database, if exists link user to song and skip
+            const existingSong = await songController.getSongByTitleAndAlbum(song.title, song.album);
+            if (existingSong) {
+                // Add song to UserSongs table
+                await userSongController.linkUserSong(userId, existingSong.SongID);
+            } else {
+                // Add song to Songs table
+                const songId = await songController.createSong(song);
+                // Add song to UserSongs table
+                await userSongController.linkUserSong(userId, songId.SongID);
+
+                // Seperate performers and genres into arrays
+                const performersArr = song.performers.split(',').trim();
+                const genresArr = song.genres.split(',').trim();
+
+                // Add performers of the song to Performers table, one by one
+                for (const performer of performersArr) {
+                    console.log('Performer:', performer);
+                    const performerIds = await performerController.createPerformer(performer, null);
+                    // Add song to SongPerformers table
+                    await songPerformerController.linkSongPerformer(songId.SongID, performerIds.PerformerID);
+                }
+                
+                // Add genres of the song to Genres table, one by one
+                for (const genre of genresArr) {
+                    console.log('Genre:', genre);
+                    const genreIds = await genreController.createGenre(genre);
+                    // Add song to SongGenres table
+                    await songGenreController.linkSongGenre(songId.SongID, genreIds.GenreID);
+                }
+            }
+        }
+
+        res.status(200).send({
+            status: 'success',
+            code: 200,
+            message: 'Song(s) uploaded from CSV file successfully',
+            data: parsedData,
+        });
+    } catch (error) {
+        console.error('Error parsing CSV:', error);
+        res.status(500).send({
+            status: 'error',
+            code: 500,
+            message: 'Internal Server Error',
+        })
+    }
 });
 
 module.exports = router;
