@@ -24,27 +24,8 @@ async function getUserById(userId) {
   }
 }
 
-// A method to validate user with given id
-async function validateUser(userId) {
-  try {
-    // Check if userId is valid
-    if (!userId) {
-      return false;
-    }
-    const user = await User.findByPk(userId);
-    if (user) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error('Error validating user:', error);
-    throw error;
-  }
-}
-
 module.exports = {
   getUserById,
   createUser,
-  validateUser,
   // You can add other user-related controller functions here as needed
 };

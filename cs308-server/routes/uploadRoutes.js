@@ -1,3 +1,9 @@
+/* 
+TODO:
+- Before adding songs, check whether they exist on Spotify or not
+- If they exist on Spotify, add them to the database from Spotify API
+- If they don't exist on Spotify, add them to the database from CSV file
+*/
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -6,13 +12,12 @@ const fs = require('fs');
 const path = require('path');
 
 const songController = require('../controllers/songController');
-const userController = require('../controllers/userController');
 const userSongController = require('../controllers/userSongController'); 
 const performerController = require('../controllers/performerController'); 
 const songPerformerController = require('../controllers/songPerformerController'); 
 const genreController = require('../controllers/genreController'); 
 const songGenreController = require('../controllers/songGenreController'); 
-const authenticateToken = require('../middleware/authMiddleware');
+const authenticateToken = require('../helpers/authToken');
 
 // Set up the storage for Multer
 const storage = multer.diskStorage({
@@ -75,16 +80,9 @@ const parseCSV = (filePath) => {
 };
 
 // Set up a route for file uploading
-router.post('/', upload.single('file'), async (req, res) => {
-  const { userId } = req.body;
-  // Check userId is valid and user with that ID exists
-  if (userController.validateUser(userId) === false) {
-    return res.status(400).send({
-        status: 'error',
-        code: 400,
-        message: 'Invalid userId',
-    });
-  }
+router.post('/', authenticateToken, upload.single('file'), async (req, res) => {
+  // Get the user ID from the JWT
+  const userId = req.user.id;
 
   if (!req.file) {
     return res.status(400).send({
