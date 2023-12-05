@@ -191,8 +191,9 @@ router.get('/getSong/title', async (req, res) => {
 });
 
 // Route to delete a song by ID
-router.delete('/deleteSong', async (req, res) => {
-  const { songId, userId } = req.body;
+router.delete('/deleteSong', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { songId } = req.body;
   try {
     await removeSongFromUser(songId, userId);
     res.status(200).json({ message: 'Song deleted successfully' });
@@ -204,6 +205,20 @@ router.delete('/deleteSong', async (req, res) => {
     } else {
       res.status(500).json({ error: 'Internal Server Error' });
     }
+  }
+});
+
+// Route to delete all album songs
+router.delete('/deleteAlbumSongs', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { albumName } = req.body;
+
+  try {
+    await deleteSongsByAlbum(albumName, userId);
+    res.status(200).json({ message: `All songs from album ${albumName} deleted successfully` });
+  } catch (error) {
+    console.error(`Error deleting songs from album ${albumName}:`, error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

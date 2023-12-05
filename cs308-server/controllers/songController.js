@@ -69,6 +69,20 @@ async function getSongBySpotifyID(spotifyID) {
   }
 }
 
+async function getSongsByAlbum(albumName) {
+  try {
+    const songs = await songModel.findAll({
+      where: {
+        Album: albumName,
+      },
+    });
+    return songs;
+  } catch (error) {
+    console.error('Error getting songs by album:', error);
+    throw error;
+  }
+}
+
 async function getSongByTitleAndAlbum(title, album) {
   try {
     const song = await songModel.findOne({
@@ -103,6 +117,7 @@ module.exports = {
   getSongByTitle,
   getSongByID,
   getSongBySpotifyID,
+  getSongsByAlbum,
   getSongByTitleAndAlbum,
   deleteSong,
   // Add other Song-related controller functions here
