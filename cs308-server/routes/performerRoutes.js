@@ -107,7 +107,7 @@ router.get('/getPerformer/SpotifyId', async (req, res) => {
 });
 
 // Route to get performer from spotify by its spotifyId
-router.get('/getPerformerFromSpotify', async (req, res) => {
+router.get('/getPerformer/Spotify', async (req, res) => {
   try {
     const { spotifyId } = req.body;
     // check if spotify id is valid
@@ -128,7 +128,7 @@ router.get('/getPerformerFromSpotify', async (req, res) => {
         return res.status(404).json({
             status: 'error',
             code: 404, 
-            message: 'Performer does not exist' 
+            message: 'Performer does not exist on Spotify' 
         });
     }
 
