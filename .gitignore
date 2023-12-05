@@ -20,3 +20,6 @@ dist
 
 # Windows files
 Thumbs.db
+
+# Uploads
+uploads
