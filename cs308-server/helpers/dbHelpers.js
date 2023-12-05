@@ -1,7 +1,3 @@
-/*
-Todo:
-- Create a schema to validate song data 
-*/
 const GenreController = require('../controllers/genreController.js');
 const PerformerController = require('../controllers/performerController.js');
 const SongController = require('../controllers/songController.js');
@@ -78,13 +74,51 @@ async function addSongsToUser(songData, userID) {
   }
 }
 
+async function deleteSong(songID) {
+  try {
+    const songPerformerLinks = await SongPerformerController.getLinkBySong(songID);
+    const performerIDs = songPerformerLinks.map(link => link.PerformerID);
+    // Check if performers have other songs linked to them
+    for (const performerID of performerIDs) {
+      const performerLinks = await SongPerformerController.getLinkByPerformer(performerID);
+      if (performerLinks.length == 1) {
+        // Delete song performer link
+        await SongPerformerController.deleteSongPerformerByPerformerId(performerID);
+        // Delete performer from Performer table
+        await PerformerController.deletePerformerByPerformerId(performerID);
+      } 
+    }
+
+    const songGenreLinks = await SongGenreController.getLinkBySong(songID);
+    const genreIDs = songGenreLinks.map(link => link.GenreID);
+    // Check if genres have other songs linked to them
+    for (const genreID of genreIDs) {
+      const genreLinks = await SongGenreController.getLinkByGenre(genreID);
+      if (genreLinks.length == 1) {
+        // Delete song genre link
+        await SongGenreController.deleteSongGenreByGenreId(genreID);
+        // Delete genre from Genre table
+        await GenreController.deleteGenre(genreID);
+      } 
+    }
+    
+    // Delete song from UserSong table
+    await UserSongController.deleteUserSongBySongId(songID);
+
+    // Delete song from Song table
+    await SongController.deleteSong(songID);
+
+    console.log('Song removed from the database successfully');
+  } catch (error) {
+    console.error('Error removing song from the database:', error);
+  }
+}
+
 async function removeSongFromUser(songID, userID) {
   try {
     // check if songId and userId are valid
     const song = await SongController.getSongByID(songID);
     if (!song) throw new Error(`Song with ID ${songID} does not exist`);
-    const user = await UserController.getUserById(userID);
-    if (!user) throw new Error(`User with ID ${userID} does not exist`);
 
     // check if link with songId and userId exists
     const existingLink = await UserSongController.getUserSongLink(userID, songID);
@@ -92,19 +126,14 @@ async function removeSongFromUser(songID, userID) {
 
     // check if song is linked to other users
     const songLinks = await UserSongController.getLinkBySong(songID);
-    if (songLinks.length > 1) {
-      // song is linked to other users, delete link with user only
-      await UserSongController.deleteUserSong(userID, songID);
-      return;
-    }
-    else {
-      await UserSongController.deleteUserSong(userID, songID);
-      await SongPerformerController.deleteSongPerformer(songID);
-      await SongGenreController.deleteSongGenre(songID);
-      await SongController.deleteSong(songID);
+    await UserSongController.deleteUserSong(userID, songID);
+    if (songLinks.length > 1) return song;
 
-      console.log('Song removed from the database successfully');
-    }
+    // Delete song from Song table
+    await deleteSong(songID);
+    console.log('Song unlinked from user successfully');
+
+    return song;
   } catch (error) {
     console.error('Error removing song from the database:', error);
   }
@@ -216,6 +245,7 @@ const transferDataFromExternalDB = async (userId) => {
 
 module.exports = {
   addSongsToUser,
+  deleteSong,
   removeSongFromUser,
   deleteSongsByAlbum,
   transferDataFromExternalDB,

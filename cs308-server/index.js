@@ -14,7 +14,7 @@ const spotifyRoutes = require('./routes/spotifyRoutes');
 const authMiddleware = require('./middleware/authMiddleware');
 const songRoutes = require('./routes/songRoutes');
 const dataTransferRoutes = require('./routes/dataTransferRoutes');
-
+const performerRoutes = require('./routes/performerRoutes');
 
 const app = express()
 const port = 3000;
@@ -32,6 +32,8 @@ app.use('/register', registerRoute);
 app.use('/song', songRoutes);
 
 app.use('/transfer', dataTransferRoutes);
+
+app.use('/performer', performerRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
