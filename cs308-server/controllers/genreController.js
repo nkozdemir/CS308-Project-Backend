@@ -26,8 +26,23 @@ async function getGenreByName(genreName) {
     }
 }
 
+async function deleteGenre(genreID) {
+    try {
+        const genre = await genreModel.destroy({
+            where: {
+                GenreID: genreID,
+            },
+        });
+        return genre;
+    } catch (error) {
+        console.error('Error deleting genre:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     createGenre,
     getGenreByName,
+    deleteGenre,
     // Add other Performer-related controller functions here
 };
