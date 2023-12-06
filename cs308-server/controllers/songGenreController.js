@@ -24,7 +24,7 @@ async function getLinkBySong(songID) {
         });
         return songGenreLink;
     } catch (error) {
-        console.error('Error getting songgenre:', error);
+        console.error('Error getting songgenre by song:', error);
         throw error;
     }
 }
@@ -38,7 +38,7 @@ async function getLinkByGenre(genreID) {
         });
         return songGenreLink;
     } catch (error) {
-        console.error('Error getting songgenre:', error);
+        console.error('Error getting songgenre by genre:', error);
         throw error;
     }
 }
@@ -76,7 +76,21 @@ async function deleteSongGenre(songID) {
         });
         return deletedSongGenre;
     } catch (error) {
-        console.error('Error deleting songgenre:', error);
+        console.error('Error deleting songgenre by songid:', error);
+        throw error;
+    }
+}
+
+async function deleteSongGenreByGenreId(genreID) {
+    try {
+        const deletedSongGenre = await songGenreModel.destroy({
+            where: {
+                GenreID: genreID,
+            },
+        });
+        return deletedSongGenre;
+    } catch (error) {
+        console.error('Error deleting songgenre by genreid:', error);
         throw error;
     }
 }
@@ -87,5 +101,6 @@ module.exports = {
     getLinkByGenre,
     linkSongGenre,
     deleteSongGenre,
+    deleteSongGenreByGenreId,
     // Add other Performer-related controller functions here
 };

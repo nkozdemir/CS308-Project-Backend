@@ -115,5 +115,66 @@ To run this project, you will need to add the following environment variables to
 ]
 ```
 
+#### Search Song
+
+```http
+  GET http://localhost:3000/spotifyapi/searchSong
+```
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `trackName`  | `string` | **Required**. Song name |
+| `performerName` | `string` | Performer name |
+| `albumName`  | `string` | Album name |
+##### Example Response:
+
+```json
+{
+    "status": "success",
+    "data": [
+        {
+            "SpotifyId": "1UGJ3w3PBBJJNK2CpwlKU1",
+            "Title": "Magic",
+            "Performer": [
+                {
+                    "name": "Coldplay",
+                    "id": "4gzpq5DPGxSnKTe4SA8HAU"
+                }
+            ],
+            "Album": {
+                "id": "4rQ9sAZtDiVyjz3qfMWTyp",
+                "name": "All Day Mellow Ballads",
+                "type": "compilation",
+                "release_date": "2023-11-21",
+                "images": [
+                    {
+                        "height": 640,
+                        "url": "https://i.scdn.co/image/ab67616d0000b2737cf33c659dc682d364127600",
+                        "width": 640
+                    },
+                    {
+                        "height": 300,
+                        "url": "https://i.scdn.co/image/ab67616d00001e027cf33c659dc682d364127600",
+                        "width": 300
+                    },
+                    {
+                        "height": 64,
+                        "url": "https://i.scdn.co/image/ab67616d000048517cf33c659dc682d364127600",
+                        "width": 64
+                    }
+                ]
+            },
+            "Length": 285014,
+            "Genres": [
+                "permanent wave",
+                "pop"
+            ]
+        },       
+    ]
+}
+```
+
 ## Database Diagram
 ![Database Diagram](images/db-diagram-2.png)

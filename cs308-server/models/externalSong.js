@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const connection = require('../config/db');
+const externalDB  = require('../config/externalDb');
 
-const Song = connection.define('Song', {
+const externalSong = externalDB.define('song', {
   SongID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -29,8 +29,15 @@ const Song = connection.define('Song', {
   Image: {
     type: DataTypes.JSON,
   }, 
+  Performers: {
+    type: DataTypes.JSON, // Array of performers
+    allowNull: false,
+  },
+  Genres: {
+    type: DataTypes.JSON, // Array of genres
+  },
 }, {
   freezeTableName: true,
 });
 
-module.exports = Song;
+module.exports = externalSong;

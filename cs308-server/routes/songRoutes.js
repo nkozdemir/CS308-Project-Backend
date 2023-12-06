@@ -1,8 +1,3 @@
-/*
-Notes:
-- Add song method only adds songs to the db using getTopTracksFromPlaylist() method (for development purposes)
-- To be modified in the future
-*/
 const express = require('express');
 const router = express.Router();
 const songController = require('../controllers/songController');
@@ -11,8 +6,8 @@ const performerController = require('../controllers/performerController');
 const songPerformerController = require('../controllers/songPerformerController'); 
 const genreController = require('../controllers/genreController'); 
 const songGenreController = require('../controllers/songGenreController'); 
-const { removeSongFromUser, addSongsToUser } = require('../helpers/dbHelpers');
-const { getTopTracksFromPlaylist, getArtistGenres } = require('../helpers/spotifyHelpers');
+const { deleteSong, removeSongFromUser } = require('../helpers/dbHelpers');
+const { getArtistGenres } = require('../helpers/spotifyHelpers');
 const authenticateToken = require('../helpers/authToken');
 const spotifyApi = require('../config/spotify.js');
 
@@ -170,7 +165,7 @@ router.post('/addCustomSong', authenticateToken, async (req, res) => {
 });
 
 // Route to get a song by title
-router.get('/getSong/title', async (req, res) => {
+router.post('/getSong/title', async (req, res) => {
   try {
     const title = req.body.title;
     if (!title) throw new Error('Title is a required parameter.');
@@ -190,25 +185,68 @@ router.get('/getSong/title', async (req, res) => {
   }
 });
 
-// Route to delete a song by ID
-router.delete('/deleteSong', async (req, res) => {
-  const { songId, userId } = req.body;
+// Route to delete a song from user
+router.delete('/deleteSong/User', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { songId } = req.body;
   try {
-    await removeSongFromUser(songId, userId);
-    res.status(200).json({ message: 'Song deleted successfully' });
+    const result = await removeSongFromUser(songId, userId);
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      message: 'Song removed from user successfully',
+      data: result,
+    });
   } catch (error) {
-    if (error.message.startsWith('User is not linked to the song')) {
-      res.status(400).json({ error: error.message });
-    } else if (error.message === 'Both songId and userId are required parameters.') {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+    console.error('Error deleting song:', error);
+    res.status(500).json({ 
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+// Route to delete a song from the database
+router.delete('/deleteSong', authenticateToken, async (req, res) => {
+  const { songId } = req.body;
+  try {
+    const song = await songController.getSongByID(songId);
+    if (!song) throw new Error(`Song with ID ${songId} does not exist`);
+
+    await deleteSong(songId);
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      message: 'Song removed from the database successfully',
+      data: song,
+    });
+  } catch (error) {
+    console.error('Error deleting song:', error);
+    res.status(500).json({ 
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+// Route to delete all album songs
+router.delete('/deleteAlbumSongs', authenticateToken, async (req, res) => {
+  const userId = req.user.id;
+  const { albumName } = req.body;
+
+  try {
+    await deleteSongsByAlbum(albumName, userId);
+    res.status(200).json({ message: `All songs from album ${albumName} deleted successfully` });
+  } catch (error) {
+    console.error(`Error deleting songs from album ${albumName}:`, error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 // Route to find a song by SpotifyID
-router.get('/getSong/spotifyID', async (req, res) => {
+router.post('/getSong/spotifyID', async (req, res) => {
   try {
     const spotifyId = req.body.spotifyId;
     if (!spotifyId) throw new Error('Spotify ID is a required parameter.');
