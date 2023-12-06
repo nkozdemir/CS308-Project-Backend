@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
+
 const ratingController = require("../controllers/ratingController");
-const userController = require("../controllers/userController");
 const songController = require("../controllers/songController");
 const userSongController = require("../controllers/userSongController");
 const authenticateToken = require("../helpers/authToken");
 
 // Route to get rating by id
-router.get("/getRating/Id", async (req, res) => {
+router.get("/getRating/Id", authenticateToken, async (req, res) => {
   try {
     const { ratingId } = req.body;
     // Check if rating id is valid
@@ -46,27 +46,9 @@ router.get("/getRating/Id", async (req, res) => {
 });
 
 // Route to get rating by user
-router.get("/getRating/User", async (req, res) => {
+router.get("/getRating/User", authenticateToken, async (req, res) => {
   try {
-    const { userId } = req.body;
-    // Check if user id is valid
-    if (!userId) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "User id is invalid",
-      });
-    }
-
-    // Check if user exists
-    const user = await userController.getUserById(userId);
-    if (!user) {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        message: "User does not exist",
-      });
-    }
+    const userId = req.user.id; 
 
     const rating = await ratingController.getRatingByUser(userId);
     // Check if rating exists
@@ -95,7 +77,7 @@ router.get("/getRating/User", async (req, res) => {
 });
 
 // Route to get rating by song
-router.get("/getRating/Song", async (req, res) => {
+router.get("/getRating/Song", authenticateToken, async (req, res) => {
   try {
     const { songId } = req.body;
     // Check if song id is valid
@@ -144,27 +126,10 @@ router.get("/getRating/Song", async (req, res) => {
 });
 
 // Route to get rating by user and song
-router.get("/getRating/UserSong", async (req, res) => {
+router.get("/getRating/UserSong", authenticateToken, async (req, res) => {
   try {
-    const { userId, songId } = req.body;
-    // Check if user id is valid
-    if (!userId) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "User id is invalid",
-      });
-    }
-
-    // Check if user exists
-    const user = await userController.getUserById(userId);
-    if (!user) {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        message: "User does not exist",
-      });
-    }
+    const userId = req.user.id;
+    const { songId } = req.body;
 
     // Check if song id is valid
     if (!songId) {
@@ -225,27 +190,10 @@ router.get("/getRating/UserSong", async (req, res) => {
 });
 
 // Route to create rating
-router.post("/createRating", async (req, res) => {
+router.post("/createRating", authenticateToken, async (req, res) => {
   try {
-    const { userId, songId, rating } = req.body;
-    // Check if user id is valid
-    if (!userId) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "User id is invalid",
-      });
-    }
-
-    // Check if user exists
-    const user = await userController.getUserById(userId);
-    if (!user) {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        message: "User does not exist",
-      });
-    }
+    const userId = req.user.id;
+    const { songId, rating } = req.body;
 
     // Check if song id is valid
     if (!songId) {
@@ -316,27 +264,10 @@ router.post("/createRating", async (req, res) => {
 });
 
 // Route to remove rating
-router.delete("/deleteRating", async (req, res) => {
+router.delete("/deleteRating", authenticateToken, async (req, res) => {
   try {
-    const { userId, songId } = req.body;
-    // Check if user id is valid
-    if (!userId) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "User id is invalid",
-      });
-    }
-
-    // Check if user exists
-    const user = await userController.getUserById(userId);
-    if (!user) {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        message: "User does not exist",
-      });
-    }
+    const userId = req.user.id;
+    const { songId } = req.body;
 
     // Check if song id is valid
     if (!songId) {
