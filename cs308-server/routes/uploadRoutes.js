@@ -1,9 +1,3 @@
-/* 
-TODO:
-- Before adding songs, check whether they exist on Spotify or not
-- If they exist on Spotify, add them to the database from Spotify API
-- If they don't exist on Spotify, add them to the database from CSV file
-*/
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
