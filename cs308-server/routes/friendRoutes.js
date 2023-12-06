@@ -88,7 +88,7 @@ router.get('/getAllFriendSongs', authenticateToken, async (req, res) => {
   });
 
 // Delete a friend by FriendID
-router.delete('/deleteFriend', authenticateToken, async (req, res) => {
+router.post('/deleteFriend', authenticateToken, async (req, res) => {
     try {
       const userId = req.user.id;
       const { friendUserId } = req.body;
