@@ -227,7 +227,7 @@ To run this project, you will need to add the following environment variables to
 #### Delete A Song From User 
 
 ```http
-  DELETE http://localhost:3000/song/deleteSong/User
+  POST http://localhost:3000/song/deleteSong/User
 ```
 
 ##### Header
@@ -262,6 +262,32 @@ To run this project, you will need to add the following environment variables to
     "status": "error",
     "code": 500, // Error code (example)
     "message": "", // Error message
+}
+```
+
+#### Delete All Album Songs
+
+```http
+  POST http://localhost:3000/song/deleteAlbumSongs
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `albumName`  | `string` | **Required**. Name of the album|
+
+##### Example Response
+
+```json
+{
+    "status": "success"
 }
 ```
 
@@ -707,6 +733,141 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "status": "error",
     "code": 500, // Error code (example)
     "message": "", // Error message
+}
+```
+
+### Friend Routes
+
+#### Add Friend
+
+```http
+  POST http://localhost:3000/friend/addFriend
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `friendEmail`  | `string` | **Required**. Email of the friend |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "data": {
+        "FriendID": 3,
+        "UserID": 4,
+        "FriendUserID": 1
+    }
+}
+```
+
+#### Get All Friends
+
+```http
+  GET http://localhost:3000/friend/getAllFriends
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "data": [
+        {
+            "FriendID": 3,
+            "UserID": 4,
+            "FriendUserID": 1,
+            "FriendInfo": {
+                "UserID": 1,
+                "Name": "Baki Mercimek",
+                "Email": "baki@mail.com"
+            }
+        }
+    ]
+}
+```
+
+#### Get All Friend Songs
+
+```http
+  GET http://localhost:3000/friend/getAllFriendSongs
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "data": [
+        {
+            "SongID": 36,
+            "Title": "Blinding Lights",
+            "ReleaseDate": "2020-03-20",
+            "Album": "After Hours",
+            "Length": 200040,
+            "SpotifyID": "0VjIjW4GlUZAMYd2vXMi3b",
+            "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36\",\"width\":640},    {\"height\":300,\"url\":\"https://i.scdn.co/image/ab67616d00001e028863bc11d2aa12b54f5aeb36\",\"width\":300},{\"height\":64,\"url\":\"https://i.scdn.co/image/ab67616d000048518863bc11d2aa12b54f5aeb36\",\"width\":64}]",
+            "Performers": [
+                {
+                    "Name": "The Weeknd"
+                }
+            ],
+            "Genres": [
+                {
+                    "Name": "canadian contemporary r&b"
+                },
+                {
+                    "Name": "canadian pop"
+                }
+            ]
+        }
+    ]
+}
+```
+
+#### Delete Friend
+
+```http
+  POST http://localhost:3000/friend/deleteFriend
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `friendUserId`  | `int` | **Required**. UserID of the friend |
+
+##### Example Response
+
+```json
+{
+    "status": "success"
 }
 ```
 
