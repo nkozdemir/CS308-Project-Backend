@@ -85,6 +85,8 @@ To run this project, you will need to add the following environment variables to
 | :-------- | :------- | :-------------------------------- |
 | `token`  | `string` | **Required**. Access token |
 
+---
+
 ### Song Routes
 
 #### Get All Songs Linked to User
@@ -93,17 +95,21 @@ To run this project, you will need to add the following environment variables to
   GET http://localhost:3000/song/getAllUserSongs
 ```
 
-##### Request Body:
+##### Header
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `accessToken`  | `string` | **Required**. Access token |
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
 
 ##### Example Response:
 
 ```json
-[
-    {
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": [
+      {
         "SongID": 1,
         "Title": "greedy",
         "ReleaseDate": "2023-09-15",
@@ -115,15 +121,165 @@ To run this project, you will need to add the following environment variables to
                 "Name": "Tate McRae"
             }
         ]
-    },
-]
+      },
+      // Additional song data...
+    ]
+}
 ```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Add Song To User, From Spotify 
+
+```http
+  POST http://localhost:3000/song/addSpotifySong
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `spotifyId`  | `string` | **Required**. Spotify id of the song|
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": {
+      // Data of added song
+    }
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Add Song To User, Custom
+
+```http
+  POST http://localhost:3000/song/addCustomSong
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `title`  | `string` | **Required**. Title of the song|
+| `performers`  | `string` | **Required**. Artists of the song|
+| `album`  | `string` | **Required**. Album name of the song|
+| `length`  | `string` | **Required**. Duration of the song (ms)|
+| `genres`  | `string` | **Required**. Genres of the song|
+| `releaseDate`  | `string` | **Required**. Release date of the song|
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": {
+      // Data of added song
+    }
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Delete A Song From User 
+
+```http
+  DELETE http://localhost:3000/song/deleteSong/User
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `songId`  | `int` | **Required**. Id of the song|
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": {
+      // Data of removed song
+    }
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+---
+
+### Spotify Routes
 
 #### Search Song
 
 ```http
   POST http://localhost:3000/spotifyapi/searchSong
 ```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
 
 ##### Request Body:
 
@@ -138,6 +294,8 @@ To run this project, you will need to add the following environment variables to
 ```json
 {
     "status": "success",
+    "code": 200,
+    "message": "Successfully retrieved search results",
     "data": [
         {
             "SpotifyId": "1UGJ3w3PBBJJNK2CpwlKU1",
@@ -176,10 +334,23 @@ To run this project, you will need to add the following environment variables to
                 "permanent wave",
                 "pop"
             ]
-        },       
+        },
+        // Additional song data...       
     ]
 }
 ```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+---
 
 ### Upload Song Externally Routes
 
@@ -216,14 +387,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Song(s) uploaded from CSV file successfully",
     "data": [
         {
-            "Title": "Magic",
-            "Performer": "Coldplay",
-            "Album": "All Day Mellow Ballads",
-            "Length": 285014,
-            "Genres": [
-                "permanent wave",
-                "pop"
-            ]
+          // Data of the added song(s)
         },
         // Additional songs...
     ]
@@ -235,10 +399,31 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "error",
-    "code": "", // Error code
+    "code": 500, // Error code (example)
     "message": "", // Error message
 }
 ```
+
+#### Upload From External DB
+
+```http
+  POST http://localhost:3000/transferDataFromExternalDB
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body
+/* TODO */
+
+##### Example Response
+/* TODO */
+
+##### Example Error Response
+/* TODO */
 
 ### Rating Routes
 
@@ -273,7 +458,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
-          "Date": "" // Date,
+          "Date": "" // Date
         },
         // Additional ratings...
     ]
@@ -285,7 +470,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "error",
-    "code": "", // Error code
+    "code": 500, // Error code (example)
     "message": "", // Error message
 }
 ```
@@ -315,7 +500,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
-          "Date": "" // Date,
+          "Date": "" // Date
         },
         // Additional ratings...
     ]
@@ -327,7 +512,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "error",
-    "code": "", // Error code
+    "code": 500, // Error code (example)
     "message": "", // Error message
 }
 ```
@@ -363,7 +548,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
-          "Date": "" // Date,
+          "Date": "" // Date
         },
         // Additional ratings...
     ]
@@ -375,7 +560,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "error",
-    "code": "", // Error code
+    "code": 500, // Error code (example)
     "message": "", // Error message
 }
 ```
@@ -411,7 +596,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
-          "Date": "" // Date,
+          "Date": "" // Date
         },
         // Additional ratings...
     ]
@@ -423,7 +608,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "error",
-    "code": "", // Error code
+    "code": 500, // Error code (example)
     "message": "", // Error message
 }
 ```
@@ -460,7 +645,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
-          "Date": "" // Date,
+          "Date": "" // Date
         },
         // Additional ratings...
     ]
@@ -472,7 +657,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "error",
-    "code": "", // Error code
+    "code": 500, // Error code (example)
     "message": "", // Error message
 }
 ```
@@ -508,7 +693,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
-          "Date": "" // Date,
+          "Date": "" // Date
         },
         // Additional ratings...
     ]
@@ -520,8 +705,9 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "error",
-    "code": "", // Error code
+    "code": 500, // Error code (example)
     "message": "", // Error message
 }
 ```
 
+---

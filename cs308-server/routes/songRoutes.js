@@ -21,7 +21,11 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
     const spotifyApiResponse = await spotifyApi.getTrack(spotifyId);
 
     if (!spotifyApiResponse.body) {
-      return res.status(404).json({ error: 'Song not found on Spotify' });
+      return res.status(404).json({ 
+        status: 'error',
+        code: 404,
+        message: 'Song not found on Spotify' 
+      });
     }
 
     const spotifyTrack = spotifyApiResponse.body;
@@ -75,16 +79,30 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
         await songGenreController.linkSongGenre(createdSong.SongID, genre.GenreID);
       }
 
-      res.status(200).json({ message: 'Song added to the database and linked to the user successfully' });
+      res.status(200).json({
+        status: 'success',
+        code: 200, 
+        message: 'Song added to the database and linked to the user successfully', 
+        data: createdSong
+      });
     } else {
       // If the song already exists, link the user to the existing song
       await userSongController.linkUserSong(userId, existingSong.SongID);
 
-      res.status(200).json({ message: 'Song linked to the user successfully' });
+      res.status(200).json({
+        status: 'success',
+        code: 200, 
+        message: 'Song linked to the user successfully',
+        data: existingSong 
+      });
     }
   } catch (error) {
     console.error('Error adding/linking song:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({
+      status: 'error',
+      code: 500, 
+      message: 'Internal Server Error' 
+    });
   }
 });
 
@@ -98,7 +116,8 @@ router.post('/addCustomSong', authenticateToken, async (req, res) => {
     // Validate required parameters
     if (!title || !performers || !album || !length || !genres || !releaseDate) {
       return res.status(400).json({
-        status: 'fail',
+        status: 'error',
+        code: 400,
         message: 'Missing required parameters: title, performers, album, length, genres, releaseDate',
       });
     }
@@ -151,14 +170,16 @@ router.post('/addCustomSong', authenticateToken, async (req, res) => {
       createdSong = existingSong;
     }
 
-    res.json({
+    res.status(200).json({
       status: 'success',
+      code: 200,
       message: 'Custom song added to the database and linked to the user successfully',
     });
   } catch (error) {
     console.error('Error adding custom song:', error);
     res.status(500).json({
       status: 'error',
+      code: 500,
       message: 'Internal Server Error',
     });
   }
@@ -285,10 +306,19 @@ router.get('/getAllUserSongs', authenticateToken, async (req, res) => {
       }
     }
 
-    res.status(200).json(songs);
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      message: 'Songs retrieved successfully',
+      data: songs
+    });
   } catch (error) {
     console.error('Error getting user songs:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
   }
 });
 

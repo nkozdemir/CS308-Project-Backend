@@ -34,7 +34,8 @@ router.post('/searchSong', async (req, res) => {
 
     if (!trackName) {
       res.status(400).json({
-        status: 'fail',
+        status: 'error',
+        code: 400,
         message: 'Missing required parameter: trackName',
       });
       return;
@@ -42,10 +43,17 @@ router.post('/searchSong', async (req, res) => {
 
     const searchResults = await searchSong(trackName, performerName, albumName);
 
-    res.json(searchResults);
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      message: 'Successfully retrieved search results',
+      data: searchResults.data,
+    });
   } catch (error) {
+    console.error('Error during Spotify API request:', error);
     res.status(500).json({
       status: 'error',
+      code: 500,
       message: 'Internal Server Error',
     });
   }
