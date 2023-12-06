@@ -2,7 +2,6 @@ const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 const SongModel = require('./song');
 
-
 const Genre = connection.define('Genre', {
   GenreID: {
     type: DataTypes.INTEGER,
@@ -11,6 +10,7 @@ const Genre = connection.define('Genre', {
   },
   Name: {
     type: DataTypes.STRING,
+    unique: true,
   },
 }, {
   freezeTableName: true,

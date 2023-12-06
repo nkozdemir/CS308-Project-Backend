@@ -81,9 +81,9 @@ async function deleteSong(songID) {
     // Check if performers have other songs linked to them
     for (const performerID of performerIDs) {
       const performerLinks = await SongPerformerController.getLinkByPerformer(performerID);
+      // Delete song performer link
+      await SongPerformerController.deleteSongPerformerByPerformerId(performerID);
       if (performerLinks.length == 1) {
-        // Delete song performer link
-        await SongPerformerController.deleteSongPerformerByPerformerId(performerID);
         // Delete performer from Performer table
         await PerformerController.deletePerformerByPerformerId(performerID);
       } 
@@ -94,9 +94,9 @@ async function deleteSong(songID) {
     // Check if genres have other songs linked to them
     for (const genreID of genreIDs) {
       const genreLinks = await SongGenreController.getLinkByGenre(genreID);
+      // Delete song genre link
+      await SongGenreController.deleteSongGenreByGenreId(genreID);
       if (genreLinks.length == 1) {
-        // Delete song genre link
-        await SongGenreController.deleteSongGenreByGenreId(genreID);
         // Delete genre from Genre table
         await GenreController.deleteGenre(genreID);
       } 
@@ -240,8 +240,6 @@ const transferDataFromExternalDB = async (userId) => {
     console.error('Error transferring data:', error);
   } 
 };
-
-
 
 module.exports = {
   addSongsToUser,

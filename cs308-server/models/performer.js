@@ -11,6 +11,7 @@ const Performer = connection.define('Performer', {
   Name: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   SpotifyID: {
     type: DataTypes.STRING,

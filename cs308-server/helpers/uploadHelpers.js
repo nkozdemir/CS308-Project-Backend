@@ -7,37 +7,61 @@ const songGenreController = require('../controllers/songGenreController');
 const { searchSong } = require('../helpers/spotifyHelpers');
 
 async function addFromSpotify(userId, mostRelevantSong) {
-  // Add song to Songs table
-  const songId = await songController.createSong({
-    title: mostRelevantSong.Title,
-    album: mostRelevantSong.Album.name,
-    length: mostRelevantSong.Length,
-    releaseDate: mostRelevantSong.Album.release_date,
-    spotifyID: mostRelevantSong.SpotifyId,
-    image: mostRelevantSong.Album.images,
-  });
+  // Check if song already exists in database, if exists link user to song and skip
+  const existingSong = await songController.getSongBySpotifyID(mostRelevantSong.SpotifyId);
+  if (existingSong) {
+    // Add song to UserSongs table
+    await userSongController.linkUserSong(userId, existingSong.SongID);
 
-  // Add song to UserSongs table
-  await userSongController.linkUserSong(userId, songId.SongID);
+    console.log('Song already exists in database, linked to user.');
+    return;
+  } else {
+    // Add song to Songs table
+    const songId = await songController.createSong({
+      title: mostRelevantSong.Title,
+      album: mostRelevantSong.Album.name,
+      length: mostRelevantSong.Length,
+      releaseDate: mostRelevantSong.Album.release_date,
+      spotifyID: mostRelevantSong.SpotifyId,
+      image: mostRelevantSong.Album.images,
+    });
 
-  // Add performers of the song to Performers table, one by one
-  for (const performer of mostRelevantSong.Performer) {
-    console.log('Performer (spotify):', performer);
-    const performerIds = await performerController.createPerformer(performer.name, performer.id);
-    // Add song to SongPerformers table
-    await songPerformerController.linkSongPerformer(songId.SongID, performerIds.PerformerID);
+    // Add song to UserSongs table
+    await userSongController.linkUserSong(userId, songId.SongID);
+
+    // Add performers of the song to Performers table, one by one
+    for (const performer of mostRelevantSong.Performer) {
+      console.log('Performer (spotify):', performer);
+      // Check if performer already exists in database, if exists link song to performer and skip
+      const existingPerformer = await performerController.getPerformerBySpotifyID(performer.id);
+      if (!existingPerformer) {
+        const performerIds = await performerController.createPerformer(performer.name, performer.id);
+        // Add song to SongPerformers table
+        await songPerformerController.linkSongPerformer(songId.SongID, performerIds.PerformerID);
+      } else {
+        // Add song to SongPerformers table
+        await songPerformerController.linkSongPerformer(songId.SongID, existingPerformer.PerformerID);
+      }
+    }
+
+    // Add genres of the song to Genres table, one by one
+    for (const genre of mostRelevantSong.Genres) {
+      console.log('Genre (spotify):', genre);
+      // Check if genre already exists in database, if exists link song to genre and skip
+      const existingGenre = await genreController.getGenreByName(genre);
+      if (!existingGenre) {
+        const genreIds = await genreController.createGenre(genre);
+        // Add song to SongGenres table
+        await songGenreController.linkSongGenre(songId.SongID, genreIds.GenreID);
+      } else {
+        // Add song to SongGenres table
+        await songGenreController.linkSongGenre(songId.SongID, existingGenre.GenreID);
+      }
+    }
+
+    console.log('Song added to database from Spotify successfully.');
+    return;
   }
-
-  // Add genres of the song to Genres table, one by one
-  for (const genre of mostRelevantSong.Genres) {
-    console.log('Genre (spotify):', genre);
-    const genreIds = await genreController.createGenre(genre);
-    // Add song to SongGenres table
-    await songGenreController.linkSongGenre(songId.SongID, genreIds.GenreID);
-  }
-
-  console.log('Song added to database from Spotify successfully.');
-  return;
 }
 
 async function addSongFromFile(userId, parsedData) {
@@ -71,7 +95,7 @@ async function addSongFromFile(userId, parsedData) {
 
         // Add performers of the song to Performers table, one by one
         for (const performer of performersArr) {
-          //console.log('Performer:', performer);
+          console.log('Performer:', performer);
           const performerIds = await performerController.createPerformer(performer, null);
           // Add song to SongPerformers table
           await songPerformerController.linkSongPerformer(songId.SongID, performerIds.PerformerID);
@@ -79,7 +103,7 @@ async function addSongFromFile(userId, parsedData) {
         
         // Add genres of the song to Genres table, one by one
         for (const genre of genresArr) {
-          //console.log('Genre:', genre);
+          console.log('Genre:', genre);
           const genreIds = await genreController.createGenre(genre);
           // Add song to SongGenres table
           await songGenreController.linkSongGenre(songId.SongID, genreIds.GenreID);
