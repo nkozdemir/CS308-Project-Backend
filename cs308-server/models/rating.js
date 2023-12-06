@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 
-const UserSong = connection.define('UserSong', {
-  UserSongID: {
+const rating = connection.define('Rating', {
+  RatingID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
@@ -15,11 +15,16 @@ const UserSong = connection.define('UserSong', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  TimesListened: {
+  Rating: {
     type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  Date: {
+    type: DataTypes.DATE,
+    allowNull: false,
   },
 }, {
   freezeTableName: true,
 });
 
-module.exports = UserSong;
+module.exports = rating;
