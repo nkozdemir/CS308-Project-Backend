@@ -1,6 +1,7 @@
 const songModel = require('../models/song');
 const PerformerModel = require('../models/performer');
 const GenreModel = require('../models/genre');
+const userSongController = require('../controllers/userSongController'); 
 
 async function createSong(songData) {
   try {
@@ -166,6 +167,40 @@ async function deleteSong(songId) {
   }
 }
 
+async function getSongsByUserIds(userIds) {
+  try {
+    // Get all user-song links for the provided user IDs
+    const userSongLinks = await userSongController.getLinkByUsers(userIds);
+
+    // Extract song IDs from user-song links
+    const songIds = userSongLinks.map(link => link.SongID);
+
+    // Get songs by the extracted song IDs
+    const songs = await songModel.findAll({
+      where: {
+        SongID: songIds,
+      },
+      include: [
+        {
+          model: PerformerModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+        {
+          model: GenreModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    return songs;
+  } catch (error) {
+    console.error('Error getting songs by user IDs:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   createSong,
   getSongByTitle,
@@ -174,5 +209,6 @@ module.exports = {
   getSongByAlbum,
   getSongByTitleAndAlbum,
   deleteSong,
+  getSongsByUserIds,
   // Add other Song-related controller functions here
 };

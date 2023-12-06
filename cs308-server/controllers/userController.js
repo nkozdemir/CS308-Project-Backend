@@ -24,8 +24,23 @@ async function getUserById(userId) {
   }
 }
 
+async function getUserByEmail(email) {
+  try {
+    const user = await User.findOne({
+      where: {
+        Email: email,
+      },
+    });
+    return user;
+  } catch (error) {
+    console.error('Error fetching user by email:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   getUserById,
   createUser,
+  getUserByEmail,
   // You can add other user-related controller functions here as needed
 };

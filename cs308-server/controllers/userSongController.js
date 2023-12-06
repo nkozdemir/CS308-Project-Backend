@@ -96,6 +96,20 @@ async function deleteUserSongBySongId(songID) {
   }
 }
 
+async function getLinkByUsers(userIds) {
+  try {
+    const userSongLinks = await userSongModel.findAll({
+      where: {
+        UserID: userIds,
+      },
+    });
+    return userSongLinks;
+  } catch (error) {
+    console.error('Error getting user-song links by users:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   getUserSongLink,
   getLinkByUser,
@@ -103,5 +117,6 @@ module.exports = {
   linkUserSong,
   deleteUserSong,
   deleteUserSongBySongId,
+  getLinkByUsers,
   // Add other UserSong-related controller functions here
 };
