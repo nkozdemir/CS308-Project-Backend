@@ -1,5 +1,6 @@
 const songModel = require('../models/song');
 const PerformerModel = require('../models/performer');
+const GenreModel = require('../models/genre');
 
 async function createSong(songData) {
   try {
@@ -24,6 +25,18 @@ async function getSongByTitle(title) {
       where: {
         Title: title,
       },
+      include: [
+        {
+          model: PerformerModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+        {
+          model: GenreModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+      ],
     });
     return song;
   } catch (error) {
@@ -44,6 +57,11 @@ const getSongByID = async (songId) => {
           attributes: ['Name'],
           through: { attributes: [] },
         },
+        {
+          model: GenreModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
       ],
     });
 
@@ -61,6 +79,18 @@ async function getSongBySpotifyID(spotifyID) {
       where: {
         SpotifyID: spotifyID,
       },
+      include: [
+        {
+          model: PerformerModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+        {
+          model: GenreModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+      ],
     });
     return song;
   } catch (error) {
@@ -69,12 +99,24 @@ async function getSongBySpotifyID(spotifyID) {
   }
 }
 
-async function getSongsByAlbum(albumName) {
+async function getSongByAlbum(albumName) {
   try {
     const songs = await songModel.findAll({
       where: {
         Album: albumName,
       },
+      include: [
+        {
+          model: PerformerModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+        {
+          model: GenreModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+      ],
     });
     return songs;
   } catch (error) {
@@ -90,6 +132,18 @@ async function getSongByTitleAndAlbum(title, album) {
         Title: title,
         Album: album,
       },
+      include: [
+        {
+          model: PerformerModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+        {
+          model: GenreModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+      ],
     });
     return song;
   } catch (error) {
@@ -117,7 +171,7 @@ module.exports = {
   getSongByTitle,
   getSongByID,
   getSongBySpotifyID,
-  getSongsByAlbum,
+  getSongByAlbum,
   getSongByTitleAndAlbum,
   deleteSong,
   // Add other Song-related controller functions here
