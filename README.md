@@ -35,6 +35,8 @@ To run this project, you will need to add the following environment variables to
 
 ## API Reference
 
+### Authentication Routes
+
 #### Login
 
 ```http
@@ -83,6 +85,8 @@ To run this project, you will need to add the following environment variables to
 | :-------- | :------- | :-------------------------------- |
 | `token`  | `string` | **Required**. Access token |
 
+### Song Routes
+
 #### Get All Songs Linked to User
 
 ```http
@@ -118,7 +122,7 @@ To run this project, you will need to add the following environment variables to
 #### Search Song
 
 ```http
-  GET http://localhost:3000/spotifyapi/searchSong
+  POST http://localhost:3000/spotifyapi/searchSong
 ```
 
 ##### Request Body:
@@ -128,6 +132,7 @@ To run this project, you will need to add the following environment variables to
 | `trackName`  | `string` | **Required**. Song name |
 | `performerName` | `string` | Performer name |
 | `albumName`  | `string` | Album name |
+
 ##### Example Response:
 
 ```json
@@ -176,5 +181,347 @@ To run this project, you will need to add the following environment variables to
 }
 ```
 
-## Database Diagram
-![Database Diagram](images/db-diagram-2.png)
+### Upload Song Externally Routes
+
+#### Upload Songs from CSV
+
+```http
+  POST http://localhost:3000/upload
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `file`  | `file` | **Required**. File to be uploaded (.csv only) |
+
+##### Example File
+```csv
+title,performers,album,length,genres,releaseDate
+Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
+```
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Song(s) uploaded from CSV file successfully",
+    "data": [
+        {
+            "Title": "Magic",
+            "Performer": "Coldplay",
+            "Album": "All Day Mellow Ballads",
+            "Length": 285014,
+            "Genres": [
+                "permanent wave",
+                "pop"
+            ]
+        },
+        // Additional songs...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // Error message
+}
+```
+
+### Rating Routes
+
+#### Get Rating by ID
+
+```http
+  POST http://localhost:3000/rating/getRating/Id
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `ratingId`  | `int` | **Required**. ID of the rating|
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating retrieved by id",
+    "data": [
+        {
+          "RatingID": 5,
+          "UserID": 1,
+          "SongID": 37,
+          "Rating": 3,
+          "Date": "" // Date,
+        },
+        // Additional ratings...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // Error message
+}
+```
+
+#### Get Rating by User
+
+```http
+  GET http://localhost:3000/rating/getRating/User
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating retrieved by user",
+    "data": [
+        {
+          "RatingID": 5,
+          "UserID": 1,
+          "SongID": 37,
+          "Rating": 3,
+          "Date": "" // Date,
+        },
+        // Additional ratings...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // Error message
+}
+```
+
+#### Get Rating by Song
+
+```http
+  POST http://localhost:3000/rating/getRating/Song
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `songId`  | `int` | **Required**. ID of the song|
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating retrieved by song",
+    "data": [
+        {
+          "RatingID": 5,
+          "UserID": 1,
+          "SongID": 37,
+          "Rating": 3,
+          "Date": "" // Date,
+        },
+        // Additional ratings...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // Error message
+}
+```
+
+#### Get Rating by UserSong
+
+```http
+  POST http://localhost:3000/rating/getRating/UserSong
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `songId`  | `int` | **Required**. ID of the song |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating retrieved by user and song",
+    "data": [
+        {
+          "RatingID": 5,
+          "UserID": 1,
+          "SongID": 37,
+          "Rating": 3,
+          "Date": "" // Date,
+        },
+        // Additional ratings...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // Error message
+}
+```
+
+#### Create Rating 
+
+```http
+  POST http://localhost:3000/rating/createRating
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `songId`  | `int` | **Required**. ID of the song |
+| `rating`  | `int` | **Required**. Rating number (1-5) |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating created",
+    "data": [
+        {
+          "RatingID": 5,
+          "UserID": 1,
+          "SongID": 37,
+          "Rating": 3,
+          "Date": "" // Date,
+        },
+        // Additional ratings...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // Error message
+}
+```
+
+#### Delete Rating 
+
+```http
+  DELETE http://localhost:3000/rating/deleteRating
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `songId`  | `int` | **Required**. ID of the song |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating removed",
+    "data": [
+        {
+          "RatingID": 5,
+          "UserID": 1,
+          "SongID": 37,
+          "Rating": 3,
+          "Date": "" // Date,
+        },
+        // Additional ratings...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // Error message
+}
+```
+
