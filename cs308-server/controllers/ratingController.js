@@ -59,17 +59,6 @@ async function getRatingByUserSong(userID, songID) {
 
 async function createRating(userID, songID, rating, date) {
     try {
-        const existingRating = await ratingModel.findOne({
-            where: {
-                UserID: userID,
-                SongID: songID,
-            }
-        });
-        if (existingRating) {
-            console.log(`User ${userID} has already rated song ${songID}`);
-            return existingRating;
-        }
-
         const newRating = await ratingModel.create({
             UserID: userID,
             SongID: songID,

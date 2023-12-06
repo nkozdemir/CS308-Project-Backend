@@ -7,7 +7,7 @@ const userSongController = require("../controllers/userSongController");
 const authenticateToken = require("../helpers/authToken");
 
 // Route to get rating by id
-router.get("/getRating/Id", authenticateToken, async (req, res) => {
+router.post("/getRating/Id", authenticateToken, async (req, res) => {
   try {
     const { ratingId } = req.body;
     // Check if rating id is valid
@@ -77,7 +77,7 @@ router.get("/getRating/User", authenticateToken, async (req, res) => {
 });
 
 // Route to get rating by song
-router.get("/getRating/Song", authenticateToken, async (req, res) => {
+router.post("/getRating/Song", authenticateToken, async (req, res) => {
   try {
     const { songId } = req.body;
     // Check if song id is valid
@@ -126,7 +126,7 @@ router.get("/getRating/Song", authenticateToken, async (req, res) => {
 });
 
 // Route to get rating by user and song
-router.get("/getRating/UserSong", authenticateToken, async (req, res) => {
+router.post("/getRating/UserSong", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const { songId } = req.body;
@@ -232,12 +232,12 @@ router.post("/createRating", authenticateToken, async (req, res) => {
       return res.status(400).json({
         status: "error",
         code: 400,
-        message: "Rating is invalid, should be between 1 and 5",
+        message: "Rating is invalid, it must be between 1 and 5",
       });
     }
 
     // Get current date and time in MySQL DATETIME format
-    const date = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const date = new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul', hour12: false });
     console.log("Date: ", date);
     
     const newRating = await ratingController.createRating(
