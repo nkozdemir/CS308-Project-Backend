@@ -4,7 +4,7 @@ const { transferDataFromExternalDB } = require('../helpers/dbHelpers');
 const authenticateToken = require('../helpers/authToken');
 
 // Endpoint to trigger data transfer
-router.post('/transferDataFromExternalDB', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     await transferDataFromExternalDB(userId);

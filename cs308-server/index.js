@@ -32,7 +32,7 @@ app.use('/register', registerRoute);
 
 app.use('/song', songRoutes);
 
-app.use('/transfer', dataTransferRoutes);
+app.use('/transferDataFromExternalDB', dataTransferRoutes);
 
 app.use('/performer', performerRoutes);
 
