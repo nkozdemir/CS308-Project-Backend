@@ -15,6 +15,7 @@ const authMiddleware = require('./middleware/authMiddleware');
 const songRoutes = require('./routes/songRoutes');
 const dataTransferRoutes = require('./routes/dataTransferRoutes');
 const performerRoutes = require('./routes/performerRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 const app = express()
 const port = 3000;
@@ -34,6 +35,8 @@ app.use('/song', songRoutes);
 app.use('/transfer', dataTransferRoutes);
 
 app.use('/performer', performerRoutes);
+
+app.use('/upload', uploadRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
