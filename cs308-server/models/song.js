@@ -1,9 +1,3 @@
-/* 
-Todo 
-- ReleaseDate should be a date instead of a string
-- Length is in milliseconds, should be in seconds
-- May add url field for track images in the future
-*/
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 

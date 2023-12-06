@@ -1,6 +1,6 @@
 const express = require('express');
 const { setAccessToken, spotifyApi } = require('../services/spotifyService');
-const { getArtistGenres, searchSong } = require('../helpers/spotifyHelpers');
+const { searchSong } = require('../helpers/spotifyHelpers');
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.get('/getTrackById', async (req, res) => {
   }
 });
 
-router.get('/searchSong', async (req, res) => {
+router.post('/searchSong', async (req, res) => {
   try {
     const { trackName, performerName, albumName } = req.body;
 
@@ -51,9 +51,8 @@ router.get('/searchSong', async (req, res) => {
   }
 });
 
-
 // Endpoint to fetch top x tracks from a Spotify playlist
-router.get('/getTopTracksFromPlaylist', async (req, res) => {
+router.post('/getTopTracksFromPlaylist', async (req, res) => {
   try {
     const { playlistId, numberOfResults } = req.body;
 

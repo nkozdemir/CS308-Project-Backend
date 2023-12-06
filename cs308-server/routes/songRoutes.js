@@ -165,7 +165,7 @@ router.post('/addCustomSong', authenticateToken, async (req, res) => {
 });
 
 // Route to get a song by title
-router.get('/getSong/title', async (req, res) => {
+router.post('/getSong/title', async (req, res) => {
   try {
     const title = req.body.title;
     if (!title) throw new Error('Title is a required parameter.');
@@ -246,7 +246,7 @@ router.delete('/deleteAlbumSongs', authenticateToken, async (req, res) => {
 });
 
 // Route to find a song by SpotifyID
-router.get('/getSong/spotifyID', async (req, res) => {
+router.post('/getSong/spotifyID', async (req, res) => {
   try {
     const spotifyId = req.body.spotifyId;
     if (!spotifyId) throw new Error('Spotify ID is a required parameter.');

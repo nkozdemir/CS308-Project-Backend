@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
-const SongModel = require('./song');
 
 const Performer = connection.define('Performer', {
   PerformerID: {
@@ -19,8 +18,5 @@ const Performer = connection.define('Performer', {
 }, {
   freezeTableName: true,
 });
-
-Performer.belongsToMany(SongModel, { through: 'SongPerformer', foreignKey: 'PerformerID' });
-SongModel.belongsToMany(Performer, { through: 'SongPerformer', foreignKey: 'SongID' });
 
 module.exports = Performer;

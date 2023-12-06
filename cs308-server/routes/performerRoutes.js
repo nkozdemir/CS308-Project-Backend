@@ -9,7 +9,7 @@ const authenticateToken = require('../helpers/authToken');
 const spotifyApi = require('../config/spotify');
 
 // Route to get all performers
-router.get('/getAllPerformers', async (req, res) => {
+router.get('/getAllPerformers', authenticateToken, async (req, res) => {
   try {
     const performers = await performerController.getAllPerformers();
     return res.status(200).json({
@@ -29,7 +29,7 @@ router.get('/getAllPerformers', async (req, res) => {
 });
 
 // Route to get performer by id
-router.get('/getPerformer/Id', async (req, res) => {
+router.post('/getPerformer/Id', authenticateToken, async (req, res) => {
   try {
     const { performerId } = req.body;
     // Check if performer id is valid
@@ -68,7 +68,7 @@ router.get('/getPerformer/Id', async (req, res) => {
 });
 
 // Route to get performer by spotify id
-router.get('/getPerformer/SpotifyId', async (req, res) => {
+router.post('/getPerformer/SpotifyId', authenticateToken, async (req, res) => {
   try {
     const { spotifyId } = req.body;
     // Check if spotify id is valid
@@ -107,7 +107,7 @@ router.get('/getPerformer/SpotifyId', async (req, res) => {
 });
 
 // Route to get performer from spotify by its spotifyId
-router.get('/getPerformer/Spotify', async (req, res) => {
+router.post('/getPerformer/Spotify', authenticateToken, async (req, res) => {
   try {
     const { spotifyId } = req.body;
     // check if spotify id is valid
@@ -156,7 +156,7 @@ router.get('/getPerformer/Spotify', async (req, res) => {
 });
 
 // Route to get performer by name
-router.get('/getPerformer/Name', async (req, res) => {
+router.post('/getPerformer/Name', authenticateToken, async (req, res) => {
   try {
     const { performerName } = req.body;
     // Check if performer name is valid

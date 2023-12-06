@@ -118,7 +118,7 @@ To run this project, you will need to add the following environment variables to
 #### Search Song
 
 ```http
-  GET http://localhost:3000/spotifyapi/searchsong
+  GET http://localhost:3000/spotifyapi/searchSong
 ```
 
 ##### Request Body:
