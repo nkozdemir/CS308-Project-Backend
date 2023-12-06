@@ -17,6 +17,7 @@ const dataTransferRoutes = require('./routes/dataTransferRoutes');
 const performerRoutes = require('./routes/performerRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const friendRoutes = require('./routes/friendRoutes');
 
 const app = express()
 const port = 3000;
@@ -40,6 +41,8 @@ app.use('/performer', performerRoutes);
 app.use('/rating', ratingRoutes);
 
 app.use('/upload', uploadRoutes);
+
+app.use('/friend', friendRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
