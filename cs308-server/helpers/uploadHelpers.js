@@ -4,9 +4,8 @@ const performerController = require('../controllers/performerController');
 const songPerformerController = require('../controllers/songPerformerController'); 
 const genreController = require('../controllers/genreController'); 
 const songGenreController = require('../controllers/songGenreController'); 
-//const { searchSong } = require('../helpers/spotifyHelpers');
+const { searchSong } = require('../helpers/spotifyHelpers');
 
-/*
 async function addFromSpotify(userId, mostRelevantSong) {
   // Add song to Songs table
   const songId = await songController.createSong({
@@ -40,7 +39,6 @@ async function addFromSpotify(userId, mostRelevantSong) {
   console.log('Song added to database from Spotify successfully.');
   return;
 }
-*/
 
 async function addSongFromFile(userId, parsedData) {
   // Add each song inside parsedData to the database
@@ -51,7 +49,6 @@ async function addSongFromFile(userId, parsedData) {
       // Add song to UserSongs table
       await userSongController.linkUserSong(userId, existingSong.SongID);
     } else {
-      /*
       // Check if song exists on Spotify
       const spotifySearchResults = await searchSong(song.title, song.performers, song.album);
       console.log('Spotify Search Results:', spotifySearchResults);
@@ -63,7 +60,6 @@ async function addSongFromFile(userId, parsedData) {
         await addFromSpotify(userId, mostRelevantSong);
       }
       else {
-      */
         // Add song to Songs table
         const songId = await songController.createSong(song);
         // Add song to UserSongs table
@@ -90,7 +86,7 @@ async function addSongFromFile(userId, parsedData) {
         }
         
         console.log('Song added to database successfully.');
-      //}
+      }
     }
   }
 }
