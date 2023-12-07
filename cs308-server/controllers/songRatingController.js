@@ -129,6 +129,22 @@ async function deleteRatingByUserSong(userID, songID) {
     }
 }
 
+async function getLatestRatingByUserSong(userID, songID) {
+    try {
+        const rating = await songRating.findOne({
+            where: {
+                UserID: userID,
+                SongID: songID,
+            },
+            order: [['Date', 'DESC']], // Order by Date in descending order
+        });
+        return rating;
+    } catch (error) {
+        console.error('Error getting latest song rating by usersong:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getRatingById,
     getRatingByUser,
@@ -139,4 +155,5 @@ module.exports = {
     deleteRatingByUser,
     deleteRatingBySong,
     deleteRatingByUserSong,
+    getLatestRatingByUserSong,
 };

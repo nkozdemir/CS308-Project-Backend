@@ -1,4 +1,6 @@
 const userSongModel = require('../models/usersong');
+const { getCurrentDateTime } = require("../helpers/dateHelper");
+
 
 async function getUserSongLink(userID, songID) {
   try {
@@ -56,9 +58,12 @@ async function linkUserSong(userID, songID) {
       return existingLink;
     }
     
+    const date = getCurrentDateTime();
+
     const userSong = await userSongModel.create({
       UserID: userID,
       SongID: songID,
+      DateAdded: date,
     });
     return userSong;
   } catch (error) {

@@ -2,6 +2,7 @@ const songModel = require('../models/song');
 const PerformerModel = require('../models/performer');
 const GenreModel = require('../models/genre');
 const userSongController = require('../controllers/userSongController'); 
+const { Op } = require('sequelize');
 
 async function createSong(songData) {
   try {
@@ -201,6 +202,46 @@ async function getSongsByUserIds(userIds) {
   }
 }
 
+async function getUserSongsByDecade(userId, decade) {
+  try {
+    // Calculate the start and end years for the given decade
+    const startYear = decade;
+    const endYear = decade + 9;
+
+    // Get user-song links for the specified user
+    const userSongLinks = await userSongController.getLinkByUser(userId);
+    // Extract song IDs from the user-song links
+    const songIds = userSongLinks.map(userSongLink => userSongLink.SongID);
+
+    // Find all songs released within the specified decade and linked to the user
+    const songsInDecade = await songModel.findAll({
+      where: {
+        SongID: songIds,
+        ReleaseDate: {
+          [Op.between]: [startYear, endYear],
+        },
+      },
+      include: [
+        {
+          model: PerformerModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+        {
+          model: GenreModel,
+          attributes: ['Name'],
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    return songsInDecade;
+  } catch (error) {
+    console.error('Error getting user songs by decade:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   createSong,
   getSongByTitle,
@@ -210,5 +251,6 @@ module.exports = {
   getSongByTitleAndAlbum,
   deleteSong,
   getSongsByUserIds,
+  getUserSongsByDecade,
   // Add other Song-related controller functions here
 };
