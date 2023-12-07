@@ -442,14 +442,26 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body
-/* TODO */
-
 ##### Example Response
-/* TODO */
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Data transfer completed successfully",
+    "data": []
+}
+```
 
 ##### Example Error Response
-/* TODO */
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
 
 ## Rating Routes
 
@@ -1050,11 +1062,23 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "success",
+    "code": "200",
+    "message": "Friend is added successfully",
     "data": {
         "FriendID": 3,
         "UserID": 4,
         "FriendUserID": 1
     }
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // error message
 }
 ```
 
@@ -1075,6 +1099,8 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "success",
+    "code": "200",
+    "message": "All friends are obtained",
     "data": [
         {
             "FriendID": 3,
@@ -1087,6 +1113,16 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
             }
         }
     ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // error message
 }
 ```
 
@@ -1107,6 +1143,8 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```json
 {
     "status": "success",
+    "code": "200",
+    "message": "All friends songs are obtained",
     "data": [
         {
             "SongID": 36,
@@ -1134,6 +1172,16 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // error message
+}
+```
+
 #### Delete Friend
 
 ```http
@@ -1156,7 +1204,24 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 
 ```json
 {
-    "status": "success"
+    "status": "success",
+    "code": 200,
+    "message": "Friend is deleted successfully",
+    "data": {
+        "FriendID": 7,
+        "UserID": 4,
+        "FriendUserID": 5
+    },
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // error message
 }
 ```
 

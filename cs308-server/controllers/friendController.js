@@ -29,13 +29,25 @@ async function createFriend(userId, friendUserId) {
 
 async function deleteFriendByFriendUserId(userId, friendUserId) {
     try {
-      const deletedFriend = await Friend.destroy({
+      // Retrieve the friend relationship to be deleted
+      const friendToDelete = await Friend.findOne({
+          where: {
+              UserID: userId,
+              FriendUserID: friendUserId,
+          },
+      });
+
+      if (!friendToDelete) {
+          // If the friend relationship does not exist, you can handle it accordingly
+          throw new Error('Friend relationship not found');
+      }
+      await Friend.destroy({
         where: {
           UserID: userId,
           FriendUserID: friendUserId,
         },
       });
-      return deletedFriend;
+      return friendToDelete;
     } catch (error) {
       console.error('Error deleting friend by FriendUserID:', error);
       throw error;

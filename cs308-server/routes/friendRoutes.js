@@ -17,6 +17,7 @@ router.post('/addFriend', authenticateToken, async (req, res) => {
       if (!friendUser) {
         return res.status(404).json({
           status: 'error',
+          code: '404',
           message: 'Friend user not found',
         });
       }
@@ -27,14 +28,17 @@ router.post('/addFriend', authenticateToken, async (req, res) => {
       // Create the friend relationship
       const newFriendship = await friendController.createFriend(userId, friendUserId);
   
-      res.status(201).json({
+      res.status(200).json({
         status: 'success',
+        code: 200,
+        message: 'Friend is added successfully',
         data: newFriendship,
       });
     } catch (error) {
       console.error('Error adding friend:', error);
       res.status(500).json({
         status: 'error',
+        code: 500,
         message: 'Internal Server Error',
       });
     }
@@ -47,14 +51,17 @@ router.get('/getAllFriends', authenticateToken, async (req, res) => {
   
       const friends = await friendController.getFriendByUserId(userId);
       
-      res.status(201).json({
+      res.status(200).json({
         status: 'success',
+        code: 200,
+        message: 'All friends are obtained',
         data: friends,
       });
     } catch (error) {
       console.error('Error getting all friends:', error);
       res.status(500).json({
         status: 'error',
+        code: 500,
         message: 'Internal Server Error',
       });
     }
@@ -76,12 +83,15 @@ router.get('/getAllFriendSongs', authenticateToken, async (req, res) => {
   
       res.status(200).json({
         status: 'success',
+        code: 200,
+        message: 'All friend songs are obtained',
         data: friendSongs,
       });
     } catch (error) {
       console.error('Error getting all friend songs:', error);
       res.status(500).json({
         status: 'error',
+        code: 500,
         message: 'Internal Server Error',
       });
     }
@@ -98,20 +108,25 @@ router.post('/deleteFriend', authenticateToken, async (req, res) => {
       if (existingFriendship.length === 0) {
         return res.status(404).json({
           status: 'error',
+          code: 404,
           message: 'Friend is not found',
         });
       }
   
       // Delete the friend relationship
-      await friendController.deleteFriendByFriendUserId(userId, friendUserId);
+      const deletedFriend = await friendController.deleteFriendByFriendUserId(userId, friendUserId);
   
       res.status(200).json({
         status: 'success',
+        code: 200,
+        message: 'Friend is deleted successfully',
+        data: deletedFriend,
       });
     } catch (error) {
       console.error('Error deleting friend:', error);
       res.status(500).json({
         status: 'error',
+        code: 500,
         message: 'Internal Server Error',
       });
     }
