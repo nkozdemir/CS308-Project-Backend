@@ -76,7 +76,7 @@ To run this project, you will need to add the following environment variables to
 #### Logout
 
 ```http
-  DELETE http://localhost:3000/auth/logout
+  POST http://localhost:3000/auth/logout
 ```
 
 ##### Request Body
