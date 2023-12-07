@@ -9,7 +9,7 @@ async function getRatingById(ratingID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by ratingid:', error);
         throw error;
     }
 }
@@ -23,7 +23,7 @@ async function getRatingByUser(userID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by userid:', error);
         throw error;
     }
 }
@@ -37,7 +37,7 @@ async function getRatingBySong(songID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by songid:', error);
         throw error;
     }
 }
@@ -52,7 +52,7 @@ async function getRatingByUserSong(userID, songID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by usersong:', error);
         throw error;
     }
 }
@@ -67,7 +67,7 @@ async function createRating(userID, songID, rating, date) {
         });
         return newRating;
     } catch (error) {
-        console.error('Error creating rating:', error);
+        console.error('Error creating song rating:', error);
         throw error;
     }
 }
@@ -81,7 +81,7 @@ async function deleteRatingById(ratingID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by ratingid:', error);
         throw error;
     }
 }
@@ -95,7 +95,7 @@ async function deleteRatingByUser(userID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by userid:', error);
         throw error;
     }
 }
@@ -109,7 +109,7 @@ async function deleteRatingBySong(songID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by songid:', error);
         throw error;
     }
 }
@@ -124,7 +124,7 @@ async function deleteRatingByUserSong(userID, songID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by usersong:', error);
         throw error;
     }
 }
