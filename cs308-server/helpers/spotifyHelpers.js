@@ -4,6 +4,7 @@ Todo:
 - Modify getTopTracksFromPlaylist to fetch genres by album id.
 */
 const spotifyApi = require('../config/spotify.js');
+const songController = require('../controllers/songController');
 
 async function getTopTracksFromPlaylist(playlistId, numberOfResults) {
   try {
@@ -137,9 +138,71 @@ const searchSong = async (trackName, performerName, albumName) => {
   }
 };
 
+/**
+ * Provides song recommendations based on given songs.
+ * @param {Array} songIds - An array of song IDs.
+ * @param {number} numberOfResults - The number of recommended songs to return.
+ * @returns {Promise<Array>} - A promise that resolves to an array of recommended song objects.
+ */
+async function getRecommendedSongs(songData, numberOfResults) {
+  try {
+    let spotifyIds = [];
+
+    for (i = 0; i < songData.length; i++) {
+      const song = await songController.getSongById(songData[i]);
+      const spotifyId = song.SpotifyID;
+      spotifyIds.push(spotifyId);
+    }
+    console.log(spotifyIds);
+
+    // If there are more than 5 ids, choose 5 random ids
+    if (spotifyIds.length > 5) {
+      const randomIndices = [];
+      while (randomIndices.length < 5) {
+        const randomIndex = Math.floor(Math.random() * spotifyIds.length);
+        if (!randomIndices.includes(randomIndex)) {
+          randomIndices.push(randomIndex);
+        }
+      }
+      spotifyIds = randomIndices.map(index => spotifyIds[index]);
+    }
+    
+    const recommendations = await spotifyApi.getRecommendations({
+      seed_tracks: spotifyIds.slice(0, 5),
+      limit: numberOfResults,
+    });
+    //console.log(recommendations.body.tracks);
+
+    const tracks = recommendations.body.tracks.map(track => ({
+      SpotifyId: track.id,
+      Title: track.name,
+      Performer: track.artists.map(artist => ({
+        name: artist.name,
+        id: artist.id,
+      })),
+      Album: {
+        id: track.album.id,
+        name: track.album.name,
+        type: track.album.album_type,
+        release_date: track.album.release_date,
+        images: track.album.images,
+      },
+      Length: track.duration_ms,
+      Genres: track.album.genres,
+    })).slice(0, numberOfResults);  
+    //console.log(tracks);
+
+    return tracks;
+  } catch (error) {
+    console.error('Error getting recommended songs:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   getTopTracksFromPlaylist,
   getArtistGenres,
   searchSong,
+  getRecommendedSongs,
   // Add other Spotify-related helper functions here
 };

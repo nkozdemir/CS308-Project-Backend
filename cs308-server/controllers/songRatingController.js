@@ -1,4 +1,5 @@
 const songRating = require('../models/songRating');
+const { Op } = require('sequelize');
 
 async function getRatingById(ratingID) {
     try {
@@ -129,6 +130,70 @@ async function deleteRatingByUserSong(userID, songID) {
     }
 }
 
+async function getHighRatedSongsByUser(userID) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userID,
+                rating: {
+                    [Op.gte]: 4, // Change the rating threshold as per your requirement
+                },
+            },
+        });
+
+        const songIDs = ratings.map((rating) => rating.SongID);
+        console.log('high rated songIDs', songIDs);
+
+        return songIDs;
+    } catch (error) {
+        console.error('Error getting high rated songs by user:', error);
+        throw error;
+    }
+}
+
+async function getMidRatedSongsByUser(userID) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userID,
+                rating: {
+                    [Op.gte]: 2, // Change the rating threshold as per your requirement
+                    [Op.lt]: 4,
+                },
+            },
+        });
+
+        const songIDs = ratings.map((rating) => rating.SongID);
+        console.log('mid rated songIDs', songIDs);
+
+        return songIDs;
+    } catch (error) {
+        console.error('Error getting mid ratings by user:', error);
+        throw error;
+    }
+}
+
+async function getLowRatedSongsByUser(userID) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userID,
+                rating: {
+                    [Op.lt]: 2, // Change the rating threshold as per your requirement
+                },
+            },
+        });
+
+        const songIDs = ratings.map((rating) => rating.SongID);
+        console.log('low rated songIDs', songIDs)
+
+        return songIDs;
+    } catch (error) {
+        console.error('Error getting low rated songs by user:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getRatingById,
     getRatingByUser,
@@ -139,4 +204,7 @@ module.exports = {
     deleteRatingByUser,
     deleteRatingBySong,
     deleteRatingByUserSong,
+    getHighRatedSongsByUser,
+    getMidRatedSongsByUser,
+    getLowRatedSongsByUser,
 };
