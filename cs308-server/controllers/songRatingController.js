@@ -1,10 +1,10 @@
-const ratingModel = require('../models/rating');
+const songRating = require('../models/songRating');
 
 async function getRatingById(ratingID) {
     try {
-        const rating = await ratingModel.findOne({
+        const rating = await songRating.findOne({
             where: {
-                RatingID: ratingID,
+                SongRatingID: ratingID,
             },
         });
         return rating;
@@ -16,7 +16,7 @@ async function getRatingById(ratingID) {
 
 async function getRatingByUser(userID) {
     try {
-        const rating = await ratingModel.findAll({
+        const rating = await songRating.findAll({
             where: {
                 UserID: userID,
             },
@@ -30,7 +30,7 @@ async function getRatingByUser(userID) {
 
 async function getRatingBySong(songID) {
     try {
-        const rating = await ratingModel.findAll({
+        const rating = await songRating.findAll({
             where: {
                 SongID: songID,
             },
@@ -44,7 +44,7 @@ async function getRatingBySong(songID) {
 
 async function getRatingByUserSong(userID, songID) {
     try {
-        const rating = await ratingModel.findOne({
+        const rating = await songRating.findOne({
             where: {
                 UserID: userID,
                 SongID: songID,
@@ -59,7 +59,7 @@ async function getRatingByUserSong(userID, songID) {
 
 async function createRating(userID, songID, rating, date) {
     try {
-        const newRating = await ratingModel.create({
+        const newRating = await songRating.create({
             UserID: userID,
             SongID: songID,
             Rating: rating,
@@ -74,9 +74,9 @@ async function createRating(userID, songID, rating, date) {
 
 async function deleteRatingById(ratingID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
-                RatingID: ratingID,
+                SongRatingID: ratingID,
             },
         });
         return rating;
@@ -88,7 +88,7 @@ async function deleteRatingById(ratingID) {
 
 async function deleteRatingByUser(userID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
                 UserID: userID,
             },
@@ -102,7 +102,7 @@ async function deleteRatingByUser(userID) {
 
 async function deleteRatingBySong(songID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
                 SongID: songID,
             },
@@ -116,7 +116,7 @@ async function deleteRatingBySong(songID) {
 
 async function deleteRatingByUserSong(userID, songID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
                 UserID: userID,
                 SongID: songID,

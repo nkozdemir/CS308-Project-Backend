@@ -15,9 +15,9 @@ const authMiddleware = require('./middleware/authMiddleware');
 const songRoutes = require('./routes/songRoutes');
 const dataTransferRoutes = require('./routes/dataTransferRoutes');
 const performerRoutes = require('./routes/performerRoutes');
-const ratingRoutes = require('./routes/ratingRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const friendRoutes = require('./routes/friendRoutes');
+const ratingRoutes = require('./routes/rating/ratingRoutes');
 
 const app = express()
 const port = 3000;
@@ -38,11 +38,11 @@ app.use('/transferDataFromExternalDB', dataTransferRoutes);
 
 app.use('/performer', performerRoutes);
 
-app.use('/rating', ratingRoutes);
-
 app.use('/upload', uploadRoutes);
 
 app.use('/friend', friendRoutes);
+
+app.use('/rating', ratingRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

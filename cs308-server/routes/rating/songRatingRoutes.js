@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const ratingController = require("../controllers/ratingController");
-const songController = require("../controllers/songController");
-const userSongController = require("../controllers/userSongController");
-const authenticateToken = require("../helpers/authToken");
+const songRatingController = require("../../controllers/songRatingController");
+const songController = require("../../controllers/songController");
+const userSongController = require("../../controllers/userSongController");
+const authenticateToken = require("../../helpers/authToken");
+const { getCurrentDateTime } = require("../../helpers/dateHelper");
 
 // Route to get rating by id
-router.post("/getRating/Id", authenticateToken, async (req, res) => {
+router.post("/get/ratingid", authenticateToken, async (req, res) => {
   try {
     const { ratingId } = req.body;
     // Check if rating id is valid
@@ -19,7 +20,7 @@ router.post("/getRating/Id", authenticateToken, async (req, res) => {
       });
     }
 
-    const rating = await ratingController.getRatingById(ratingId);
+    const rating = await songRatingController.getRatingById(ratingId);
     // Check if rating exists
     if (!rating) {
       return res.status(404).json({
@@ -46,11 +47,11 @@ router.post("/getRating/Id", authenticateToken, async (req, res) => {
 });
 
 // Route to get rating by user
-router.get("/getRating/User", authenticateToken, async (req, res) => {
+router.get("/get/userid", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id; 
 
-    const rating = await ratingController.getRatingByUser(userId);
+    const rating = await songRatingController.getRatingByUser(userId);
     // Check if rating exists
     if (!rating) {
       return res.status(404).json({
@@ -77,7 +78,7 @@ router.get("/getRating/User", authenticateToken, async (req, res) => {
 });
 
 // Route to get rating by song
-router.post("/getRating/Song", authenticateToken, async (req, res) => {
+router.post("/get/songid", authenticateToken, async (req, res) => {
   try {
     const { songId } = req.body;
     // Check if song id is valid
@@ -99,7 +100,7 @@ router.post("/getRating/Song", authenticateToken, async (req, res) => {
       });
     }
 
-    const rating = await ratingController.getRatingBySong(songId);
+    const rating = await songRatingController.getRatingBySong(songId);
     // Check if rating exists
     if (!rating) {
       return res.status(404).json({
@@ -126,7 +127,7 @@ router.post("/getRating/Song", authenticateToken, async (req, res) => {
 });
 
 // Route to get rating by user and song
-router.post("/getRating/UserSong", authenticateToken, async (req, res) => {
+router.post("/get/usersong", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const { songId } = req.body;
@@ -163,7 +164,7 @@ router.post("/getRating/UserSong", authenticateToken, async (req, res) => {
         });
     }
 
-    const rating = await ratingController.getRatingByUserSong(userId, songId);
+    const rating = await songRatingController.getRatingByUserSong(userId, songId);
     // Check if rating exists
     if (!rating) {
       return res.status(404).json({
@@ -190,7 +191,7 @@ router.post("/getRating/UserSong", authenticateToken, async (req, res) => {
 });
 
 // Route to create rating
-router.post("/createRating", authenticateToken, async (req, res) => {
+router.post("/create", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const { songId, rating } = req.body;
@@ -237,10 +238,9 @@ router.post("/createRating", authenticateToken, async (req, res) => {
     }
 
     // Get current date and time in MySQL DATETIME format
-    const date = new Date().toLocaleString('en-US', { timeZone: 'Europe/Istanbul', hour12: false });
-    console.log("Date: ", date);
+    const date = getCurrentDateTime();
     
-    const newRating = await ratingController.createRating(
+    const newRating = await songRatingController.createRating(
       userId,
       songId,
       rating,
@@ -264,7 +264,7 @@ router.post("/createRating", authenticateToken, async (req, res) => {
 });
 
 // Route to remove rating
-router.delete("/deleteRating", authenticateToken, async (req, res) => {
+router.post("/delete", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const { songId } = req.body;
@@ -301,7 +301,7 @@ router.delete("/deleteRating", authenticateToken, async (req, res) => {
         });
     }
 
-    const rating = await ratingController.getRatingByUserSong(userId, songId);
+    const rating = await songRatingController.getRatingByUserSong(userId, songId);
     // Check if rating exists
     if (!rating) {
       return res.status(404).json({
@@ -311,7 +311,7 @@ router.delete("/deleteRating", authenticateToken, async (req, res) => {
       });
     }
 
-    await ratingController.deleteRatingByUserSong(userId, songId);
+    await songRatingController.deleteRatingByUserSong(userId, songId);
 
     return res.status(200).json({
       status: "success",
