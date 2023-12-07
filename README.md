@@ -451,12 +451,14 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ##### Example Error Response
 /* TODO */
 
-### Rating Routes
+## Rating Routes
 
-#### Get Rating by ID
+### Song Rating Routes
+
+#### Get Song Rating by ID
 
 ```http
-  POST http://localhost:3000/rating/getRating/Id
+  POST http://localhost:3000/rating/song/get/ratingid
 ```
 
 ##### Header
@@ -480,7 +482,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating retrieved by id",
     "data": [
         {
-          "RatingID": 5,
+          "SongRatingID": 5,
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
@@ -501,10 +503,10 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Rating by User
+#### Get Song Rating by User
 
 ```http
-  GET http://localhost:3000/rating/getRating/User
+  GET http://localhost:3000/rating/song/get/userid
 ```
 
 ##### Header
@@ -522,7 +524,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating retrieved by user",
     "data": [
         {
-          "RatingID": 5,
+          "SongRatingID": 5,
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
@@ -543,10 +545,10 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Rating by Song
+#### Get Song Rating by Song
 
 ```http
-  POST http://localhost:3000/rating/getRating/Song
+  POST http://localhost:3000/rating/song/get/songid
 ```
 
 ##### Header
@@ -570,7 +572,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating retrieved by song",
     "data": [
         {
-          "RatingID": 5,
+          "SongRatingID": 5,
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
@@ -591,10 +593,10 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Rating by UserSong
+#### Get Song Rating by UserSong
 
 ```http
-  POST http://localhost:3000/rating/getRating/UserSong
+  POST http://localhost:3000/rating/song/get/usersong
 ```
 
 ##### Header
@@ -618,7 +620,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating retrieved by user and song",
     "data": [
         {
-          "RatingID": 5,
+          "SongRatingID": 5,
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
@@ -639,10 +641,10 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Create Rating 
+#### Create Song Rating 
 
 ```http
-  POST http://localhost:3000/rating/createRating
+  POST http://localhost:3000/rating/song/create
 ```
 
 ##### Header
@@ -667,7 +669,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating created",
     "data": [
         {
-          "RatingID": 5,
+          "SongRatingID": 5,
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
@@ -688,10 +690,10 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Delete Rating 
+#### Delete Song Rating 
 
 ```http
-  DELETE http://localhost:3000/rating/deleteRating
+  POST http://localhost:3000/rating/song/delete
 ```
 
 ##### Header
@@ -715,7 +717,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating removed",
     "data": [
         {
-          "RatingID": 5,
+          "SongRatingID": 5,
           "UserID": 1,
           "SongID": 37,
           "Rating": 3,
@@ -735,6 +737,293 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "", // Error message
 }
 ```
+
+### Performer Rating Routes
+
+#### Get Performer Rating by ID
+
+```http
+  POST http://localhost:3000/rating/performer/get/ratingid
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `ratingId`  | `int` | **Required**. ID of the rating|
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": [
+      {
+        "PerformerRatingID": 1,
+        "UserID": 1,
+        "PerformerID": 40,
+        "Rating": 5,
+        "Date": "2023-12-07 12:23:51"
+      },
+      // Additional rating data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Get Performer Rating by User
+
+```http
+  GET http://localhost:3000/rating/performer/get/userid
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": [
+      {
+        "PerformerRatingID": 1,
+        "UserID": 1,
+        "PerformerID": 40,
+        "Rating": 5,
+        "Date": "2023-12-07 12:23:51"
+      },
+      // Additional rating data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Get Performer Rating by Performer
+
+```http
+  POST http://localhost:3000/rating/performer/get/performerid
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `performerId`  | `int` | **Required**. ID of the performer|
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": [
+      {
+        "PerformerRatingID": 1,
+        "UserID": 1,
+        "PerformerID": 40,
+        "Rating": 5,
+        "Date": "2023-12-07 12:23:51"
+      },
+      // Additional rating data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Get Performer Rating by UserPerformer
+
+```http
+  POST http://localhost:3000/rating/performer/get/userperformer
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `performerId`  | `int` | **Required**. ID of the performer |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": [
+      {
+        "PerformerRatingID": 1,
+        "UserID": 1,
+        "PerformerID": 40,
+        "Rating": 5,
+        "Date": "2023-12-07 12:23:51"
+      },
+      // Additional rating data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Create Performer Rating 
+
+```http
+  POST http://localhost:3000/rating/performer/create
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `performerId`  | `int` | **Required**. ID of the performer |
+| `rating`  | `int` | **Required**. Rating number (1-5) |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": [
+      {
+        "PerformerRatingID": 1,
+        "UserID": 1,
+        "PerformerID": 40,
+        "Rating": 5,
+        "Date": "2023-12-07 12:23:51"
+      },
+      // Additional rating data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Delete Performer Rating 
+
+```http
+  POST http://localhost:3000/rating/performer/delete
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `performerId`  | `int` | **Required**. ID of the performer |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "", // Status Message
+    "data": [
+      {
+        "PerformerRatingID": 1,
+        "UserID": 1,
+        "PerformerID": 40,
+        "Rating": 5,
+        "Date": "2023-12-07 12:23:51"
+      },
+      // Additional rating data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+---
 
 ### Friend Routes
 

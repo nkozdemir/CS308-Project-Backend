@@ -1,50 +1,50 @@
-const ratingModel = require('../models/rating');
+const songRating = require('../models/songRating');
 
 async function getRatingById(ratingID) {
     try {
-        const rating = await ratingModel.findOne({
+        const rating = await songRating.findOne({
             where: {
-                RatingID: ratingID,
+                SongRatingID: ratingID,
             },
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by ratingid:', error);
         throw error;
     }
 }
 
 async function getRatingByUser(userID) {
     try {
-        const rating = await ratingModel.findAll({
+        const rating = await songRating.findAll({
             where: {
                 UserID: userID,
             },
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by userid:', error);
         throw error;
     }
 }
 
 async function getRatingBySong(songID) {
     try {
-        const rating = await ratingModel.findAll({
+        const rating = await songRating.findAll({
             where: {
                 SongID: songID,
             },
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by songid:', error);
         throw error;
     }
 }
 
 async function getRatingByUserSong(userID, songID) {
     try {
-        const rating = await ratingModel.findOne({
+        const rating = await songRating.findOne({
             where: {
                 UserID: userID,
                 SongID: songID,
@@ -52,14 +52,14 @@ async function getRatingByUserSong(userID, songID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error getting rating:', error);
+        console.error('Error getting song rating by usersong:', error);
         throw error;
     }
 }
 
 async function createRating(userID, songID, rating, date) {
     try {
-        const newRating = await ratingModel.create({
+        const newRating = await songRating.create({
             UserID: userID,
             SongID: songID,
             Rating: rating,
@@ -67,56 +67,56 @@ async function createRating(userID, songID, rating, date) {
         });
         return newRating;
     } catch (error) {
-        console.error('Error creating rating:', error);
+        console.error('Error creating song rating:', error);
         throw error;
     }
 }
 
 async function deleteRatingById(ratingID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
-                RatingID: ratingID,
+                SongRatingID: ratingID,
             },
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by ratingid:', error);
         throw error;
     }
 }
 
 async function deleteRatingByUser(userID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
                 UserID: userID,
             },
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by userid:', error);
         throw error;
     }
 }
 
 async function deleteRatingBySong(songID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
                 SongID: songID,
             },
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by songid:', error);
         throw error;
     }
 }
 
 async function deleteRatingByUserSong(userID, songID) {
     try {
-        const rating = await ratingModel.destroy({
+        const rating = await songRating.destroy({
             where: {
                 UserID: userID,
                 SongID: songID,
@@ -124,7 +124,7 @@ async function deleteRatingByUserSong(userID, songID) {
         });
         return rating;
     } catch (error) {
-        console.error('Error deleting rating:', error);
+        console.error('Error deleting song rating by usersong:', error);
         throw error;
     }
 }
