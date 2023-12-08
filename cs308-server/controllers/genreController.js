@@ -12,6 +12,20 @@ async function createGenre(genreName) {
     }
 }
 
+async function getGenreById(genreID) {
+    try {
+        const genre = await genreModel.findOne({
+            where: {
+                GenreID: genreID,
+            },
+        });
+        return genre;
+    } catch (error) {
+        console.error('Error getting genre by id:', error);
+        throw error;
+    }
+}
+
 async function getGenreByName(genreName) {
     try {
         const genre = await genreModel.findOne({
@@ -43,6 +57,7 @@ async function deleteGenre(genreID) {
 module.exports = {
     createGenre,
     getGenreByName,
+    getGenreById,
     deleteGenre,
     // Add other Performer-related controller functions here
 };
