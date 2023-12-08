@@ -26,8 +26,31 @@ router.post('/get', authenticateToken, async (req, res) => {
         const numberOfResults = req.body.numberOfResults || 10;
 
         // Get high rated songs by user
-        const highRatedSongs = await songRatingController.getHighRatedSongsByUser(userId);
-        console.log(highRatedSongs);
+        const songData = await songRatingController.getHighRatedSongsByUser(userId);
+        console.log(songData);
+
+        // If there are less than 5 songs in songData, get mid rated songs by user as well
+        if (highRatedSongs.length < 5) {
+            const midRatedSongs = await songRatingController.getMidRatedSongsByUser(userId);
+            console.log(midRatedSongs);
+            songData.push(...midRatedSongs);
+        }
+
+        // If there are less than 5 songs in songData, get low rated songs by user as well
+        if (highRatedSongs.length < 5) {
+            const lowRatedSongs = await songRatingController.getLowRatedSongsByUser(userId);
+            console.log(lowRatedSongs);
+            songData.push(...lowRatedSongs);
+        }
+
+        // Still, if there are less than 5 songs in songData, return an error
+        if (highRatedSongs.length < 5) {
+            res.status(400).json({
+                status: 'error',
+                code: '400',
+                message: 'Not enough rated songs by user to get recommendations',
+            });
+        }
 
         // Get recommendations from Spotify
         const recommendations = await getRecommendedSongs(highRatedSongs, numberOfResults);

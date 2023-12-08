@@ -188,7 +188,7 @@ async function getRecommendedSongs(songData, numberOfResults) {
         images: track.album.images,
       },
       Length: track.duration_ms,
-      Genres: track.album.genres,
+      Genres: track.artists.genres || [],
     })).slice(0, numberOfResults);  
     //console.log(tracks);
 
