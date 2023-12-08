@@ -142,7 +142,7 @@ async function getHighRatedSongsByUser(userID) {
         });
 
         const songIDs = ratings.map((rating) => rating.SongID);
-        console.log('high rated songIDs', songIDs);
+        //console.log('high rated songIDs', songIDs);
 
         return songIDs;
     } catch (error) {

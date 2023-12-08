@@ -1,11 +1,13 @@
-/* 
-Todo:
-- Create a schema to validate song data.
-- Modify getTopTracksFromPlaylist to fetch genres by album id.
-*/
 const spotifyApi = require('../config/spotify.js');
 const songController = require('../controllers/songController');
 
+/**
+ * Retrieves the top tracks from a playlist.
+ * @param {string} playlistId - The ID of the playlist.
+ * @param {number} numberOfResults - The number of tracks to retrieve.
+ * @returns {Promise<Array<Object>>} - A promise that resolves to an array of formatted track objects.
+ * @throws {Error} - If the required parameters are missing or if the requested number of tracks is greater than the number of tracks in the playlist.
+ */
 async function getTopTracksFromPlaylist(playlistId, numberOfResults) {
   try {
     if (!playlistId || !numberOfResults) throw new Error('Missing required parameters: playlistId and numberOfResults');
@@ -67,6 +69,26 @@ async function getArtistGenres(artistIds) {
   }
 }
 
+// A function to get genres of an album given the album's id
+async function getAlbumGenres(albumId) {
+  try {
+    const data = await spotifyApi.getAlbum(albumId);
+    //console.log(data);
+    return data.body.genres;
+  } catch (error) {
+    console.error('Error during Spotify API request:', error);
+    throw error;
+  }
+}
+
+/**
+ * Searches for a song based on the provided parameters.
+ * @param {string} trackName - The name of the track.
+ * @param {string} performerName - The name of the performer.
+ * @param {string} albumName - The name of the album.
+ * @returns {Promise<{status: string, data: Object[] | null}>} - The search result, including the status and data.
+ * @throws {Error} - If there is an error during the Spotify API request.
+ */
 const searchSong = async (trackName, performerName, albumName) => {
   try {
     // Construct the search query based on the provided parameters
@@ -153,7 +175,7 @@ async function getRecommendedSongs(songData, numberOfResults) {
       const spotifyId = song.SpotifyID;
       spotifyIds.push(spotifyId);
     }
-    console.log(spotifyIds);
+    console.log("Initial spotifyids:", spotifyIds);
 
     // If there are more than 5 ids, choose 5 random ids
     if (spotifyIds.length > 5) {
@@ -166,12 +188,21 @@ async function getRecommendedSongs(songData, numberOfResults) {
       }
       spotifyIds = randomIndices.map(index => spotifyIds[index]);
     }
+    console.log("Randomly chosen spotifyids:", spotifyIds);
     
     const recommendations = await spotifyApi.getRecommendations({
-      seed_tracks: spotifyIds.slice(0, 5),
+      seed_tracks: spotifyIds,
       limit: numberOfResults,
     });
     //console.log(recommendations.body.tracks);
+
+    let genreData = new Set();
+    const albumIds = recommendations.body.tracks.map(track => track.album).map(album => album.id).flat();
+    for (i = 0; i < albumIds.length; i++) {
+      const albumGenres = await getAlbumGenres(albumIds[i]);
+      albumGenres.forEach(genre => genreData.add(genre));
+    }
+    console.log("Genre data:", Array.from(genreData));
 
     const tracks = recommendations.body.tracks.map(track => ({
       SpotifyId: track.id,
@@ -188,7 +219,7 @@ async function getRecommendedSongs(songData, numberOfResults) {
         images: track.album.images,
       },
       Length: track.duration_ms,
-      Genres: track.artists.genres || [],
+      Genres: genreData, 
     })).slice(0, numberOfResults);  
     //console.log(tracks);
 
@@ -202,6 +233,7 @@ async function getRecommendedSongs(songData, numberOfResults) {
 module.exports = {
   getTopTracksFromPlaylist,
   getArtistGenres,
+  getAlbumGenres,
   searchSong,
   getRecommendedSongs,
   // Add other Spotify-related helper functions here

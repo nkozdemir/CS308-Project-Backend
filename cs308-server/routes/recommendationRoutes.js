@@ -27,40 +27,42 @@ router.post('/get', authenticateToken, async (req, res) => {
 
         // Get high rated songs by user
         const songData = await songRatingController.getHighRatedSongsByUser(userId);
-        console.log(songData);
+        console.log("Initial songdata:", songData);
 
         // If there are less than 5 songs in songData, get mid rated songs by user as well
-        if (highRatedSongs.length < 5) {
+        if (songData.length < 5) {
             const midRatedSongs = await songRatingController.getMidRatedSongsByUser(userId);
             console.log(midRatedSongs);
             songData.push(...midRatedSongs);
         }
 
         // If there are less than 5 songs in songData, get low rated songs by user as well
-        if (highRatedSongs.length < 5) {
+        if (songData.length < 5) {
             const lowRatedSongs = await songRatingController.getLowRatedSongsByUser(userId);
             console.log(lowRatedSongs);
             songData.push(...lowRatedSongs);
         }
+        console.log("Final songdata:", songData);
 
         // Still, if there are less than 5 songs in songData, return an error
-        if (highRatedSongs.length < 5) {
+        if (songData.length < 5) {
             res.status(400).json({
                 status: 'error',
                 code: '400',
                 message: 'Not enough rated songs by user to get recommendations',
             });
         }
+        else {
+            // Get recommendations from Spotify
+            const recommendations = await getRecommendedSongs(songData, numberOfResults);
 
-        // Get recommendations from Spotify
-        const recommendations = await getRecommendedSongs(highRatedSongs, numberOfResults);
-
-        res.status(200).json({
-            status: 'success',
-            code: '200',
-            message: `Successfully retrieved ${recommendations.length} recommendations`,
-            data: recommendations,
-        });
+            res.status(200).json({
+                status: 'success',
+                code: '200',
+                message: `Successfully retrieved ${recommendations.length} recommendations`,
+                data: recommendations,
+            });
+        }
     } catch (error) {
         console.error('Error getting recommendations:', error);
         res.status(500).json({
