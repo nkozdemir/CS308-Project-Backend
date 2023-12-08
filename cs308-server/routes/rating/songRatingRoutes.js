@@ -228,12 +228,12 @@ router.post("/create", authenticateToken, async (req, res) => {
         });
     }
 
-    // Check if rating is valid and between 1 and 5
-    if (!rating || rating < 1 || rating > 5) {
+    // Check if rating is valid and between 0 and 5
+    if (!rating || rating < 0 || rating > 5) {
       return res.status(400).json({
         status: "error",
         code: 400,
-        message: "Rating is invalid, it must be between 1 and 5",
+        message: "Rating is invalid, it must be between 0 and 5",
       });
     }
 
