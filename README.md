@@ -1222,7 +1222,10 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
                     }
                 ]
             },
-            "Length": 285906
+            "Length": 285906,
+            "Genres": [
+              // Genre data... {} if none found
+            ]
         },
         // Additional recommendation data...
     ]
