@@ -750,6 +750,38 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
+#### Export Song Rating By PerformerName
+
+```http
+  POST http://localhost:3000/rating/song/export/performername
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `performerName`  | `string` | **Required**. Name of the performer |
+
+##### Example Response
+
+- User will receive a text file named 'ratings_export.txt'
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
 ### Performer Rating Routes
 
 #### Get Performer Rating by ID

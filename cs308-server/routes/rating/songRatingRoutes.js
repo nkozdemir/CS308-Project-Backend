@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 
 const songRatingController = require("../../controllers/songRatingController");
 const songController = require("../../controllers/songController");
 const userSongController = require("../../controllers/userSongController");
 const authenticateToken = require("../../helpers/authToken");
 const { getCurrentDateTime } = require("../../helpers/dateHelper");
+const { exportRatingByPerformerFilter, formatEntry } = require('../../helpers/exportHelpers');
 
 // Route to get rating by id
 router.post("/get/ratingid", authenticateToken, async (req, res) => {
@@ -324,6 +327,65 @@ router.post("/delete", authenticateToken, async (req, res) => {
       status: "error",
       code: 500,
       message: "Internal server error",
+    });
+  }
+});
+
+router.post('/export/performername', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { performerName } = req.body;
+
+    // Check if performerName is provided
+    if (!performerName) {
+      return res.status(400).json({
+          status: 'error',
+          code: 400,
+          message: 'Performer name is required',
+      });
+    }
+
+    const results = await exportRatingByPerformerFilter(userId, performerName);
+    if (Object.keys(results).length === 0) {
+      return res.status(404).json({
+          status: 'error',
+          code: 404,
+          message: `No ratings with performerName=${performerName} found`,
+      });
+    }
+    else {
+      // Write results to a file
+      const filePath = path.join(__dirname, 'ratings_export.txt');
+      const fileContent = formatEntry(results);
+      fs.writeFileSync(filePath, fileContent);
+  
+      // Send the file to the client
+      const onDownloadComplete = (err) => {
+        // Cleanup: Delete the file after sending
+        fs.unlinkSync(filePath);
+
+        if (err) {
+          console.error('Error during file download:', err);
+          return res.status(500).json({
+              status: 'error',
+              code: 500,
+              message: 'Internal Server Error',
+          });
+        } else {
+          // Success response after successful file download
+          console.log('File sent successfully');
+        }
+      };
+  
+      // Use res.download() only for file download
+      return res.download(filePath, 'ratings_export.txt', onDownloadComplete);
+    }
+  } catch (error) {
+    console.error('Error during exporting ratings:', error);
+    res.status(500).json({
+        status: 'error',
+        code: 500,
+        message: 'Internal Server Error',
     });
   }
 });
