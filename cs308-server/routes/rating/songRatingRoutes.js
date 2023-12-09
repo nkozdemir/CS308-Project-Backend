@@ -8,7 +8,7 @@ const songController = require("../../controllers/songController");
 const userSongController = require("../../controllers/userSongController");
 const authenticateToken = require("../../helpers/authToken");
 const { getCurrentDateTime } = require("../../helpers/dateHelper");
-const { exportRatingByPerformerFilter } = require('../../helpers/exportHelpers');
+const { exportRatingByPerformerFilter, formatEntry } = require('../../helpers/exportHelpers');
 
 // Route to get rating by id
 router.post("/get/ratingid", authenticateToken, async (req, res) => {
@@ -346,7 +346,7 @@ router.post('/export/performername', authenticateToken, async (req, res) => {
     }
 
     const results = await exportRatingByPerformerFilter(userId, performerName);
-    if (results.length === 0) {
+    if (Object.keys(results).length === 0) {
       return res.status(404).json({
           status: 'error',
           code: 404,
@@ -356,8 +356,7 @@ router.post('/export/performername', authenticateToken, async (req, res) => {
     else {
       // Write results to a file
       const filePath = path.join(__dirname, 'ratings_export.txt');
-      const fileContent = results.map(result => JSON.stringify(result)).join('\n');
-  
+      const fileContent = formatEntry(results);
       fs.writeFileSync(filePath, fileContent);
   
       // Send the file to the client
