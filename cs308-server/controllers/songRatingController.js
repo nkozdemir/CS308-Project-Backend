@@ -1,4 +1,5 @@
 const songRating = require('../models/songRating');
+const { Op } = require('sequelize');
 
 async function getRatingById(ratingID) {
     try {
@@ -187,6 +188,55 @@ async function getTopRatedSongs(userId, count) {
     }
 }
 
+async function getRatingsByDateRange(userId, startDate, endDate) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userId,
+                Date: {
+                    [Op.between]: [startDate, endDate],
+                },
+            },
+        });
+        return ratings;
+    } catch (error) {
+        console.error('Error getting song ratings by date range:', error);
+        throw error;
+    }
+}
+
+// Group ratings by day
+function groupRatingsByDay(songRatings) {
+    const ratingsByDay = new Map();
+
+    songRatings.forEach((rating) => {
+        const date = new Date(rating.Date).toDateString(); // Extracting the date without time
+        if (!ratingsByDay.has(date)) {
+            ratingsByDay.set(date, []);
+        }
+        ratingsByDay.get(date).push(rating);
+    });
+
+    return ratingsByDay;
+}
+
+// Calculate the daily average ratings
+function calculateDailyAverageRatings(ratingsByDay) {
+    const dailyAverageRatings = [];
+
+    for (const [date, ratings] of ratingsByDay.entries()) {
+        const totalRating = ratings.reduce((sum, rating) => sum + rating.Rating, 0);
+        const averageRating = totalRating / ratings.length;
+
+        dailyAverageRatings.push({
+            date,
+            averageRating,
+        });
+    }
+
+    return dailyAverageRatings;
+}
+
 module.exports = {
     getRatingById,
     getRatingByUser,
@@ -200,4 +250,7 @@ module.exports = {
     getLatestRatingByUserSong,
     getLatestRatingsForUserSongs,
     getTopRatedSongs,
+    getRatingsByDateRange,
+    groupRatingsByDay,
+    calculateDailyAverageRatings,
 };
