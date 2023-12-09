@@ -1225,4 +1225,134 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
+### Analysis Routes
+
+#### Get Top Rated Songs By Decade
+
+```http
+  POST http://localhost:3000/analysis/getTopRatedSongsByDecade
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `decade`  | `int` | **Required**. Year |
+| `count`  | `int` | **Required**. Number of the songs |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Top-rated user songs from the decade retrieved successfully",
+    "data": [ {
+      // song data
+    },
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // error message
+}
+```
+
+#### Get Top Rated Songs From Last Months
+
+```http
+  POST http://localhost:3000/analysis/getTopRatedSongsFromLastMonths
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `month`  | `int` | **Required**. Month count |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Top-rated user songs from the last month(s) retrieved successfully",
+    "data": [ {
+      // song data
+    },
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // error message
+}
+```
+
+#### Get Daily Average Rating From Last n Days
+
+```http
+  POST http://localhost:3000/analysis/getDailyAverageRating
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `day`  | `int` | **Required**. Day count |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Daily average ratings retrieved successfully",
+    "data": [ {
+        "date": "Thu Dec 07 2023",
+        "averageRating": 3.5
+    },
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": "", // Error code
+    "message": "", // error message
+}
+```
+
 ---

@@ -61,7 +61,7 @@ router.post('/getTopRatedSongsByDecade', authenticateToken, async (req, res) => 
   });
   
 // Route to get top-rated songs added in last n months
-router.post('/getTopRatedSongsByLastMonths', authenticateToken, async (req, res) => {
+router.post('/getTopRatedSongsFromLastMonths', authenticateToken, async (req, res) => {
     try {
       const userId = req.user.id;
       const { month } = req.body;
