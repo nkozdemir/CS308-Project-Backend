@@ -145,6 +145,48 @@ async function getLatestRatingByUserSong(userID, songID) {
     }
 }
 
+async function getLatestRatingsForUserSongs(userId) {
+    try {
+        // Find all distinct user-song pairs
+        const userSongPairs = await songRating.findAll({
+            attributes: ['SongID'],
+            where: {
+                UserID: userId,
+            },
+            group: ['SongID'],
+        });
+
+        // Get the latest rating for each user-song pair
+        const latestRatings = await Promise.all(userSongPairs.map(async ({ SongID }) => {
+            const rating = await getLatestRatingByUserSong(userId, SongID);
+            return rating;
+        }));
+
+        return latestRatings;
+    } catch (error) {
+        console.error('Error getting latest ratings for user songs:', error);
+        throw error;
+    }
+}
+
+async function getTopRatedSongs(userId, count) {
+    try {
+        // Retrieve latest ratings for user songs
+        const latestRatings = await getLatestRatingsForUserSongs(userId);
+
+        // Sort the ratings in descending order based on the Rating value
+        const sortedRatings = latestRatings.sort((a, b) => b.Rating - a.Rating);
+
+        // Get the top X rated user songs
+        const topRatedUserSongs = sortedRatings.slice(0, count);
+
+        return topRatedUserSongs;
+    } catch (error) {
+        console.error('Error getting top-rated songs:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getRatingById,
     getRatingByUser,
@@ -156,4 +198,6 @@ module.exports = {
     deleteRatingBySong,
     deleteRatingByUserSong,
     getLatestRatingByUserSong,
+    getLatestRatingsForUserSongs,
+    getTopRatedSongs,
 };
