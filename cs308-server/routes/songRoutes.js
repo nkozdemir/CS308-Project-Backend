@@ -11,6 +11,45 @@ const { getArtistGenres } = require('../helpers/spotifyHelpers');
 const authenticateToken = require('../helpers/authToken');
 const spotifyApi = require('../config/spotify.js');
 
+router.post('/addSongById', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { songId } = req.body;
+    // Check if songId is valid
+    if (!songId) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Missing required parameter: songId',
+      });
+    }
+    // Check if the song exists in the database
+    const song = await songController.getSongById(songId);
+    if (!song) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'Song not found',
+      });
+    }
+    // Link song to user
+    await userSongController.linkUserSong(userId, songId);
+    return res.status(200).json({
+      status: 'success',
+      code: 200,
+      message: 'Song linked to the user successfully',
+      data: song,
+    });
+  } catch (error) {
+    console.error('Error adding song:', error);
+    res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
 // Route to add songs linked to specific user, to database
 router.post('/addSpotifySong', authenticateToken, async (req, res) => {
   try {
