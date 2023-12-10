@@ -130,6 +130,22 @@ async function deleteRatingByUserSong(userID, songID) {
     }
 }
 
+async function getLatestRatingByUserSong(userID, songID) {
+    try {
+        const rating = await songRating.findOne({
+            where: {
+                UserID: userID,
+                SongID: songID,
+            },
+            order: [['Date', 'DESC']], // Order by Date in descending order
+        });
+        return rating;
+    } catch (error) {
+        console.error('Error getting latest song rating by usersong:', error);
+       throw error;
+    }
+}
+
 async function getHighRatedSongsByUser(userID) {
     try {
         const ratings = await songRating.findAll({
@@ -148,6 +164,48 @@ async function getHighRatedSongsByUser(userID) {
     } catch (error) {
         console.error('Error getting high rated songs by user:', error);
         throw error;
+    }
+}
+
+async function getLatestRatingsForUserSongs(userId) {
+    try {
+        // Find all distinct user-song pairs
+        const userSongPairs = await songRating.findAll({
+            attributes: ['SongID'],
+            where: {
+                UserID: userId,
+            },
+            group: ['SongID'],
+        });
+
+        // Get the latest rating for each user-song pair
+        const latestRatings = await Promise.all(userSongPairs.map(async ({ SongID }) => {
+            const rating = await getLatestRatingByUserSong(userId, SongID);
+            return rating;
+        }));
+
+        return latestRatings;
+    } catch (error) {
+        console.error('Error getting latest ratings for user songs:', error);
+        throw error;
+    }
+}
+
+async function getTopRatedSongs(userId, count) {
+    try {
+        // Retrieve latest ratings for user songs
+        const latestRatings = await getLatestRatingsForUserSongs(userId);
+
+        // Sort the ratings in descending order based on the Rating value
+        const sortedRatings = latestRatings.sort((a, b) => b.Rating - a.Rating);
+
+        // Get the top X rated user songs
+        const topRatedUserSongs = sortedRatings.slice(0, count);
+
+        return topRatedUserSongs;
+    } catch (error) {
+        console.error('Error getting top-rated songs:', error);
+      throw error;
     }
 }
 
@@ -171,6 +229,53 @@ async function getMidRatedSongsByUser(userID) {
         console.error('Error getting mid ratings by user:', error);
         throw error;
     }
+}
+
+async function getRatingsByDateRange(userId, startDate, endDate) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userId,
+                Date: {
+                    [Op.between]: [startDate, endDate],
+                },
+            },
+        });
+        return ratings;
+    } catch (error) {
+        console.error('Error getting song ratings by date range:', error);
+        throw error;
+    }
+}
+
+function groupRatingsByDay(songRatings) {
+    const ratingsByDay = new Map();
+
+    songRatings.forEach((rating) => {
+        const date = new Date(rating.Date).toDateString(); // Extracting the date without time
+        if (!ratingsByDay.has(date)) {
+            ratingsByDay.set(date, []);
+        }
+        ratingsByDay.get(date).push(rating);
+    });
+
+    return ratingsByDay;
+}
+
+function calculateDailyAverageRatings(ratingsByDay) {
+    const dailyAverageRatings = [];
+
+    for (const [date, ratings] of ratingsByDay.entries()) {
+        const totalRating = ratings.reduce((sum, rating) => sum + rating.Rating, 0);
+        const averageRating = totalRating / ratings.length;
+
+        dailyAverageRatings.push({
+            date,
+            averageRating,
+        });
+    }
+
+    return dailyAverageRatings;
 }
 
 async function getLowRatedSongsByUser(userID) {
@@ -204,6 +309,12 @@ module.exports = {
     deleteRatingByUser,
     deleteRatingBySong,
     deleteRatingByUserSong,
+    getLatestRatingByUserSong,
+    getLatestRatingsForUserSongs,
+    getTopRatedSongs,
+    getRatingsByDateRange,
+    groupRatingsByDay,
+    calculateDailyAverageRatings,
     getHighRatedSongsByUser,
     getMidRatedSongsByUser,
     getLowRatedSongsByUser,

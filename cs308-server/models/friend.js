@@ -21,7 +21,7 @@ const Friend = connection.define('Friend', {
 });
 
 Friend.belongsTo(UserModel, {
-    foreignKey: 'FriendUserID', // This should match the field in the Friend model
+    foreignKey: 'FriendUserID',
     as: 'FriendInfo',
   });
 

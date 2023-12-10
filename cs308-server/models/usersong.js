@@ -18,6 +18,9 @@ const UserSong = connection.define('UserSong', {
   TimesListened: {
     type: DataTypes.INTEGER,
   },
+  DateAdded: {
+    type: DataTypes.DATE,
+  },
 }, {
   freezeTableName: true,
 });
