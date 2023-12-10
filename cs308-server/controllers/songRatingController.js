@@ -191,7 +191,7 @@ async function getLatestRatingsForUserSongs(userId) {
     }
 }
 
-async function getTopRatedSongs(userId, count) {
+async function getTopRatedUserSongs(userId, count) {
     try {
         // Retrieve latest ratings for user songs
         const latestRatings = await getLatestRatingsForUserSongs(userId);
@@ -203,6 +203,21 @@ async function getTopRatedSongs(userId, count) {
         const topRatedUserSongs = sortedRatings.slice(0, count);
 
         return topRatedUserSongs;
+    } catch (error) {
+        console.error('Error getting top-rated songs:', error);
+      throw error;
+    }
+}
+
+async function getTopRatedSongs(songData, count) {
+    try {
+        // Sort the ratings in descending order based on the Rating value
+        const sortedRatings = songData.sort((a, b) => b.SongRatingInfo.Rating - a.SongRatingInfo.Rating);
+
+        // Get the top X rated user songs
+        const topRatedSongs = sortedRatings.slice(0, count);
+
+        return topRatedSongs;
     } catch (error) {
         console.error('Error getting top-rated songs:', error);
       throw error;
@@ -311,6 +326,7 @@ module.exports = {
     deleteRatingByUserSong,
     getLatestRatingByUserSong,
     getLatestRatingsForUserSongs,
+    getTopRatedUserSongs,
     getTopRatedSongs,
     getRatingsByDateRange,
     groupRatingsByDay,

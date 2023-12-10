@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
+const SongRating = require('../models/songRating');
 
 const Song = connection.define('Song', {
   SongID: {
@@ -32,5 +33,8 @@ const Song = connection.define('Song', {
 }, {
   freezeTableName: true,
 });
+
+Song.hasMany(SongRating, { foreignKey: 'SongID', as: 'SongRatingInfo' });
+
 
 module.exports = Song;

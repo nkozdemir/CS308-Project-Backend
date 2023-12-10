@@ -1,6 +1,7 @@
 const songModel = require('../models/song');
 const PerformerModel = require('../models/performer');
 const GenreModel = require('../models/genre');
+const songRatingModel = require('../models/songRating');
 const userSongController = require('../controllers/userSongController'); 
 const { Op } = require('sequelize');
 
@@ -236,12 +237,19 @@ async function getSongsBySongIds(songIds) {
           attributes: ['Name'],
           through: { attributes: [] },
         },
+        {
+          model: songRatingModel,
+          as: 'SongRatingInfo',
+          attributes: ['Rating'],
+          order: [['Date', 'DESC']],
+          limit: 1, // Limit to 1 to get the latest rating
+        },
       ],
     });
 
     return songs;
   } catch (error) {
-    console.error('Error getting songs by user IDs:', error);
+    console.error('Error getting songs by song IDs:', error);
     throw error;
   }
 }
@@ -308,6 +316,13 @@ async function getUserSongsByMonth(userId, monthDuration) {
               model: GenreModel,
               attributes: ['Name'],
               through: { attributes: [] },
+            },
+            {
+              model: songRatingModel,
+              as: 'SongRatingInfo',
+              attributes: ['Rating'],
+              order: [['Date', 'DESC']],
+              limit: 1, // Limit to 1 to get the latest rating
             },
           ],
       });

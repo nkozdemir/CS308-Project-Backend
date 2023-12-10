@@ -74,12 +74,21 @@ router.post('/getTopRatedSongsFromLastMonths', authenticateToken, async (req, re
       }
 
       const topRatedUserSongs = await songController.getUserSongsByMonth(userId, month);
+
+      topRatedUserSongs.sort((a, b) => {
+        const ratingA = a.SongRatingInfo[0]?.Rating || 0; // Default to 0 if undefined
+        const ratingB = b.SongRatingInfo[0]?.Rating || 0; // Default to 0 if undefined
+      
+        return ratingB - ratingA;
+      });
+      
+      const top10RatedUserSongs = topRatedUserSongs.slice(0, 10);
   
       res.status(200).json({
         status: 'success',
         code: 200,
         message: 'Top-rated user songs from the last month(s) retrieved successfully',
-        data: topRatedUserSongs,
+        data: top10RatedUserSongs,
       });
     } catch (error) {
       console.error('Error getting top-rated user songs from the last month(s):', error);
