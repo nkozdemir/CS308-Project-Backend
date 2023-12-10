@@ -46,9 +46,9 @@ router.post('/get', authenticateToken, async (req, res) => {
 
         // Still, if there are less than 5 songs in songData, return an error
         if (songData.length < 5) {
-            res.status(400).json({
+            res.status(404).json({
                 status: 'error',
-                code: '400',
+                code: '404',
                 message: 'Not enough rated songs by user to get recommendations',
             });
         }

@@ -100,10 +100,15 @@ async function exportRatingByPerformerFilter(userId, performerName) {
                 ratingData.push(ratingInformation);
             }
         }
-        const finalData = { ...headerInformation, SongRatings: ratingData };
-        console.log('Final data:', finalData);
 
-        return finalData;
+        if (ratingData.length == 0) 
+            return {};
+        else {
+            const finalData = { ...headerInformation, SongRatings: ratingData };
+            console.log('Final data:', finalData);
+
+            return finalData;
+        }
     } catch (error) {
         console.error('Error during exporting ratings:', error);
         throw error;
