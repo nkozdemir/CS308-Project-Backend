@@ -27,6 +27,7 @@ router.post('/addFriend', authenticateToken, async (req, res) => {
   
       // Create the friend relationship
       const newFriendship = await friendController.createFriend(userId, friendUserId);
+      await friendController.createFriend(friendUserId, userId);
   
       res.status(200).json({
         status: 'success',
@@ -115,6 +116,7 @@ router.post('/deleteFriend', authenticateToken, async (req, res) => {
   
       // Delete the friend relationship
       const deletedFriend = await friendController.deleteFriendByFriendUserId(userId, friendUserId);
+      await friendController.deleteFriendByFriendUserId(friendUserId, userId);
   
       res.status(200).json({
         status: 'success',

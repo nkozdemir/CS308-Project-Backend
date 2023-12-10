@@ -142,6 +142,27 @@ async function getLatestRatingByUserSong(userID, songID) {
         return rating;
     } catch (error) {
         console.error('Error getting latest song rating by usersong:', error);
+       throw error;
+    }
+}
+
+async function getHighRatedSongsByUser(userID) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userID,
+                rating: {
+                    [Op.gte]: 4, // Change the rating threshold as per your requirement
+                },
+            },
+        });
+
+        const songIDs = ratings.map((rating) => rating.SongID);
+        //console.log('high rated songIDs', songIDs);
+
+        return songIDs;
+    } catch (error) {
+        console.error('Error getting high rated songs by user:', error);
         throw error;
     }
 }
@@ -184,6 +205,28 @@ async function getTopRatedSongs(userId, count) {
         return topRatedUserSongs;
     } catch (error) {
         console.error('Error getting top-rated songs:', error);
+      throw error;
+    }
+}
+
+async function getMidRatedSongsByUser(userID) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userID,
+                rating: {
+                    [Op.gte]: 2, // Change the rating threshold as per your requirement
+                    [Op.lt]: 4,
+                },
+            },
+        });
+
+        const songIDs = ratings.map((rating) => rating.SongID);
+        console.log('mid rated songIDs', songIDs);
+
+        return songIDs;
+    } catch (error) {
+        console.error('Error getting mid ratings by user:', error);
         throw error;
     }
 }
@@ -205,7 +248,6 @@ async function getRatingsByDateRange(userId, startDate, endDate) {
     }
 }
 
-// Group ratings by day
 function groupRatingsByDay(songRatings) {
     const ratingsByDay = new Map();
 
@@ -220,7 +262,6 @@ function groupRatingsByDay(songRatings) {
     return ratingsByDay;
 }
 
-// Calculate the daily average ratings
 function calculateDailyAverageRatings(ratingsByDay) {
     const dailyAverageRatings = [];
 
@@ -235,6 +276,27 @@ function calculateDailyAverageRatings(ratingsByDay) {
     }
 
     return dailyAverageRatings;
+}
+
+async function getLowRatedSongsByUser(userID) {
+    try {
+        const ratings = await songRating.findAll({
+            where: {
+                UserID: userID,
+                rating: {
+                    [Op.lt]: 2, // Change the rating threshold as per your requirement
+                },
+            },
+        });
+
+        const songIDs = ratings.map((rating) => rating.SongID);
+        console.log('low rated songIDs', songIDs)
+
+        return songIDs;
+    } catch (error) {
+        console.error('Error getting low rated songs by user:', error);
+        throw error;
+    }
 }
 
 module.exports = {
@@ -253,4 +315,7 @@ module.exports = {
     getRatingsByDateRange,
     groupRatingsByDay,
     calculateDailyAverageRatings,
+    getHighRatedSongsByUser,
+    getMidRatedSongsByUser,
+    getLowRatedSongsByUser,
 };

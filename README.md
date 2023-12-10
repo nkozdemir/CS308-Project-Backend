@@ -750,6 +750,38 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
+#### Export Song Rating By PerformerName
+
+```http
+  POST http://localhost:3000/rating/song/export/performername
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `performerName`  | `string` | **Required**. Name of the performer |
+
+##### Example Response
+
+- User will receive a text file named 'ratings_export.txt'
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
 ### Performer Rating Routes
 
 #### Get Performer Rating by ID
@@ -1352,6 +1384,88 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "status": "error",
     "code": "", // Error code
     "message": "", // error message
+}
+```
+
+---
+
+### Recommendation Routes
+
+#### Get Recommendation
+
+```http
+  POST http://localhost:3000/recommendation/get
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `numberOfResults`  | `int` | Number of recommendations to get (10 by default) |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": "200",
+    "message": "Successfully retrieved 10 recommendations",
+    "data": [
+        {
+            "SpotifyId": "2Di0qFNb7ATroCGB3q0Ka7",
+            "Title": "West End Girls - 2018 Remaster",
+            "Performer": [
+                {
+                    "name": "Pet Shop Boys",
+                    "id": "2ycnb8Er79LoH2AsR5ldjh"
+                }
+            ],
+            "Album": {
+                "id": "47fRf3JwriMUPPzFjdvNS6",
+                "name": "Please: Further Listening 1984 - 1986 (2018 Remaster)",
+                "type": "ALBUM",
+                "release_date": "1986-03-24",
+                "images": [
+                    {
+                        "height": 640,
+                        "url": "https://i.scdn.co/image/ab67616d0000b2733540f5cb8e1e7a54125f84db",
+                        "width": 640
+                    },
+                    {
+                        "height": 300,
+                        "url": "https://i.scdn.co/image/ab67616d00001e023540f5cb8e1e7a54125f84db",
+                        "width": 300
+                    },
+                    {
+                        "height": 64,
+                        "url": "https://i.scdn.co/image/ab67616d000048513540f5cb8e1e7a54125f84db",
+                        "width": 64
+                    }
+                ]
+            },
+            "Length": 285906,
+            "Genres": [
+              // Genre data... {} if none found
+            ]
+        },
+        // Additional recommendation data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
 }
 ```
 

@@ -43,12 +43,21 @@ router.post('/searchSong', async (req, res) => {
 
     const searchResults = await searchSong(trackName, performerName, albumName);
 
-    res.status(200).json({
-      status: 'success',
-      code: 200,
-      message: 'Successfully retrieved search results',
-      data: searchResults.data,
-    });
+    if (searchResults.data === null) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'No matching tracks found.',
+      });
+    }
+    else {
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        message: 'Successfully retrieved search results',
+        data: searchResults.data,
+      });
+    }
   } catch (error) {
     console.error('Error during Spotify API request:', error);
     res.status(500).json({

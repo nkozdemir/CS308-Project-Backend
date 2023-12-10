@@ -19,6 +19,8 @@ const uploadRoutes = require('./routes/uploadRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const ratingRoutes = require('./routes/rating/ratingRoutes');
 const analysisRoutes = require('./routes/analysisRoutes');
+const recommendationRoutes = require('./routes/recommendationRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express()
 const port = 3000;
@@ -46,6 +48,10 @@ app.use('/friend', friendRoutes);
 app.use('/rating', ratingRoutes);
 
 app.use('/analysis', analysisRoutes);
+
+app.use('/recommendation', recommendationRoutes);
+
+app.use('/user', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
