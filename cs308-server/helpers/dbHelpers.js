@@ -3,6 +3,7 @@ const PerformerController = require('../controllers/performerController.js');
 const SongController = require('../controllers/songController.js');
 const SongGenreController = require('../controllers/songGenreController.js');
 const SongPerformerController = require('../controllers/songPerformerController.js');
+const SongRatingController = require('../controllers/songRatingController.js');
 const UserSongController = require('../controllers/userSongController.js');
 const UserController = require('../controllers/userController.js');
 const ExternalSongController = require('../controllers/externalSongController.js')
@@ -104,6 +105,9 @@ async function deleteSong(songID) {
     
     // Delete song from UserSong table
     await UserSongController.deleteUserSongBySongId(songID);
+
+    // Delete song from SongRating table
+    await SongRatingController.deleteRatingBySong(songID);
 
     // Delete song from Song table
     await SongController.deleteSong(songID);

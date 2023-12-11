@@ -76,7 +76,7 @@ async function addSongFromFile(userId, parsedData) {
       // Check if song exists on Spotify
       const spotifySearchResults = await searchSong(song.title, song.performers, song.album);
       console.log('Spotify Search Results:', spotifySearchResults);
-      if (spotifySearchResults.data.length > 0) {
+      if (spotifySearchResults.data !== null && spotifySearchResults.data.length > 0) {
         // Add most relevant result to database
         const mostRelevantSong = spotifySearchResults.data[0];
         console.log('Most Relevant Song:', mostRelevantSong);
@@ -96,17 +96,29 @@ async function addSongFromFile(userId, parsedData) {
         // Add performers of the song to Performers table, one by one
         for (const performer of performersArr) {
           console.log('Performer:', performer);
-          const performerIds = await performerController.createPerformer(performer, null);
-          // Add song to SongPerformers table
-          await songPerformerController.linkSongPerformer(songId.SongID, performerIds.PerformerID);
+          const existingPerformer = await performerController.getPerformerByName(performer);
+          if (existingPerformer) {
+            await songPerformerController.linkSongPerformer(songId.SongID, existingPerformer.PerformerID);
+          }
+          else {
+            const performerIds = await performerController.createPerformer(performer, null);
+            // Add song to SongPerformers table
+            await songPerformerController.linkSongPerformer(songId.SongID, performerIds.PerformerID);
+          }
         }
         
         // Add genres of the song to Genres table, one by one
         for (const genre of genresArr) {
           console.log('Genre:', genre);
-          const genreIds = await genreController.createGenre(genre);
-          // Add song to SongGenres table
-          await songGenreController.linkSongGenre(songId.SongID, genreIds.GenreID);
+          // if genre already exists in database, do not create new genre
+          const existingGenre = await genreController.getGenreByName(genre);
+          if (existingGenre) {
+            await songGenreController.linkSongGenre(songId.SongID, existingGenre.GenreID);
+          }
+          else {
+            const genreIds = await genreController.createGenre(genre);
+            await songGenreController.linkSongGenre(songId.SongID, genreIds.GenreID);
+          }
         }
         
         console.log('Song added to database successfully.');

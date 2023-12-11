@@ -3,6 +3,7 @@ const router = express.Router();
 const performerController = require('../controllers/performerController');
 const songPerformerController = require('../controllers/songPerformerController');
 const songGenreController = require('../controllers/songGenreController');
+const performerRatingController = require('../controllers/performerRatingController');
 const userSongController = require('../controllers/userSongController');
 const songController = require('../controllers/songController');
 const authenticateToken = require('../helpers/authToken');
@@ -235,6 +236,9 @@ router.delete('/deletePerformer', authenticateToken, async (req, res) => {
     for (const song of performerSongs) {
       await songController.deleteSong(song.SongID);
     }
+
+    // Delete performer from PerformerRating table
+    await performerRatingController.deleteRatingByPerformer(performerId);
 
     // Delete performer from Performer table
     await performerController.deletePerformerByPerformerId(performerId);
