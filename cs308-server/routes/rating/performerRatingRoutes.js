@@ -286,4 +286,41 @@ router.post("/delete", authenticateToken, async (req, res) => {
   }
 });
 
+router.post('/delete/performerratingid', authenticateToken, async (req, res) => {
+  try {
+    const { performerRatingId } = req.body;
+    // Check if rating id is valid
+    if (!performerRatingId) {
+      return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "Rating id is invalid",
+      });
+    }
+    const rating = await performerRatingController.getRatingById(performerRatingId);
+    // Check if rating exists
+    if (!rating) {
+      return res.status(404).json({
+          status: "error",
+          code: 404,
+          message: "Rating does not exist",
+      });
+    }
+    await performerRatingController.deleteRatingById(performerRatingId);
+    return res.status(200).json({
+        status: "success",
+        code: 200,
+        message: "Rating removed",
+        data: rating,
+    });
+  } catch (err) {
+    console.error("Error removing rating by id: ", err);
+    return res.status(500).json({
+        status: "error",
+        code: 500,
+        message: "Internal server error",
+    });
+  }
+});
+
 module.exports = router;

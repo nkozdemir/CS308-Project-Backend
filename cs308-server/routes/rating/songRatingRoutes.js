@@ -331,6 +331,47 @@ router.post("/delete", authenticateToken, async (req, res) => {
   }
 });
 
+router.post('/delete/songratingid', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { songRatingId } = req.body;
+
+    // Check if songRatingId is valid
+    if (!songRatingId) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Song rating id is invalid",
+      });
+    }
+
+    const rating = await songRatingController.getRatingById(songRatingId);
+    // Check if rating exists
+    if (!rating) {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "Rating does not exist",
+      });
+    }
+
+    await songRatingController.deleteRatingById(songRatingId);
+
+    return res.status(200).json({
+      status: "success",
+      code: 200,
+      message: "Rating removed",
+    });
+  } catch (err) {
+    console.error("Error removing rating by id: ", err);
+    return res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+});
+
 router.post('/export/performername', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;

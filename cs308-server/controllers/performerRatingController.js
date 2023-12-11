@@ -1,4 +1,5 @@
 const performerRating = require('../models/performerRating');
+const PerformerModel = require('../models/performer');
 
 async function getRatingById(ratingID) {
     try {
@@ -20,6 +21,12 @@ async function getRatingByUser(userID) {
             where: {
                 UserID: userID,
             },
+            include: {
+                model: PerformerModel,
+                as: 'PerformerInfo',
+                required: true,
+                nest: true,
+            }
         });
         return rating;
     } catch (error) {

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
+const PerformerModel = require('./performer');
 
 const performerRating = connection.define('PerformerRating', {
   PerformerRatingID: {
@@ -26,5 +27,7 @@ const performerRating = connection.define('PerformerRating', {
 }, {
   freezeTableName: true,
 });
+
+performerRating.belongsTo(PerformerModel, { foreignKey: 'PerformerID', as: 'PerformerInfo' });
 
 module.exports = performerRating;
