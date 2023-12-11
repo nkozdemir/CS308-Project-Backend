@@ -1,8 +1,8 @@
 const express = require('express');
+const router = express.Router();
 const { setAccessToken, spotifyApi } = require('../services/spotifyService');
 const { searchSong } = require('../helpers/spotifyHelpers');
-
-const router = express.Router();
+const authenticateToken = require('../helpers/authToken');
 
 // Middleware to set the access token before handling routes
 router.use(async (req, res, next) => {
@@ -28,7 +28,7 @@ router.get('/getTrackById', async (req, res) => {
   }
 });
 
-router.post('/searchSong', async (req, res) => {
+router.post('/searchSong', authenticateToken, async (req, res) => {
   try {
     const { trackName, performerName, albumName } = req.body;
 
