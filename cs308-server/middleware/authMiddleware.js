@@ -73,7 +73,7 @@ authMiddleware.delete('/logout', (req, res) => {
 });
 
 function generateAccessToken(userData) {
-  return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
+  return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 }
 
 module.exports = authMiddleware;
