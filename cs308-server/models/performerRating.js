@@ -28,6 +28,4 @@ const performerRating = connection.define('PerformerRating', {
   freezeTableName: true,
 });
 
-performerRating.belongsTo(PerformerModel, { foreignKey: 'PerformerID', as: 'PerformerInfo' });
-
 module.exports = performerRating;

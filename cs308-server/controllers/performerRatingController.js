@@ -7,6 +7,12 @@ async function getRatingById(ratingID) {
             where: {
                 PerformerRatingID: ratingID,
             },
+            include: [
+                {
+                    model: PerformerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
         });
         return rating;
     } catch (error) {
@@ -41,6 +47,12 @@ async function getRatingByPerformer(performerId) {
             where: {
                 PerformerID: performerId,
             },
+            include: [
+                {
+                    model: PerformerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
         });
         return rating;
     } catch (error) {
@@ -56,6 +68,12 @@ async function getRatingByUserPerformer(userID, performerId) {
                 UserID: userID,
                 PerformerID: performerId,
             },
+            include: [
+                {
+                    model: PerformerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
         });
         return rating;
     } catch (error) {

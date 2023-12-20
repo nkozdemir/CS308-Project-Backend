@@ -1,5 +1,7 @@
+const songModel = require('../models/song');
 const songRating = require('../models/songRating');
 const { Op } = require('sequelize');
+
 
 async function getRatingById(ratingID) {
     try {
@@ -7,6 +9,12 @@ async function getRatingById(ratingID) {
             where: {
                 SongRatingID: ratingID,
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
         });
         return rating;
     } catch (error) {
@@ -21,6 +29,12 @@ async function getRatingByUser(userID) {
             where: {
                 UserID: userID,
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
         });
         return rating;
     } catch (error) {
@@ -35,6 +49,12 @@ async function getRatingBySong(songID) {
             where: {
                 SongID: songID,
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
         });
         return rating;
     } catch (error) {
@@ -50,6 +70,12 @@ async function getRatingByUserSong(userID, songID) {
                 UserID: userID,
                 SongID: songID,
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
         });
         return rating;
     } catch (error) {
@@ -137,6 +163,12 @@ async function getLatestRatingByUserSong(userID, songID) {
                 UserID: userID,
                 SongID: songID,
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
             order: [['Date', 'DESC']], // Order by Date in descending order
         });
         return rating;
@@ -154,6 +186,12 @@ async function getHighRatedSongsByUser(userID) {
                 rating: {
                     [Op.gte]: 4, // Change the rating threshold as per your requirement
                 },
+                include: [
+                    {
+                        model: songModel,
+                        as: 'SongInfo',
+                    },
+                ],
             },
         });
 
@@ -175,6 +213,12 @@ async function getLatestRatingsForUserSongs(userId) {
             where: {
                 UserID: userId,
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
             group: ['SongID'],
         });
 
@@ -234,6 +278,12 @@ async function getMidRatedSongsByUser(userID) {
                     [Op.lt]: 4,
                 },
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
         });
 
         const songIDs = ratings.map((rating) => rating.SongID);
@@ -255,6 +305,12 @@ async function getRatingsByDateRange(userId, startDate, endDate) {
                     [Op.between]: [startDate, endDate],
                 },
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
         });
         return ratings;
     } catch (error) {
@@ -302,6 +358,12 @@ async function getLowRatedSongsByUser(userID) {
                     [Op.lt]: 2, // Change the rating threshold as per your requirement
                 },
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
         });
 
         const songIDs = ratings.map((rating) => rating.SongID);

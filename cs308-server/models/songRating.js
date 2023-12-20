@@ -1,3 +1,4 @@
+
 const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 const songModel = require('../models/song');
@@ -27,6 +28,5 @@ const songRating = connection.define('SongRating', {
 }, {
   freezeTableName: true,
 });
-
 
 module.exports = songRating;

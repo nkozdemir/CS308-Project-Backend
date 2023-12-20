@@ -35,6 +35,6 @@ const Song = connection.define('Song', {
 });
 
 Song.hasMany(SongRating, { foreignKey: 'SongID', as: 'SongRatingInfo' });
-
+SongRating.belongsTo(Song, { foreignKey: 'SongID', as: 'SongInfo' });
 
 module.exports = Song;
