@@ -186,12 +186,6 @@ async function getHighRatedSongsByUser(userID) {
                 rating: {
                     [Op.gte]: 4, // Change the rating threshold as per your requirement
                 },
-                include: [
-                    {
-                        model: songModel,
-                        as: 'SongInfo',
-                    },
-                ],
             },
         });
 
@@ -278,12 +272,6 @@ async function getMidRatedSongsByUser(userID) {
                     [Op.lt]: 4,
                 },
             },
-            include: [
-                {
-                    model: songModel,
-                    as: 'SongInfo',
-                },
-            ],
         });
 
         const songIDs = ratings.map((rating) => rating.SongID);
@@ -358,12 +346,6 @@ async function getLowRatedSongsByUser(userID) {
                     [Op.lt]: 2, // Change the rating threshold as per your requirement
                 },
             },
-            include: [
-                {
-                    model: songModel,
-                    as: 'SongInfo',
-                },
-            ],
         });
 
         const songIDs = ratings.map((rating) => rating.SongID);
