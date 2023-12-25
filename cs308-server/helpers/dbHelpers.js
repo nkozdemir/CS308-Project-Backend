@@ -83,7 +83,7 @@ async function deleteSong(songID) {
     for (const performerID of performerIDs) {
       const performerLinks = await SongPerformerController.getLinkByPerformer(performerID);
       // Delete song performer link
-      await SongPerformerController.deleteSongPerformerByPerformerId(performerID);
+      await SongPerformerController.deleteSongPerformerBySongPerformer(songID, performerID);
       if (performerLinks.length == 1) {
         // Delete performer from Performer table
         await PerformerController.deletePerformerByPerformerId(performerID);
@@ -96,7 +96,7 @@ async function deleteSong(songID) {
     for (const genreID of genreIDs) {
       const genreLinks = await SongGenreController.getLinkByGenre(genreID);
       // Delete song genre link
-      await SongGenreController.deleteSongGenreByGenreId(genreID);
+      await SongGenreController.deleteSongGenreBySongGenre(songID, genreID);
       if (genreLinks.length == 1) {
         // Delete genre from Genre table
         await GenreController.deleteGenre(genreID);
@@ -127,6 +127,9 @@ async function removeSongFromUser(songID, userID) {
     // check if link with songId and userId exists
     const existingLink = await UserSongController.getUserSongLink(userID, songID);
     if (!existingLink) throw new Error(`User ${userID} is not linked to the song with ID ${songID}`);
+
+    // remove user ratings
+    await SongRatingController.deleteRatingByUserSong(userID, songID);
 
     // check if song is linked to other users
     const songLinks = await UserSongController.getLinkBySong(songID);

@@ -94,6 +94,21 @@ async function deleteSongPerformerByPerformerId(performerID) {
     }
 }
 
+async function deleteSongPerformerBySongPerformer(songID, performerID) {
+    try {
+        const deletedSongPerformer = await songPerformerModel.destroy({
+            where: {
+                SongID: songID,
+                PerformerID: performerID,
+            },
+        });
+        return deletedSongPerformer;
+    } catch (error) {
+        console.error('Error deleting songperformer:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getSongPerformerLink,
     getLinkBySong,
@@ -101,5 +116,6 @@ module.exports = {
     linkSongPerformer,
     deleteSongPerformer,
     deleteSongPerformerByPerformerId,
+    deleteSongPerformerBySongPerformer,
     // Add other Performer-related controller functions here
 };

@@ -70,8 +70,10 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
     const spotifyTrack = spotifyApiResponse.body;
     
     const artistInfo = spotifyTrack.artists.map(artist => ({
+      name: artist.name,
       id: artist.id,
     }));
+    console.log(artistInfo);
     // Get album genres, if empty get artist genres
     const albumGenres = spotifyTrack.album.genres;
     const artistIds = artistInfo.map(artist => artist.id);
@@ -102,11 +104,19 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
 
       // Check if the performers exist and create them if not
       for (const artist of spotifyTrack.artists) {
-        let performer = await performerController.getPerformerBySpotifyID(artist.id);
+        const performer = await performerController.getPerformerBySpotifyID(artist.id);
+        console.log('Performer:', performer);
         if (!performer) {
-          performer = await performerController.createPerformer(artist.name, artist.id);
+          const performer2 = await performerController.getPerformerByName(artist.name);
+          if (!performer2) {
+            const performer3 = await performerController.createPerformer(artist.name, artist.id);
+            await songPerformerController.linkSongPerformer(createdSong.SongID, performer3.PerformerID);
+          } else {
+            await songPerformerController.linkSongPerformer(createdSong.SongID, performer2.PerformerID);
+          }
+        } else {
+          await songPerformerController.linkSongPerformer(createdSong.SongID, performer.PerformerID);
         }
-        await songPerformerController.linkSongPerformer(createdSong.SongID, performer.PerformerID);
       }
 
       // Check if genres exist and create them if not

@@ -67,7 +67,7 @@ authMiddleware.post('/login', async (req, res) => {
   }
 });
 
-authMiddleware.delete('/logout', (req, res) => {
+authMiddleware.post('/logout', (req, res) => {
   refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
   res.sendStatus(204);
 });

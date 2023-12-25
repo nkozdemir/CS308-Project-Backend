@@ -95,6 +95,21 @@ async function deleteSongGenreByGenreId(genreID) {
     }
 }
 
+async function deleteSongGenreBySongGenre(songID, genreID) {
+    try {
+        const deletedSongGenre = await songGenreModel.destroy({
+            where: {
+                SongID: songID,
+                GenreID: genreID,
+            },
+        });
+        return deletedSongGenre;
+    } catch (error) {
+        console.error('Error deleting songgenre by songid and genreid:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getSongGenreLink,
     getLinkBySong,
@@ -102,5 +117,6 @@ module.exports = {
     linkSongGenre,
     deleteSongGenre,
     deleteSongGenreByGenreId,
+    deleteSongGenreBySongGenre,
     // Add other Performer-related controller functions here
 };
