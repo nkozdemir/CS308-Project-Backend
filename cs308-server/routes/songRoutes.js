@@ -7,7 +7,7 @@ const songPerformerController = require('../controllers/songPerformerController'
 const genreController = require('../controllers/genreController'); 
 const songGenreController = require('../controllers/songGenreController'); 
 const { deleteSong, removeSongFromUser } = require('../helpers/dbHelpers');
-const { getArtistGenres } = require('../helpers/spotifyHelpers');
+const { getArtistGenres, getArtistImages } = require('../helpers/spotifyHelpers');
 const authenticateToken = require('../helpers/authToken');
 const spotifyApi = require('../config/spotify.js');
 
@@ -73,7 +73,6 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
       name: artist.name,
       id: artist.id,
     }));
-    console.log(artistInfo);
     // Get album genres, if empty get artist genres
     const albumGenres = spotifyTrack.album.genres;
     const artistIds = artistInfo.map(artist => artist.id);
@@ -106,7 +105,8 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
       for (const artist of spotifyTrack.artists) {
         let performer = await performerController.getPerformerBySpotifyID(artist.id);
         if (!performer) {
-          performer = await performerController.createPerformer(artist.name, artist.id);
+          const images = await getArtistImages(artist.id);
+          performer = await performerController.createPerformer(artist.name, artist.id, images);
         } 
         await songPerformerController.linkSongPerformer(createdSong.SongID, performer.PerformerID);
       }
@@ -192,7 +192,7 @@ router.post('/addCustomSong', authenticateToken, async (req, res) => {
       for (const performerName of performersArray) {
         let performer = await performerController.getPerformerByName(performerName);
         if (!performer) {
-          performer = await performerController.createPerformer(performerName, null);
+          performer = await performerController.createPerformer(performerName, null, null);
         }
         await songPerformerController.linkSongPerformer(createdSong.SongID, performer.PerformerID);
       }

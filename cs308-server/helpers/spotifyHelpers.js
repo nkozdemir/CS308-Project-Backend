@@ -69,6 +69,19 @@ async function getArtistGenres(artistIds) {
   }
 }
 
+// A function to retrieve images of an artist
+async function getArtistImages(artistId) {
+  try {
+    const data = await spotifyApi.getArtist(artistId);
+    const images = JSON.stringify(data.body.images.flat());
+    //console.log(images);
+    return images;
+  } catch (error) {
+    console.error('Error during Spotify API request:', error);
+    return [];
+  }
+}
+
 // A function to get genres of an album given the album's id
 async function getAlbumGenres(albumId) {
   try {
@@ -236,5 +249,6 @@ module.exports = {
   getAlbumGenres,
   searchSong,
   getRecommendedSongs,
+  getArtistImages,
   // Add other Spotify-related helper functions here
 };

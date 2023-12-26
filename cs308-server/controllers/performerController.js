@@ -11,11 +11,12 @@ async function getAllPerformers() {
   }
 }
 
-async function createPerformer(name, spotifyID) {
+async function createPerformer(name, spotifyID, images) {
   try {
     const performer = await performerModel.create({
       Name: name,
       SpotifyID: spotifyID,
+      Image: images,
     });
     return performer;
   } catch (error) {

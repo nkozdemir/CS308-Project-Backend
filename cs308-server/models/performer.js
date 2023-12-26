@@ -18,6 +18,10 @@ const Performer = connection.define('Performer', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  Image: {
+    type: DataTypes.JSON,
+    allowNull: true,
+  },
 }, {
   freezeTableName: true,
 });
