@@ -23,4 +23,34 @@ router.get("/", authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/search', authenticateToken, async (req, res) => {
+    const { query } = req.query;
+
+    if (!query) {
+        return res.status(404).json({
+            status: 'error',
+            code: 404,
+            message: 'Query parameter is required'
+        });
+    }
+
+    try {
+        const users = await userController.searchUsers(query);
+  
+        res.status(200).json({ 
+            status: 'success',
+            code: 200,
+            message: 'Users retrieved successfully',
+            data: users 
+        });
+    } catch (error) {
+        console.error('Error searching for users:', error);
+        res.status(500).json({
+            status: 'error',
+            code: 500,
+            message: 'Internal Server Error'
+        });
+    }
+});
+
 module.exports = router;

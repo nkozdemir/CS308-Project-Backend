@@ -196,7 +196,7 @@ router.post('/getPerformer/Name', authenticateToken, async (req, res) => {
 });
 
 // Route to delete performer
-router.delete('/deletePerformer', authenticateToken, async (req, res) => {
+router.post('/deletePerformer', authenticateToken, async (req, res) => {
   try {
     const { performerId } = req.body;
     // Check if performer id is valid

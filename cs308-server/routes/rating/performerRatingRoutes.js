@@ -269,7 +269,7 @@ router.post("/delete", authenticateToken, async (req, res) => {
       status: "success",
       code: 200,
       message: "Rating removed",
-      data: rating,
+      data: {},
     });
   } catch (err) {
     console.error("Error removing rating: ", err);

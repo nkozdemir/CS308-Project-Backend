@@ -475,49 +475,55 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-## Rating Routes
+### Rating Routes
 
-### Song Rating Routes
+#### Song Rating Routes
 
-#### Get Song Rating by ID
+##### Get Song Rating by ID
 
 ```http
   POST http://localhost:3000/rating/song/get/ratingid
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `ratingId`  | `int` | **Required**. ID of the rating|
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
     "message": "Rating retrieved by id",
-    "data": [
-        {
-          "SongRatingID": 5,
-          "UserID": 1,
-          "SongID": 37,
-          "Rating": 3,
-          "Date": "" // Date
-        },
-        // Additional ratings...
-    ]
+    "data": {
+        "SongRatingID": 8,
+        "UserID": 4,
+        "SongID": 48,
+        "Rating": 5,
+        "Date": "2023-12-07 18:10:40",
+        "SongInfo": {
+            "SongID": 48,
+            "Title": "La Luna",
+            "ReleaseDate": "1989",
+            "Album": "Runaway Horses (Deluxe Edition)",
+            "Length": 285026,
+            "SpotifyID": "1ShffyEFRNUKgxyMfURhAN",
+            "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab67616d0000b273292fadaac1393b5c7110411c\",\"width\":640},{\"height\":300,\"url\":\"https://i.scdn.co/image/ab67616d00001e02292fadaac1393b5c7110411c\",\"width\":300},{\"height\":64,\"url\":\"https://i.scdn.co/image/ab67616d00004851292fadaac1393b5c7110411c\",\"width\":64}]"
+        }
+    }
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -527,19 +533,19 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Song Rating by User
+##### Get Song Rating by User
 
 ```http
   GET http://localhost:3000/rating/song/get/userid
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
@@ -548,18 +554,27 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating retrieved by user",
     "data": [
         {
-          "SongRatingID": 5,
-          "UserID": 1,
-          "SongID": 37,
-          "Rating": 3,
-          "Date": "" // Date
+            "SongRatingID": 25,
+            "UserID": 1,
+            "SongID": 67,
+            "Rating": 4,
+            "Date": "2023-12-08 13:40:46",
+            "SongInfo": {
+                "SongID": 67,
+                "Title": "One Of The Girls (with JENNIE, Lily Rose Depp)",
+                "ReleaseDate": "2023-06-23",
+                "Album": "The Idol Episode 4 (Music from the HBO Original Series)",
+                "Length": 244684,
+                "SpotifyID": "7CyPwkp0oE8Ro9Dd5CUDjW",
+                "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab67616d0000b273b0dd6a5cd1dec96c4119c262\",\"width\":640},{\"height\":300,\"url\":\"https://i.scdn.co/image/ab67616d00001e02b0dd6a5cd1dec96c4119c262\",\"width\":300},{\"height\":64,\"url\":\"https://i.scdn.co/image/ab67616d00004851b0dd6a5cd1dec96c4119c262\",\"width\":64}]"
+            }
         },
-        // Additional ratings...
+        // Additional data...
     ]
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -569,25 +584,25 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Song Rating by Song
+##### Get Song Rating by Song
 
 ```http
   POST http://localhost:3000/rating/song/get/songid
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `songId`  | `int` | **Required**. ID of the song|
 
-##### Example Response
+###### Example Response
 
 ```json
 {
@@ -596,18 +611,27 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "Rating retrieved by song",
     "data": [
         {
-          "SongRatingID": 5,
-          "UserID": 1,
-          "SongID": 37,
-          "Rating": 3,
-          "Date": "" // Date
+            "SongRatingID": 25,
+            "UserID": 1,
+            "SongID": 67,
+            "Rating": 4,
+            "Date": "2023-12-08 13:40:46",
+            "SongInfo": {
+                "SongID": 67,
+                "Title": "One Of The Girls (with JENNIE, Lily Rose Depp)",
+                "ReleaseDate": "2023-06-23",
+                "Album": "The Idol Episode 4 (Music from the HBO Original Series)",
+                "Length": 244684,
+                "SpotifyID": "7CyPwkp0oE8Ro9Dd5CUDjW",
+                "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab67616d0000b273b0dd6a5cd1dec96c4119c262\",\"width\":640},{\"height\":300,\"url\":\"https://i.scdn.co/image/ab67616d00001e02b0dd6a5cd1dec96c4119c262\",\"width\":300},{\"height\":64,\"url\":\"https://i.scdn.co/image/ab67616d00004851b0dd6a5cd1dec96c4119c262\",\"width\":64}]"
+            }
         },
-        // Additional ratings...
+        // Additional data...
     ]
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -617,45 +641,52 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Song Rating by UserSong
+##### Get Song Rating by UserSong
 
 ```http
   POST http://localhost:3000/rating/song/get/usersong
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `songId`  | `int` | **Required**. ID of the song |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
     "message": "Rating retrieved by user and song",
-    "data": [
-        {
-          "SongRatingID": 5,
-          "UserID": 1,
-          "SongID": 37,
-          "Rating": 3,
-          "Date": "" // Date
+    "data": {
+        "SongRatingID": 25,
+        "UserID": 1,
+        "SongID": 67,
+        "Rating": 4,
+        "Date": "2023-12-08 13:40:46",
+        "SongInfo": {
+            "SongID": 67,
+            "Title": "One Of The Girls (with JENNIE, Lily Rose Depp)",
+            "ReleaseDate": "2023-06-23",
+            "Album": "The Idol Episode 4 (Music from the HBO Original Series)",
+            "Length": 244684,
+            "SpotifyID": "7CyPwkp0oE8Ro9Dd5CUDjW",
+            "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab67616d0000b273b0dd6a5cd1dec96c4119c262\",\"width\":640},{\"height\":300,\"url\":\"https://i.scdn.co/image/ab67616d00001e02b0dd6a5cd1dec96c4119c262\",\"width\":300},{\"height\":64,\"url\":\"https://i.scdn.co/image/ab67616d00004851b0dd6a5cd1dec96c4119c262\",\"width\":64}]"
         },
-        // Additional ratings...
-    ]
+        // Additional data...
+    }
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -665,46 +696,46 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Create Song Rating 
+##### Create Song Rating 
 
 ```http
   POST http://localhost:3000/rating/song/create
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `songId`  | `int` | **Required**. ID of the song |
 | `rating`  | `int` | **Required**. Rating number (1-5) |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
     "message": "Rating created",
-    "data": [
-        {
-          "SongRatingID": 5,
-          "UserID": 1,
-          "SongID": 37,
-          "Rating": 3,
-          "Date": "" // Date
-        },
-        // Additional ratings...
-    ]
+    "data": {
+        "SongRatingID": 62,
+        "UserID": 1,
+        "SongID": 78,
+        "Rating": 3,
+        "Date": {
+            "fn": "NOW",
+            "args": []
+        }
+    }
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -714,45 +745,80 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Delete Song Rating 
+##### Delete Song Rating 
 
 ```http
   POST http://localhost:3000/rating/song/delete
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `songId`  | `int` | **Required**. ID of the song |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
     "message": "Rating removed",
-    "data": [
-        {
-          "SongRatingID": 5,
-          "UserID": 1,
-          "SongID": 37,
-          "Rating": 3,
-          "Date": "" // Date
-        },
-        // Additional ratings...
-    ]
+    "data": {}
 }
 ```
 
-##### Example Error Response
+##### Delete Song Rating By SongRatingID 
+
+```http
+  POST http://localhost:3000/rating/song/delete/songratingid
+```
+
+###### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+###### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `songRatingId`  | `int` | **Required**. ID of the song |
+
+###### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating removed",
+    "data": {
+        "SongRatingID": 25,
+        "UserID": 1,
+        "SongID": 67,
+        "Rating": 4,
+        "Date": "2023-12-08 13:40:46",
+        "SongInfo": {
+            "SongID": 67,
+            "Title": "One Of The Girls (with JENNIE, Lily Rose Depp)",
+            "ReleaseDate": "2023-06-23",
+            "Album": "The Idol Episode 4 (Music from the HBO Original Series)",
+            "Length": 244684,
+            "SpotifyID": "7CyPwkp0oE8Ro9Dd5CUDjW",
+            "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab67616d0000b273b0dd6a5cd1dec96c4119c262\",\"width\":640},{\"height\":300,\"url\":\"https://i.scdn.co/image/ab67616d00001e02b0dd6a5cd1dec96c4119c262\",\"width\":300},{\"height\":64,\"url\":\"https://i.scdn.co/image/ab67616d00004851b0dd6a5cd1dec96c4119c262\",\"width\":64}]"
+        }
+    }
+}
+```
+
+###### Example Error Response
 
 ```json
 {
@@ -762,29 +828,29 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Export Song Rating By PerformerName
+##### Export Song Rating By PerformerName
 
 ```http
   POST http://localhost:3000/rating/song/export/performername
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `performerName`  | `string` | **Required**. Name of the performer |
 
-##### Example Response
+###### Example Response
 
 - User will receive a text file named 'ratings_export.txt'
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -794,47 +860,50 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-### Performer Rating Routes
+#### Performer Rating Routes
 
-#### Get Performer Rating by ID
+##### Get Performer Rating by ID
 
 ```http
   POST http://localhost:3000/rating/performer/get/ratingid
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `ratingId`  | `int` | **Required**. ID of the rating|
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
-    "message": "", // Status Message
-    "data": [
-      {
-        "PerformerRatingID": 1,
+    "message": "Rating retrieved by id",
+    "data": {
+        "PerformerRatingID": 20,
         "UserID": 1,
-        "PerformerID": 40,
-        "Rating": 5,
-        "Date": "2023-12-07 12:23:51"
-      },
-      // Additional rating data...
-    ]
+        "PerformerID": 162,
+        "Rating": 3,
+        "Date": "2023-12-26 19:58:05",
+        "PerformerInfo": {
+            "PerformerID": 162,
+            "Name": "Ariana Grande",
+            "SpotifyID": "66CXWjxzNUsdJxJ2JdwvnR",
+            "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952\",\"width\":640},{\"height\":320,\"url\":\"https://i.scdn.co/image/ab67616100005174cdce7620dc940db079bf4952\",\"width\":320},{\"height\":160,\"url\":\"https://i.scdn.co/image/ab6761610000f178cdce7620dc940db079bf4952\",\"width\":160}]"
+        }
+    }
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -844,39 +913,45 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Performer Rating by User
+##### Get Performer Rating by User
 
 ```http
   GET http://localhost:3000/rating/performer/get/userid
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
-    "message": "", // Status Message
+    "message": "Rating retrieved by user id",
     "data": [
-      {
-        "PerformerRatingID": 1,
-        "UserID": 1,
-        "PerformerID": 40,
-        "Rating": 5,
-        "Date": "2023-12-07 12:23:51"
-      },
-      // Additional rating data...
+        {
+            "PerformerRatingID": 20,
+            "UserID": 1,
+            "PerformerID": 162,
+            "Rating": 3,
+            "Date": "2023-12-26 19:58:05",
+            "PerformerInfo": {
+                "PerformerID": 162,
+                "Name": "Ariana Grande",
+                "SpotifyID": "66CXWjxzNUsdJxJ2JdwvnR",
+                "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952\",\"width\":640},{\"height\":320,\"url\":\"https://i.scdn.co/image/ab67616100005174cdce7620dc940db079bf4952\",\"width\":320},{\"height\":160,\"url\":\"https://i.scdn.co/image/ab6761610000f178cdce7620dc940db079bf4952\",\"width\":160}]"
+            }
+        },
+        // Additional data...
     ]
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -886,45 +961,51 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Performer Rating by Performer
+##### Get Performer Rating by Performer
 
 ```http
   POST http://localhost:3000/rating/performer/get/performerid
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `performerId`  | `int` | **Required**. ID of the performer|
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
-    "message": "", // Status Message
+    "message": "Rating retrieved by performer id",
     "data": [
-      {
-        "PerformerRatingID": 1,
-        "UserID": 1,
-        "PerformerID": 40,
-        "Rating": 5,
-        "Date": "2023-12-07 12:23:51"
-      },
-      // Additional rating data...
+        {
+            "PerformerRatingID": 20,
+            "UserID": 1,
+            "PerformerID": 162,
+            "Rating": 3,
+            "Date": "2023-12-26 19:58:05",
+            "PerformerInfo": {
+                "PerformerID": 162,
+                "Name": "Ariana Grande",
+                "SpotifyID": "66CXWjxzNUsdJxJ2JdwvnR",
+                "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952\",\"width\":640},{\"height\":320,\"url\":\"https://i.scdn.co/image/ab67616100005174cdce7620dc940db079bf4952\",\"width\":320},{\"height\":160,\"url\":\"https://i.scdn.co/image/ab6761610000f178cdce7620dc940db079bf4952\",\"width\":160}]"
+            }
+        },
+        // Additional data...
     ]
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -934,45 +1015,51 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Get Performer Rating by UserPerformer
+##### Get Performer Rating by UserPerformer
 
 ```http
   POST http://localhost:3000/rating/performer/get/userperformer
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `performerId`  | `int` | **Required**. ID of the performer |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
-    "message": "", // Status Message
+    "message": "Rating retrieved by user id and performer id",
     "data": [
-      {
-        "PerformerRatingID": 1,
-        "UserID": 1,
-        "PerformerID": 40,
-        "Rating": 5,
-        "Date": "2023-12-07 12:23:51"
-      },
-      // Additional rating data...
+        {
+            "PerformerRatingID": 20,
+            "UserID": 1,
+            "PerformerID": 162,
+            "Rating": 3,
+            "Date": "2023-12-26 19:58:05",
+            "PerformerInfo": {
+                "PerformerID": 162,
+                "Name": "Ariana Grande",
+                "SpotifyID": "66CXWjxzNUsdJxJ2JdwvnR",
+                "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952\",\"width\":640},{\"height\":320,\"url\":\"https://i.scdn.co/image/ab67616100005174cdce7620dc940db079bf4952\",\"width\":320},{\"height\":160,\"url\":\"https://i.scdn.co/image/ab6761610000f178cdce7620dc940db079bf4952\",\"width\":160}]"
+            }
+        },
+        // Additional data...
     ]
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -982,46 +1069,46 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Create Performer Rating 
+##### Create Performer Rating 
 
 ```http
   POST http://localhost:3000/rating/performer/create
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `performerId`  | `int` | **Required**. ID of the performer |
 | `rating`  | `int` | **Required**. Rating number (1-5) |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
-    "message": "", // Status Message
-    "data": [
-      {
-        "PerformerRatingID": 1,
+    "message": "Rating created",
+    "data": {
+        "PerformerRatingID": 22,
         "UserID": 1,
-        "PerformerID": 40,
-        "Rating": 5,
-        "Date": "2023-12-07 12:23:51"
-      },
-      // Additional rating data...
-    ]
+        "PerformerID": 162,
+        "Rating": 3,
+        "Date": {
+            "fn": "NOW",
+            "args": []
+        }
+    }
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
 
 ```json
 {
@@ -1031,45 +1118,87 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Delete Performer Rating 
+##### Delete Performer Rating 
 
 ```http
   POST http://localhost:3000/rating/performer/delete
 ```
 
-##### Header
+###### Header
 
 | Header | Description |
 | :-------- | :--------- |
 | `Authorization` | JWT Token |
 
-##### Request Body:
+###### Request Body:
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `performerId`  | `int` | **Required**. ID of the performer |
 
-##### Example Response
+###### Example Response
 
 ```json
 {
     "status": "success",
     "code": 200,
-    "message": "", // Status Message
-    "data": [
-      {
-        "PerformerRatingID": 1,
-        "UserID": 1,
-        "PerformerID": 40,
-        "Rating": 5,
-        "Date": "2023-12-07 12:23:51"
-      },
-      // Additional rating data...
-    ]
+    "message": "Rating removed",
+    "data": {}
 }
 ```
 
-##### Example Error Response
+###### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+##### Delete Performer Rating By PerformerRatingID
+
+```http
+  POST http://localhost:3000/rating/performer/delete/performerratingid
+```
+
+###### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+###### Request Body:
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `performerRatingId`  | `int` | **Required**. ID of the performer |
+
+###### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Rating removed",
+    "data": {
+        "PerformerRatingID": 23,
+        "UserID": 4,
+        "PerformerID": 162,
+        "Rating": 4,
+        "Date": "2023-12-26 23:57:48",
+        "PerformerInfo": {
+            "PerformerID": 162,
+            "Name": "Ariana Grande",
+            "SpotifyID": "66CXWjxzNUsdJxJ2JdwvnR",
+            "Image": "[{\"height\":640,\"url\":\"https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952\",\"width\":640},{\"height\":320,\"url\":\"https://i.scdn.co/image/ab67616100005174cdce7620dc940db079bf4952\",\"width\":320},{\"height\":160,\"url\":\"https://i.scdn.co/image/ab6761610000f178cdce7620dc940db079bf4952\",\"width\":160}]"
+        }
+    }
+}
+```
+
+###### Example Error Response
 
 ```json
 {
@@ -1482,3 +1611,88 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 ```
 
 ---
+
+### User Routes
+
+#### Get User Information
+
+```http
+  POST http://localhost:3000/user
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "User retrieved successfully",
+    "data": {
+        "UserID": 18,
+        "Name": "Kaan Ozdemir",
+        "Email": "kaanozdemir@email.com"
+    }
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Search Users
+
+```http
+  POST http://localhost:3000/user/search
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Query String Parameters
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `query`  | `string` | Search query |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Users retrieved successfully",
+    "data": [
+        {
+            "UserID": 18,
+            "Name": "Kaan Ozdemir",
+            "Email": "kaanozdemir@email.com"
+        },
+        // Additional data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```

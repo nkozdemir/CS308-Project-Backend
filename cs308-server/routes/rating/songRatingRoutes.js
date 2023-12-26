@@ -315,6 +315,7 @@ router.post("/delete", authenticateToken, async (req, res) => {
       status: "success",
       code: 200,
       message: "Rating removed",
+      data: {},
     });
   } catch (err) {
     console.error("Error removing rating: ", err);
@@ -356,6 +357,7 @@ router.post('/delete/songratingid', authenticateToken, async (req, res) => {
       status: "success",
       code: 200,
       message: "Rating removed",
+      data: rating,
     });
   } catch (err) {
     console.error("Error removing rating by id: ", err);
