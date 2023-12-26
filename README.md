@@ -97,6 +97,14 @@ To run this project, you will need to add the following environment variables to
 | :-------- | :------- | :-------------------------------- |
 | `token`  | `string` | **Required**. Refresh token |
 
+##### Example Response
+
+```json
+{
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJhbHBheWtpbGljQHNhYmFuY2l1bml2LmVkdSIsImlhdCI6MTcwMzYyNTU3NiwiZXhwIjoxNzAzNjI2NDc2fQ.T6dHPZ_bACuO5Jo-jpedHwTTPTp-h6BZsvSLvvNfvAM"
+}
+```
+
 ---
 
 ### Song Routes
