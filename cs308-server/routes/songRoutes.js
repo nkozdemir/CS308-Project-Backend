@@ -104,19 +104,11 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
 
       // Check if the performers exist and create them if not
       for (const artist of spotifyTrack.artists) {
-        const performer = await performerController.getPerformerBySpotifyID(artist.id);
-        console.log('Performer:', performer);
+        let performer = await performerController.getPerformerBySpotifyID(artist.id);
         if (!performer) {
-          const performer2 = await performerController.getPerformerByName(artist.name);
-          if (!performer2) {
-            const performer3 = await performerController.createPerformer(artist.name, artist.id);
-            await songPerformerController.linkSongPerformer(createdSong.SongID, performer3.PerformerID);
-          } else {
-            await songPerformerController.linkSongPerformer(createdSong.SongID, performer2.PerformerID);
-          }
-        } else {
-          await songPerformerController.linkSongPerformer(createdSong.SongID, performer.PerformerID);
-        }
+          performer = await performerController.createPerformer(artist.name, artist.id);
+        } 
+        await songPerformerController.linkSongPerformer(createdSong.SongID, performer.PerformerID);
       }
 
       // Check if genres exist and create them if not

@@ -1,6 +1,6 @@
 const songModel = require('../models/song');
 const songRating = require('../models/songRating');
-const { Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 
 async function getRatingById(ratingID) {
@@ -84,13 +84,13 @@ async function getRatingByUserSong(userID, songID) {
     }
 }
 
-async function createRating(userID, songID, rating, date) {
+async function createRating(userID, songID, rating) {
     try {
         const newRating = await songRating.create({
             UserID: userID,
             SongID: songID,
             Rating: rating,
-            Date: date,
+            Date: Sequelize.fn('NOW'),
         });
         return newRating;
     } catch (error) {

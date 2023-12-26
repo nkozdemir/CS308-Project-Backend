@@ -1,6 +1,5 @@
 const userSongModel = require('../models/usersong');
-const { getCurrentDateTime } = require("../helpers/dateHelper");
-const { Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 async function getUserSongLink(userID, songID) {
   try {
@@ -58,12 +57,10 @@ async function linkUserSong(userID, songID) {
       return existingLink;
     }
     
-    const date = getCurrentDateTime();
-
     const userSong = await userSongModel.create({
       UserID: userID,
       SongID: songID,
-      DateAdded: date,
+      DateAdded: Sequelize.fn('NOW'),
     });
     return userSong;
   } catch (error) {

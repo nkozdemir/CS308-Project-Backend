@@ -1,5 +1,6 @@
 const performerRating = require('../models/performerRating');
 const PerformerModel = require('../models/performer');
+const { Sequelize } = require('sequelize');
 
 async function getRatingById(ratingID) {
     try {
@@ -82,13 +83,13 @@ async function getRatingByUserPerformer(userID, performerId) {
     }
 }
 
-async function createRating(userID, performerId, rating, date) {
+async function createRating(userID, performerId, rating) {
     try {
         const newRating = await performerRating.create({
             UserID: userID,
             PerformerID: performerId,
             Rating: rating,
-            Date: date,
+            Date: Sequelize.fn('NOW'),
         });
         return newRating;
     } catch (error) {

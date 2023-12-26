@@ -4,7 +4,6 @@ const router = express.Router();
 const performerRatingController = require("../../controllers/performerRatingController");
 const performerController = require("../../controllers/performerController");
 const authenticateToken = require("../../helpers/authToken");
-const { getCurrentDateTime } = require("../../helpers/dateHelper");
 
 // Route to get rating by id
 router.post("/get/ratingid", authenticateToken, async (req, res) => {
@@ -201,14 +200,10 @@ router.post("/create", authenticateToken, async (req, res) => {
       });
     }
 
-    // Get current date and time in MySQL DATETIME format
-    const date = getCurrentDateTime();
-
     const newRating = await performerRatingController.createRating(
       userId,
       performerId,
       rating,
-      date
     );
 
     return res.status(200).json({

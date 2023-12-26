@@ -7,7 +7,6 @@ const songRatingController = require("../../controllers/songRatingController");
 const songController = require("../../controllers/songController");
 const userSongController = require("../../controllers/userSongController");
 const authenticateToken = require("../../helpers/authToken");
-const { getCurrentDateTime } = require("../../helpers/dateHelper");
 const { exportRatingByPerformerFilter, formatEntry } = require('../../helpers/exportHelpers');
 
 // Route to get rating by id
@@ -240,14 +239,10 @@ router.post("/create", authenticateToken, async (req, res) => {
       });
     }
 
-    // Get current date and time in MySQL DATETIME format
-    const date = getCurrentDateTime();
-    
     const newRating = await songRatingController.createRating(
       userId,
       songId,
       rating,
-      date
     );
 
     return res.status(200).json({

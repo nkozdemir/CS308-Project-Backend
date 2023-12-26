@@ -83,7 +83,19 @@ To run this project, you will need to add the following environment variables to
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `token`  | `string` | **Required**. Access token |
+| `token`  | `string` | **Required**. Refresh token |
+
+#### Refresh Access Token
+
+```http
+  POST http://localhost:3000/auth/token
+```
+
+##### Request Body
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `token`  | `string` | **Required**. Refresh token |
 
 ---
 
