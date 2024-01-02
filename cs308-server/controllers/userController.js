@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const { Op } = require('sequelize');
+const friendController = require('./friendController');
 
 async function createUser(email, password, name) {
   try {
@@ -41,25 +42,36 @@ async function getUserByEmail(email) {
   }
 }
 
-async function searchUsers(query) {
+async function searchUsers(query, userId) {
   try {
+    const friendUserIds = (await friendController.getFriendByUserId(userId)).map(friend => friend.FriendInfo.UserID);
     const users = await User.findAll({
       attributes: ['UserID', 'Name', 'Email'], // Specify the fields you want to retrieve
       where: {
-        [Op.or]: [
+        [Op.and]: [
           {
-            Name: {
-              [Op.like]: `%${query}%`,
-            },
+            [Op.or]: [
+              {
+                Name: {
+                  [Op.like]: `%${query}%`,
+                },
+              },
+              {
+                Email: {
+                  [Op.like]: `%${query.split('@')[0]}%`,
+                },
+              },
+            ],
           },
           {
-            Email: {
-              [Op.like]: `%${query}%`,
+            UserID: {
+              [Op.notIn]: [userId, ...friendUserIds],
             },
           },
         ],
       },
     });
+
     return users;
   } catch (error) {
     console.error('Error searching users:', error);

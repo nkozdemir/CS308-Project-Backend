@@ -35,7 +35,7 @@ router.get('/search', authenticateToken, async (req, res) => {
     }
 
     try {
-        const users = await userController.searchUsers(query);
+        const users = await userController.searchUsers(query, req.user.id);
   
         res.status(200).json({ 
             status: 'success',
