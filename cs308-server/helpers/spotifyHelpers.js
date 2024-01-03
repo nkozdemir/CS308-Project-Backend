@@ -182,11 +182,13 @@ async function getRecommendedSongs(songData, numberOfResults = 6) {
     }
     // Pick songsWithNoSpotifyId.length random genres from genreSeeds
     genreSeeds = genreSeeds.sort(() => Math.random() - Math.random()).slice(0, songsWithNoSpotifyId.length);
-    console.log("Genre seeds:", genreSeeds);
+    // Convert genre names to lowercase
+    genreSeeds = genreSeeds.map(genre => genre.toLowerCase());
+    //console.log("Genre seeds:", genreSeeds);
 
     // Remove songs with no SpotifyID from spotifyIds
     spotifyIds = spotifyIds.filter(id => id);
-    console.log("Spotifyids:", spotifyIds);
+    //console.log("Spotifyids:", spotifyIds);
 
     const request = {
       seed_tracks: spotifyIds,
@@ -195,7 +197,7 @@ async function getRecommendedSongs(songData, numberOfResults = 6) {
     if (genreSeeds.length > 0) {
       request.seed_genres = genreSeeds;
     }
-    console.log("Request:", request);
+    //console.log("Request:", request);
 
     const recommendations = await spotifyApi.getRecommendations(request);
     //console.log(recommendations.body.tracks);
