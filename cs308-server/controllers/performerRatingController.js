@@ -155,6 +155,37 @@ async function deleteRatingByUserPerformer(userID, performerId) {
     }
 }
 
+async function getTopRatedPerformers(userId, count = 5) {
+    try {
+        const topPerformers = await performerRating.findAll({
+            attributes: [
+                'PerformerInfo.PerformerID',
+                [Sequelize.fn('AVG', Sequelize.col('rating')), 'averageRating'],
+            ],
+            where: {
+                UserID: userId,
+            },
+            include: [
+                {
+                    model: PerformerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
+            group: ['PerformerInfo.PerformerID'],
+            order: [[Sequelize.literal('averageRating'), 'DESC']],
+            limit: count,
+        });
+
+        return topPerformers.map((rating) => ({
+            PerformerInfo: rating.PerformerInfo,
+            averageRating: parseFloat(rating.dataValues.averageRating).toFixed(2),
+        }));
+    } catch (error) {
+        console.error('Error getting top rated performers:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getRatingById,
     getRatingByUser,
@@ -165,4 +196,5 @@ module.exports = {
     deleteRatingByUser,
     deleteRatingByPerformer,
     deleteRatingByUserPerformer,
+    getTopRatedPerformers,
 };

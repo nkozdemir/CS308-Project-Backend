@@ -1,4 +1,5 @@
 const userSongModel = require('../models/usersong');
+const songModel = require('../models/song');
 const { Sequelize, Op } = require('sequelize');
 
 async function getUserSongLink(userID, songID) {
@@ -135,6 +136,30 @@ async function getUserSongLinksByMonth(userID, monthDuration) {
   }
 }
 
+async function getLatestSongs(userId, numberOfSongs = 5) {
+  try {
+    const latestSongs = await userSongModel.findAll({
+      where: {
+        UserID: userId,
+      },
+      order: [
+        ['DateAdded', 'DESC'],
+      ],
+      limit: numberOfSongs,
+      include: [
+        {
+          model: songModel,
+          as: 'SongInfo',
+        }
+      ]
+    });
+    return latestSongs;
+  } catch (error) {
+    console.error('Error getting latest songs:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   getUserSongLink,
   getLinkByUser,
@@ -144,5 +169,6 @@ module.exports = {
   deleteUserSongBySongId,
   getLinkByUsers,
   getUserSongLinksByMonth,
+  getLatestSongs,
   // Add other UserSong-related controller functions here
 };
