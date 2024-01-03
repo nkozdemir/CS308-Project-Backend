@@ -1,4 +1,5 @@
 const songGenreModel = require('../models/songGenre');
+const genreModel = require('../models/genre');
 
 async function getSongGenreLink(songID, genreID) {
     try {
@@ -21,6 +22,12 @@ async function getLinkBySong(songID) {
             where: {
                 SongID: songID,
             },
+            include: [
+                {
+                    model: genreModel,
+                    as: 'GenreInfo',
+                },
+            ],
         });
         return songGenreLink;
     } catch (error) {

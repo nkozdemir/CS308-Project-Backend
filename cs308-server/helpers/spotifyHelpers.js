@@ -1,4 +1,5 @@
 const spotifyApi = require('../config/spotify.js');
+const songGenreController = require('../controllers/songGenreController');
 
 // A function to get top tracks from a playlist
 async function getTopTracksFromPlaylist(playlistId, numberOfResults) {
@@ -162,13 +163,41 @@ const searchSong = async (trackName, performerName, albumName) => {
 // A function to get recommended songs based on song data
 async function getRecommendedSongs(songData, numberOfResults = 6) {
   try {
-    const spotifyIds = songData;
+    let spotifyIds = songData.map(song => song.SpotifyID);
     //console.log("Initial spotifyids:", spotifyIds);
 
-    const recommendations = await spotifyApi.getRecommendations({
+    // If there are songs with no SpotifyID, get their genre information and store them in a separate array
+    let genreSeeds = [];
+    const songsWithNoSpotifyId = songData.filter(song => !song.SpotifyID).map(song => song.SongID);
+    if (songsWithNoSpotifyId.length > 0) {
+      //console.log("Songs with no spotify id:", songsWithNoSpotifyId);
+      for (let i = 0; i < songsWithNoSpotifyId.length; i++) {
+        const songGenreLink = await songGenreController.getLinkBySong(songsWithNoSpotifyId[i]);
+        //console.log("Song genre links:", songGenreLink);
+        const genre = songGenreLink.map(link => link.GenreInfo.Name);
+        //console.log("Genre:", genre);
+        genreSeeds = genreSeeds.concat(genre);
+      }
+      //console.log("Genre seeds:", genreSeeds);
+    }
+    // Pick songsWithNoSpotifyId.length random genres from genreSeeds
+    genreSeeds = genreSeeds.sort(() => Math.random() - Math.random()).slice(0, songsWithNoSpotifyId.length);
+    console.log("Genre seeds:", genreSeeds);
+
+    // Remove songs with no SpotifyID from spotifyIds
+    spotifyIds = spotifyIds.filter(id => id);
+    console.log("Spotifyids:", spotifyIds);
+
+    const request = {
       seed_tracks: spotifyIds,
       limit: numberOfResults,
-    });
+    }
+    if (genreSeeds.length > 0) {
+      request.seed_genres = genreSeeds;
+    }
+    console.log("Request:", request);
+
+    const recommendations = await spotifyApi.getRecommendations(request);
     //console.log(recommendations.body.tracks);
 
     const tracks = recommendations.body.tracks.map(track => ({
