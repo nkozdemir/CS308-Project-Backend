@@ -1,6 +1,6 @@
 const performerRating = require('../models/performerRating');
 const PerformerModel = require('../models/performer');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 async function getRatingById(ratingID) {
     try {
@@ -155,6 +155,79 @@ async function deleteRatingByUserPerformer(userID, performerId) {
     }
 }
 
+async function getHighRatedPerformers(userId) {
+    try {
+        const ratings = await performerRating.findAll({
+            where: {
+                UserID: userId,
+                rating: {
+                    [Op.gte]: 4,
+                }
+            },
+            include: [
+                {
+                    model: PerformerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
+            distinct: true,
+        });
+        return ratings;
+    } catch (error) {
+        console.error('Error getting high rated performers:', error);
+        throw error;
+    }
+}
+
+async function getMidRatedPerformers(userId) {
+    try {
+        const ratings = await performerRating.findAll({
+            where: {
+                UserID: userId,
+                rating: {
+                    [Op.gte]: 2,
+                    [Op.lt]: 4,
+                }
+            },
+            include: [
+                {
+                    model: PerformerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
+            distinct: true,
+        });
+        return ratings;
+    } catch (error) {
+        console.error('Error getting mid rated performers:', error);
+        throw error;
+    }
+}
+
+async function getLowRatedPerformers(userId) {
+    try {
+        const ratings = await performerRating.findAll({
+            where: {
+                UserID: userId,
+                rating: {
+                    [Op.lt]: 2,
+                }
+            },
+            include: [
+                {
+                    model: PerformerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
+            distinct: true,
+        });
+        return ratings;
+    } catch (error) {
+        console.error('Error getting low rated performers:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getRatingById,
     getRatingByUser,
@@ -165,4 +238,7 @@ module.exports = {
     deleteRatingByUser,
     deleteRatingByPerformer,
     deleteRatingByUserPerformer,
+    getHighRatedPerformers,
+    getMidRatedPerformers,
+    getLowRatedPerformers,
 };

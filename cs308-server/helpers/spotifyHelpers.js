@@ -1,5 +1,6 @@
 const spotifyApi = require('../config/spotify.js');
 const songController = require('../controllers/songController');
+const performerController = require('../controllers/performerController');
 
 /**
  * Retrieves the top tracks from a playlist.
@@ -179,7 +180,7 @@ const searchSong = async (trackName, performerName, albumName) => {
  * @param {number} numberOfResults - The number of recommended songs to return.
  * @returns {Promise<Array>} - A promise that resolves to an array of recommended song objects.
  */
-async function getRecommendedSongs(songData, numberOfResults) {
+async function getRecommendedSongs(songData, numberOfResults = 5) {
   try {
     let spotifyIds = [];
 
@@ -233,8 +234,61 @@ async function getRecommendedSongs(songData, numberOfResults) {
       },
       Length: track.duration_ms,
       Genres: genreData, 
-    })).slice(0, numberOfResults);  
+    }));  
     //console.log(tracks);
+
+    return tracks;
+  } catch (error) {
+    console.error('Error getting recommended songs:', error);
+    throw error;
+  }
+}
+
+async function getRecommendedSongsByPerformer(performerData, numberOfResults = 5) {
+  try {
+    let spotifyIds = [];
+    for (i = 0; i < performerData.length; i++) {
+      const performer = performerController.getPerformerById(performerData[i]);
+      const performerId = performer.SpotifyID;
+      spotifyIds.push(performerId);
+    }
+    console.log("Initial spotifyids:", spotifyIds);
+
+    // If there are more than 5 ids, choose 5 random ids
+    if (spotifyIds.length > 5) {
+      const randomIndices = [];
+      while (randomIndices.length < 5) {
+        const randomIndex = Math.floor(Math.random() * spotifyIds.length);
+        if (!randomIndices.includes(randomIndex)) {
+          randomIndices.push(randomIndex);
+        }
+      }
+      spotifyIds = randomIndices.map(index => spotifyIds[index]);
+    }
+    console.log("Randomly chosen spotifyids:", spotifyIds);
+
+    const recommendations = await spotifyApi.getRecommendations({
+      seed_artists: spotifyIds,
+      limit: numberOfResults,
+    });
+
+    const tracks = recommendations.body.tracks.map(track => ({
+      SpotifyId: track.id,
+      Title: track.name,
+      Performer: track.artists.map(artist => ({
+        name: artist.name,
+        id: artist.id,
+      })),
+      Album: {
+        id: track.album.id,
+        name: track.album.name,
+        type: track.album.album_type,
+        release_date: track.album.release_date,
+        images: track.album.images,
+      },
+      Length: track.duration_ms,
+      Genres: track.album.genres, 
+    }));
 
     return tracks;
   } catch (error) {
@@ -250,5 +304,6 @@ module.exports = {
   searchSong,
   getRecommendedSongs,
   getArtistImages,
+  getRecommendedSongsByPerformer,
   // Add other Spotify-related helper functions here
 };
