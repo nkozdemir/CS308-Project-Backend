@@ -155,14 +155,15 @@ async function deleteRatingByUserPerformer(userID, performerId) {
     }
 }
 
-async function getHighRatedPerformers(userId) {
+async function getTopRatedPerformers(userId, count = 5) {
     try {
-        const ratings = await performerRating.findAll({
+        const topPerformers = await performerRating.findAll({
+            attributes: [
+                'PerformerInfo.PerformerID',
+                [Sequelize.fn('AVG', Sequelize.col('rating')), 'averageRating'],
+            ],
             where: {
                 UserID: userId,
-                rating: {
-                    [Op.gte]: 4,
-                }
             },
             include: [
                 {
@@ -170,60 +171,17 @@ async function getHighRatedPerformers(userId) {
                     as: 'PerformerInfo',
                 },
             ],
-            distinct: true,
+            group: ['PerformerInfo.PerformerID'],
+            order: [[Sequelize.literal('averageRating'), 'DESC']],
+            limit: count,
         });
-        return ratings;
-    } catch (error) {
-        console.error('Error getting high rated performers:', error);
-        throw error;
-    }
-}
 
-async function getMidRatedPerformers(userId) {
-    try {
-        const ratings = await performerRating.findAll({
-            where: {
-                UserID: userId,
-                rating: {
-                    [Op.gte]: 2,
-                    [Op.lt]: 4,
-                }
-            },
-            include: [
-                {
-                    model: PerformerModel,
-                    as: 'PerformerInfo',
-                },
-            ],
-            distinct: true,
-        });
-        return ratings;
+        return topPerformers.map((rating) => ({
+            PerformerInfo: rating.PerformerInfo,
+            averageRating: parseFloat(rating.dataValues.averageRating).toFixed(2),
+        }));
     } catch (error) {
-        console.error('Error getting mid rated performers:', error);
-        throw error;
-    }
-}
-
-async function getLowRatedPerformers(userId) {
-    try {
-        const ratings = await performerRating.findAll({
-            where: {
-                UserID: userId,
-                rating: {
-                    [Op.lt]: 2,
-                }
-            },
-            include: [
-                {
-                    model: PerformerModel,
-                    as: 'PerformerInfo',
-                },
-            ],
-            distinct: true,
-        });
-        return ratings;
-    } catch (error) {
-        console.error('Error getting low rated performers:', error);
+        console.error('Error getting top rated performers:', error);
         throw error;
     }
 }
@@ -238,7 +196,5 @@ module.exports = {
     deleteRatingByUser,
     deleteRatingByPerformer,
     deleteRatingByUserPerformer,
-    getHighRatedPerformers,
-    getMidRatedPerformers,
-    getLowRatedPerformers,
+    getTopRatedPerformers,
 };

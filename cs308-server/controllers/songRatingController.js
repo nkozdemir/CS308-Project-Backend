@@ -178,27 +178,6 @@ async function getLatestRatingByUserSong(userID, songID) {
     }
 }
 
-async function getHighRatedSongsByUser(userID) {
-    try {
-        const ratings = await songRating.findAll({
-            where: {
-                UserID: userID,
-                rating: {
-                    [Op.gte]: 4, // Change the rating threshold as per your requirement
-                },
-            },
-        });
-
-        const songIDs = ratings.map((rating) => rating.SongID);
-        //console.log('high rated songIDs', songIDs);
-
-        return songIDs;
-    } catch (error) {
-        console.error('Error getting high rated songs by user:', error);
-        throw error;
-    }
-}
-
 async function getLatestRatingsForUserSongs(userId) {
     try {
         // Find all distinct user-song pairs
@@ -262,28 +241,6 @@ async function getTopRatedSongs(songData, count) {
     }
 }
 
-async function getMidRatedSongsByUser(userID) {
-    try {
-        const ratings = await songRating.findAll({
-            where: {
-                UserID: userID,
-                rating: {
-                    [Op.gte]: 2, // Change the rating threshold as per your requirement
-                    [Op.lt]: 4,
-                },
-            },
-        });
-
-        const songIDs = ratings.map((rating) => rating.SongID);
-        console.log('mid rated songIDs', songIDs);
-
-        return songIDs;
-    } catch (error) {
-        console.error('Error getting mid ratings by user:', error);
-        throw error;
-    }
-}
-
 async function getRatingsByDateRange(userId, startDate, endDate) {
     try {
         const ratings = await songRating.findAll({
@@ -303,6 +260,37 @@ async function getRatingsByDateRange(userId, startDate, endDate) {
         return ratings;
     } catch (error) {
         console.error('Error getting song ratings by date range:', error);
+        throw error;
+    }
+}
+
+async function getTopRatedSongsByAverage(userId, count = 5) {
+    try {
+        const topSongs = await songRating.findAll({
+            attributes: [
+                'SongInfo.SongID',
+                [Sequelize.fn('AVG', Sequelize.col('rating')), 'averageRating'],
+            ],
+            where: {
+                UserID: userId,
+            },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+            ],
+            group: ['SongInfo.SongID'],
+            order: [[Sequelize.literal('averageRating'), 'DESC']],
+            limit: count,
+        });
+
+        return topSongs.map((rating) => ({
+            SongInfo: rating.SongInfo,
+            averageRating: parseFloat(rating.dataValues.averageRating).toFixed(2),
+        }));
+    } catch (error) {
+        console.error('Error getting top-rated songs:', error);
         throw error;
     }
 }
@@ -337,27 +325,6 @@ function calculateDailyAverageRatings(ratingsByDay) {
     return dailyAverageRatings;
 }
 
-async function getLowRatedSongsByUser(userID) {
-    try {
-        const ratings = await songRating.findAll({
-            where: {
-                UserID: userID,
-                rating: {
-                    [Op.lt]: 2, // Change the rating threshold as per your requirement
-                },
-            },
-        });
-
-        const songIDs = ratings.map((rating) => rating.SongID);
-        console.log('low rated songIDs', songIDs)
-
-        return songIDs;
-    } catch (error) {
-        console.error('Error getting low rated songs by user:', error);
-        throw error;
-    }
-}
-
 module.exports = {
     getRatingById,
     getRatingByUser,
@@ -372,10 +339,8 @@ module.exports = {
     getLatestRatingsForUserSongs,
     getTopRatedUserSongs,
     getTopRatedSongs,
+    getTopRatedSongsByAverage,
     getRatingsByDateRange,
     groupRatingsByDay,
     calculateDailyAverageRatings,
-    getHighRatedSongsByUser,
-    getMidRatedSongsByUser,
-    getLowRatedSongsByUser,
 };
