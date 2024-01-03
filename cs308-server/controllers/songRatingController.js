@@ -2,7 +2,6 @@ const songModel = require('../models/song');
 const songRating = require('../models/songRating');
 const { Sequelize, Op } = require('sequelize');
 
-
 async function getRatingById(ratingID) {
     try {
         const rating = await songRating.findOne({

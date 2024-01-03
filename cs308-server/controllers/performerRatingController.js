@@ -1,6 +1,6 @@
 const performerRating = require('../models/performerRating');
 const PerformerModel = require('../models/performer');
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize } = require('sequelize');
 
 async function getRatingById(ratingID) {
     try {
