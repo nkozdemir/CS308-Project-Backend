@@ -19,7 +19,7 @@ router.post("/get/ratingid", authenticateToken, async (req, res) => {
 
     const rating = await performerRatingController.getRatingById(ratingId);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
@@ -47,9 +47,10 @@ router.post("/get/ratingid", authenticateToken, async (req, res) => {
 router.get("/get/userid", authenticateToken, async (req, res) => { 
   try {
     const user = req.user.id;
+
     const rating = await performerRatingController.getRatingByUser(user);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
@@ -97,7 +98,7 @@ router.post("/get/performerid", authenticateToken, async (req, res) => {
 
     const rating = await performerRatingController.getRatingByPerformer(performerId);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
@@ -147,7 +148,7 @@ router.post("/get/userperformer", authenticateToken, async (req, res) => {
 
     const rating = await performerRatingController.getRatingByUserPerformer(user, performerId);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
@@ -227,7 +228,7 @@ router.post("/create", authenticateToken, async (req, res) => {
   }
 });
 
-// Route to remove rating
+// Route to delete rating
 router.post("/delete", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -286,6 +287,7 @@ router.post("/delete", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to delete rating by id
 router.post('/delete/performerratingid', authenticateToken, async (req, res) => {
   try {
     const { performerRatingId } = req.body;

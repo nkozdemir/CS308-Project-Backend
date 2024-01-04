@@ -23,7 +23,7 @@ router.post("/get/ratingid", authenticateToken, async (req, res) => {
 
     const rating = await songRatingController.getRatingById(ratingId);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
@@ -54,7 +54,7 @@ router.get("/get/userid", authenticateToken, async (req, res) => {
 
     const rating = await songRatingController.getRatingByUser(userId);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
@@ -103,7 +103,7 @@ router.post("/get/songid", authenticateToken, async (req, res) => {
 
     const rating = await songRatingController.getRatingBySong(songId);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
@@ -167,7 +167,7 @@ router.post("/get/usersong", authenticateToken, async (req, res) => {
 
     const rating = await songRatingController.getRatingByUserSong(userId, songId);
     // Check if rating exists
-    if (!rating) {
+    if (rating.length === 0) {
       return res.status(404).json({
         status: "error",
         code: 404,
