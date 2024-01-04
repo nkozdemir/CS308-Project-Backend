@@ -1,6 +1,4 @@
-const SpotifyWebApi = require('spotify-web-api-node');
 const fetch = require('node-fetch');
-
 const spotifyApi = require('../config/spotify');
 
 const getToken = async () => {

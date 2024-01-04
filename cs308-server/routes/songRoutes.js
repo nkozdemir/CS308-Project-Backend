@@ -11,10 +11,12 @@ const { getArtistGenres, getArtistImages } = require('../helpers/spotifyHelpers'
 const authenticateToken = require('../helpers/authToken');
 const spotifyApi = require('../config/spotify.js');
 
+// Route to add song to user by songId
 router.post('/addSongById', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const { songId } = req.body;
+
     // Check if songId is valid
     if (!songId) {
       return res.status(400).json({
@@ -23,6 +25,7 @@ router.post('/addSongById', authenticateToken, async (req, res) => {
         message: 'Missing required parameter: songId',
       });
     }
+
     // Check if the song exists in the database
     const song = await songController.getSongById(songId);
     if (!song) {
@@ -32,6 +35,7 @@ router.post('/addSongById', authenticateToken, async (req, res) => {
         message: 'Song not found',
       });
     }
+
     // Link song to user
     await userSongController.linkUserSong(userId, songId);
     return res.status(200).json({
@@ -55,6 +59,15 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const { spotifyId } = req.body;
+
+    // Validate required parameters
+    if (!spotifyId) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Missing required parameter: spotifyId',
+      });
+    }
 
     // Fetch song details from Spotify API using the provided Spotify ID
     const spotifyApiResponse = await spotifyApi.getTrack(spotifyId);
@@ -151,7 +164,6 @@ router.post('/addSpotifySong', authenticateToken, async (req, res) => {
 router.post('/addCustomSong', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-
     const { title, performers, album, length, genres, releaseDate } = req.body;
 
     // Validate required parameters
@@ -215,6 +227,7 @@ router.post('/addCustomSong', authenticateToken, async (req, res) => {
       status: 'success',
       code: 200,
       message: 'Custom song added to the database and linked to the user successfully',
+      data: createdSong,
     });
   } catch (error) {
     console.error('Error adding custom song:', error);
@@ -230,28 +243,56 @@ router.post('/addCustomSong', authenticateToken, async (req, res) => {
 router.post('/getSong/title', async (req, res) => {
   try {
     const title = req.body.title;
-    if (!title) throw new Error('Title is a required parameter.');
+
+    // Check if title is valid
+    if (!title) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Missing required parameter: title',
+      });
+    }
 
     const song = await songController.getSongByTitle(title);
     if (song) {
-      res.status(200).json(song);
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        message: 'Song retrieved successfully',
+        data: song,
+      });
     } else {
-      res.status(404).json({ error: 'Song not found' });
+      return res.status(404).json({ 
+        status: 'error',
+        code: 404,
+        message: 'Song not found' 
+      });
     }
   } catch (error) {
-    if (error.message === 'Title is a required parameter.') {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+    console.error('Error getting song by title:', error);
+    res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
   }
 });
 
 // Route to delete a song from user
 router.post('/deleteSong/User', authenticateToken, async (req, res) => {
-  const userId = req.user.id;
-  const { songId } = req.body;
   try {
+    const userId = req.user.id;
+    const { songId } = req.body;
+
+    // Check if songId is valid
+    if (!songId) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Missing required parameter: songId',
+      });
+    }
+
     const result = await removeSongFromUser(songId, userId);
     res.status(200).json({
       status: 'success',
@@ -271,10 +312,26 @@ router.post('/deleteSong/User', authenticateToken, async (req, res) => {
 
 // Route to delete a song from the database
 router.post('/deleteSong', authenticateToken, async (req, res) => {
-  const { songId } = req.body;
   try {
+    const { songId } = req.body;
+    
+    // Check if songId is valid
+    if (!songId) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Missing required parameter: songId',
+      });
+    }
+
     const song = await songController.getSongByID(songId);
-    if (!song) throw new Error(`Song with ID ${songId} does not exist`);
+    if (!song) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'Song not found',
+      });
+    }
 
     await deleteSong(songId);
     res.status(200).json({
@@ -295,15 +352,33 @@ router.post('/deleteSong', authenticateToken, async (req, res) => {
 
 // Route to delete all album songs
 router.post('/deleteAlbumSongs', authenticateToken, async (req, res) => {
-  const userId = req.user.id;
-  const { albumName } = req.body;
-
   try {
+    const userId = req.user.id;
+    const { albumName } = req.body;
+
+    // Check if albumName is valid
+    if (!albumName) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Missing required parameter: albumName',
+      });
+    }
+
     await deleteSongsByAlbum(albumName, userId);
-    res.status(200).json({ status: 'success' });
+    res.status(200).json({ 
+      status: 'success',
+      code: 200,
+      message: 'Songs removed from the database successfully',
+      data: {},  
+    });
   } catch (error) {
-    console.error(`Error deleting songs from album ${albumName}:`, error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error deleting album songs:', error);
+    res.status(500).json({ 
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
   }
 });
 
@@ -311,24 +386,42 @@ router.post('/deleteAlbumSongs', authenticateToken, async (req, res) => {
 router.post('/getSong/spotifyID', async (req, res) => {
   try {
     const spotifyId = req.body.spotifyId;
-    if (!spotifyId) throw new Error('Spotify ID is a required parameter.');
+
+    // Check if spotifyId is valid
+    if (!spotifyId) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Missing required parameter: spotifyId',
+      });
+    }
 
     const song = await songController.getSongBySpotifyID(spotifyId);
     if (song) {
-      res.status(200).json(song);
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        message: 'Song retrieved successfully',
+        data: song,
+      });
     } else {
-      res.status(404).json({ error: 'Song not found' });
+      return res.status(404).json({ 
+        status: 'error',
+        code: 404,
+        message: 'Song not found' 
+      });
     }
   } catch (error) {
-    if (error.message === 'Spotify ID is a required parameter.') {
-      res.status(400).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+    console.error('Error getting song by Spotify ID:', error);
+    res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
   }
 });
 
-// Endpoint to get all songs for the logged-in user
+// Route to get all songs for the logged-in user
 router.get('/getAllUserSongs', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -347,12 +440,21 @@ router.get('/getAllUserSongs', authenticateToken, async (req, res) => {
       }
     }
 
-    res.status(200).json({
-      status: 'success',
-      code: 200,
-      message: 'Songs retrieved successfully',
-      data: songs
-    });
+    // Check if the user has any songs
+    if (songs.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'No songs found for the user',
+      });
+    } else {
+      return res.status(200).json({
+        status: 'success',
+        code: 200,
+        message: 'Songs retrieved successfully',
+        data: songs
+      });
+    }
   } catch (error) {
     console.error('Error getting user songs:', error);
     res.status(500).json({
@@ -362,7 +464,5 @@ router.get('/getAllUserSongs', authenticateToken, async (req, res) => {
     });
   }
 });
-
-// Add more routes as needed for other operations
 
 module.exports = router;

@@ -27,7 +27,7 @@ router.get('/search', authenticateToken, async (req, res) => {
     const { query } = req.query;
 
     if (!query) {
-        return res.status(404).json({
+        return res.status(400).json({
             status: 'error',
             code: 404,
             message: 'Query parameter is required'

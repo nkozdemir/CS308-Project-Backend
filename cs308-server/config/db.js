@@ -10,7 +10,6 @@ const connection = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proce
   },
   dialectOptions: {
     // Options specific to the mysql2 library
-    // For example, you can set the timezone:
     dateStrings: true,
     typeCast: true,
   },

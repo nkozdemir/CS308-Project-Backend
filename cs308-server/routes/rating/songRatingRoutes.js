@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-
 const songRatingController = require("../../controllers/songRatingController");
 const songController = require("../../controllers/songController");
 const userSongController = require("../../controllers/userSongController");
@@ -159,11 +158,11 @@ router.post("/get/usersong", authenticateToken, async (req, res) => {
         songId
     );
     if (!userSong) {
-        return res.status(404).json({
-            status: "error",
-            code: 404,
-            message: "User and song does not exist in UserSong table",
-        });
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "User and song does not exist in UserSong table",
+      });
     }
 
     const rating = await songRatingController.getRatingByUserSong(userId, songId);
@@ -223,11 +222,11 @@ router.post("/create", authenticateToken, async (req, res) => {
       songId
     );
     if (!userSong) {
-        return res.status(404).json({
-            status: "error",
-            code: 404,
-            message: "User and song does not exist in UserSong table",
-        });
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "User and song does not exist in UserSong table",
+      });
     }
 
     // Check if rating is valid and between 1 and 5
@@ -292,11 +291,11 @@ router.post("/delete", authenticateToken, async (req, res) => {
       songId
     );
     if (!userSong) {
-        return res.status(404).json({
-            status: "error",
-            code: 404,
-            message: "User and song does not exist in UserSong table",
-        });
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "User and song does not exist in UserSong table",
+      });
     }
 
     const rating = await songRatingController.getRatingByUserSong(userId, songId);
@@ -377,18 +376,18 @@ router.post('/export/performername', authenticateToken, async (req, res) => {
     // Check if performerName is provided
     if (!performerName) {
       return res.status(400).json({
-          status: 'error',
-          code: 400,
-          message: 'Performer name is required',
+        status: 'error',
+        code: 400,
+        message: 'Performer name is required',
       });
     }
 
     const results = await exportRatingByPerformerFilter(userId, performerName);
     if (Object.keys(results).length === 0) {
       return res.status(404).json({
-          status: 'error',
-          code: 404,
-          message: `No ratings with performerName=${performerName} found`,
+        status: 'error',
+        code: 404,
+        message: `No ratings with performerName=${performerName} found`,
       });
     }
     else {
@@ -405,9 +404,9 @@ router.post('/export/performername', authenticateToken, async (req, res) => {
         if (err) {
           console.error('Error during file download:', err);
           return res.status(500).json({
-              status: 'error',
-              code: 500,
-              message: 'Internal Server Error',
+            status: 'error',
+            code: 500,
+            message: 'Internal Server Error',
           });
         } else {
           // Success response after successful file download
@@ -421,9 +420,9 @@ router.post('/export/performername', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error during exporting ratings:', error);
     res.status(500).json({
-        status: 'error',
-        code: 500,
-        message: 'Internal Server Error',
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
     });
   }
 });

@@ -1,5 +1,4 @@
 const performerModel = require('../models/performer');
-//const songPerformerModel = require('../models/songPerformer');
 
 async function getAllPerformers() {
   try {

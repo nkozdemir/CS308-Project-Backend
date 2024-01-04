@@ -163,7 +163,7 @@ async function deleteSongsByAlbum(albumName, userId) {
     // Loop through each song and call removeSongFromUser
     for (const song of songsToDelete) {
       const songID = song.SongID;
-      await removeSongFromUser(songID, userID);
+      await removeSongFromUser(songID, userId);
     }
 
     console.log(`All songs from album ${albumName} deleted successfully`);

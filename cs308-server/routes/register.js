@@ -6,7 +6,13 @@ const User = require('../models/user');
 router.post('/', async (req, res) => {
   try {
     const { error, value } = validateRegister(req.body);
-    if (error) return res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
+    if (error) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: error.details.map((detail) => detail.message).join('\n'),
+      });
+    }
 
     const { email, password, name } = value;
 
@@ -14,7 +20,11 @@ router.post('/', async (req, res) => {
     const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser) {
-      return res.status(400).send('User already exists');
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'User already exists',
+      });
     }
 
     // Hash the password
@@ -28,10 +38,19 @@ router.post('/', async (req, res) => {
       Name: name,
     });
 
-    res.status(200).send('User registered successfully');
+    res.status(200).json({
+      status: 'success',
+      code: 200,
+      message: 'User successfully created',
+      data: newUser,
+    });
   } catch (error) {
     console.error('Error during user registration:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal server error',
+    });
   }
 });
 

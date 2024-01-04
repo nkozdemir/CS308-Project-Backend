@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 const songRatingRoutes = require('./songRatingRoutes');
 const performerRatingRoutes = require('./performerRatingRoutes');
 

@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -31,7 +30,11 @@ authMiddleware.post('/login', async (req, res) => {
     const { error, value } = validateLogin(req.body);
 
     if (error) {
-      return res.status(400).send(error.details.map((detail) => detail.message).join('\n'));
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: error.details.map((detail) => detail.message).join('\n'),
+      });
     }
 
     const { email, password } = value;
@@ -40,7 +43,11 @@ authMiddleware.post('/login', async (req, res) => {
     const user = await User.findOne({ where: { Email: email } });
 
     if (!user) {
-      return res.status(400).send('User does not exist');
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'User not found',
+      });
     }
 
     // Compare passwords using bcrypt
@@ -59,11 +66,19 @@ authMiddleware.post('/login', async (req, res) => {
 
       return res.status(200).json({ accessToken, refreshToken });
     } else {
-      return res.status(400).send('Incorrect password');
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Incorrect password',
+      });
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).send('Internal Server Error');
+    console.error('Error during login', error);
+    return res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal server error',
+    });
   }
 });
 
