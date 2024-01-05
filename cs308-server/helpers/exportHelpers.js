@@ -44,7 +44,7 @@ async function exportRatingByPerformerFilter(userId, performerName) {
             // Get song id from rating
             const songId = rating.SongID;
             // Get song from database by song id
-            const song = await songController.getSongById(songId);
+            const song = await songController.getSongByID(songId);
             // Concatenate song information containing Title, ReleaseDate, Album, Length, SpotifyID to an object
             const songInformation = {
                 Title: song.Title,

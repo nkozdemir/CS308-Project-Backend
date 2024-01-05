@@ -27,7 +27,7 @@ router.post('/addSongById', authenticateToken, async (req, res) => {
     }
 
     // Check if the song exists in the database
-    const song = await songController.getSongById(songId);
+    const song = await songController.getSongByID(songId);
     if (!song) {
       return res.status(404).json({
         status: 'error',
@@ -293,6 +293,26 @@ router.post('/deleteSong/User', authenticateToken, async (req, res) => {
       });
     }
 
+    // Check if the song exists in the database
+    const song = await songController.getSongByID(songId);
+    if (!song) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'Song not found',
+      });
+    }
+
+    // Check if the song is linked to the user
+    const userSongLink = await userSongController.getLinkByUserAndSong(userId, songId);
+    if (!userSongLink) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'Song not linked to the user',
+      });
+    }
+
     const result = await removeSongFromUser(songId, userId);
     res.status(200).json({
       status: 'success',
@@ -365,12 +385,22 @@ router.post('/deleteAlbumSongs', authenticateToken, async (req, res) => {
       });
     }
 
-    await deleteSongsByAlbum(albumName, userId);
+    // Check if the album exists in the database
+    const albumSongs = await songController.getSongsByAlbum(albumName);
+    if (!albumSongs || albumSongs.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'Album not found',
+      });
+    }
+
+    const result = await deleteSongsByAlbum(albumName, userId);
     res.status(200).json({ 
       status: 'success',
       code: 200,
       message: 'Songs removed from the database successfully',
-      data: {},  
+      data: result,  
     });
   } catch (error) {
     console.error('Error deleting album songs:', error);

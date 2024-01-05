@@ -48,22 +48,6 @@ async function getSongByTitle(title) {
   }
 }
 
-// Returns only song data, no performer or genre data
-async function getSongById(songId) {
-  try {
-    const song = await songModel.findOne({
-      where: {
-        SongID: songId,
-      },
-    });
-
-    return song;
-  } catch (error) {
-    console.error('Error getting song by ID:', error);
-    throw error;
-  }
-}
-
 const getSongByID = async (songId) => {
   try {
     const song = await songModel.findOne({
@@ -337,7 +321,6 @@ async function getUserSongsByMonth(userId, monthDuration) {
 module.exports = {
   createSong,
   getSongByTitle,
-  getSongById,
   getSongByID,
   getSongBySpotifyID,
   getSongByAlbum,

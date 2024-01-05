@@ -155,10 +155,7 @@ async function deleteSongsByAlbum(albumName, userId) {
     const songsToDelete = await SongController.getSongsByAlbum(albumName);
 
     // Check if any songs were found
-    if (songsToDelete.length === 0) {
-      console.log(`No songs found for album ${albumName}`);
-      return;
-    }
+    if (songsToDelete.length === 0) throw new Error(`No songs found with album name ${albumName}`);
 
     // Loop through each song and call removeSongFromUser
     for (const song of songsToDelete) {
@@ -167,6 +164,7 @@ async function deleteSongsByAlbum(albumName, userId) {
     }
 
     console.log(`All songs from album ${albumName} deleted successfully`);
+    return songsToDelete;
   } catch (error) {
     console.error(`Error deleting songs from album ${albumName}:`, error);
   }
