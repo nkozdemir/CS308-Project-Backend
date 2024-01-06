@@ -304,7 +304,7 @@ router.post('/deleteSong/User', authenticateToken, async (req, res) => {
     }
 
     // Check if the song is linked to the user
-    const userSongLink = await userSongController.getLinkByUserAndSong(userId, songId);
+    const userSongLink = await userSongController.getUserSongLink(userId, songId);
     if (!userSongLink) {
       return res.status(404).json({
         status: 'error',
@@ -386,7 +386,7 @@ router.post('/deleteAlbumSongs', authenticateToken, async (req, res) => {
     }
 
     // Check if the album exists in the database
-    const albumSongs = await songController.getSongsByAlbum(albumName);
+    const albumSongs = await songController.getSongByAlbum(albumName);
     if (!albumSongs || albumSongs.length === 0) {
       return res.status(404).json({
         status: 'error',
