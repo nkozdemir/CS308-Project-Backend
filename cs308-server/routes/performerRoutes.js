@@ -205,6 +205,65 @@ router.post('/getPerformer/Name', authenticateToken, async (req, res) => {
   }
 });
 
+// Route to get the performers of the songs which user has
+router.get('/getPerformer/user', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const userSongs = (await userSongController.getLinkByUser(userId)).map((userSong) => userSong.SongID);
+    if (!userSongs || userSongs.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404, 
+        message: 'User does not have songs' 
+      });
+    }
+    //console.log("userSongs: ", userSongs);
+
+    const performerIdsSet = new Set();
+    for (const userSong of userSongs) {
+      const songPerformerLinks = await songPerformerController.getLinkBySong(userSong);
+      
+      songPerformerLinks.forEach((songPerformer) => {
+        const performerId = songPerformer.PerformerID;
+        performerIdsSet.add(performerId);
+      });
+    }
+    const performerIds = Array.from(performerIdsSet);
+    //console.log("performerIds: ", performerIds);
+
+    const performers = [];
+    for (const performerId of performerIds) {
+      const performer = await performerController.getPerformerById(performerId);
+      performers.push(performer);
+    }
+    //console.log("performers: ", performers);
+
+    if (!performers || performers.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404, 
+        message: 'Performers do not exist' 
+      });
+    }
+    else {
+      return res.status(200).json({
+        status: 'success', 
+        code: 200,
+        message: 'Performers retrieved by user songs',
+        data: performers
+      });
+    }
+  } catch (err) {
+    console.error('Error getting performers by user songs: ', err);
+    return res.status(500).json({
+      status: 'error',
+      code: 500, 
+      message: 'Internal server error'
+    });
+  }
+});
+
 // Route to delete performer
 router.post('/deletePerformer', authenticateToken, async (req, res) => {
   try {

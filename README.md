@@ -2001,3 +2001,46 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "", // Error message
 }
 ```
+
+### Performer Routes
+
+#### Get All Performers Of User Songs
+
+```http
+  GET http://localhost:3000/performer/getPerformer/user
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Performers retrieved by user songs",
+    "data": [
+        {
+            "PerformerID": 70,
+            "Name": "JENNIE",
+            "SpotifyID": "250b0Wlc5Vk0CoUsaCY84M",
+            "Image": null
+        },
+        // Additional performer data...
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
