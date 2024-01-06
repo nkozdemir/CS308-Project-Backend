@@ -1,4 +1,6 @@
 const songPerformerModel = require('../models/songPerformer');
+const songModel = require('../models/song');
+const performerModel = require('../models/performer');
 
 async function getSongPerformerLink(songID, performerID) {
     try {
@@ -21,7 +23,18 @@ async function getLinkBySong(songID) {
             where: {
                 SongID: songID,
             },
+            include: [
+                {
+                    model: songModel,
+                    as: 'SongInfo',
+                },
+                {
+                    model: performerModel,
+                    as: 'PerformerInfo',
+                },
+            ],
         });
+
         return songPerformerLink;
     } catch (error) {
         console.error('Error getting songperformer:', error);

@@ -704,6 +704,50 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
+##### Get Performers Of Rated Songs
+
+**IMPORTANT NOTE**: Use response data from this endpoint for **creating performer ratings** and **exporting song ratings**
+
+```http
+  GET http://localhost:3000/rating/song/get/performers
+```
+
+###### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+
+###### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Performers of the rated songs by user retrieved",
+    "data": [
+        {
+            "PerformerID": 71,
+            "Name": "Lily-Rose Depp",
+            "SpotifyID": "1pBLC0qVRTB5zVMuteQ9jJ",
+            "Image": null
+        },
+        // Additional performer data...
+    ]
+}
+```
+
+###### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
 ##### Create Song Rating 
 
 ```http
@@ -2001,6 +2045,8 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "", // Error message
 }
 ```
+
+---
 
 ### Performer Routes
 

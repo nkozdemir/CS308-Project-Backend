@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const connection = require('../config/db');
 const SongModel = require('./song');
 const PerformerRatingModel = require('./performerRating');
+const SongPerformer = require('./songPerformer');
 
 const Performer = connection.define('Performer', {
   PerformerID: {
@@ -31,5 +32,8 @@ SongModel.belongsToMany(Performer, { through: 'SongPerformer', foreignKey: 'Song
 
 Performer.hasMany(PerformerRatingModel, { foreignKey: 'PerformerID', as: 'PerformerRatingInfo' });
 PerformerRatingModel.belongsTo(Performer, { foreignKey: 'PerformerID', as: 'PerformerInfo' });
+
+// Added this to get the songperformer link
+SongPerformer.belongsTo(Performer, { foreignKey: 'PerformerID', as: 'PerformerInfo' });
 
 module.exports = Performer;

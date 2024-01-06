@@ -205,7 +205,7 @@ router.post('/getPerformer/Name', authenticateToken, async (req, res) => {
   }
 });
 
-// Route to get the performers of the songs which user has
+// Route to get the performers of the songs which user has (DELETE THIS ROUTE AND ITS README SECTION)
 router.get('/getPerformer/user', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;

@@ -5,6 +5,7 @@ const path = require('path');
 const songRatingController = require("../../controllers/songRatingController");
 const songController = require("../../controllers/songController");
 const userSongController = require("../../controllers/userSongController");
+const songPerformerController = require("../../controllers/songPerformerController");
 const authenticateToken = require("../../helpers/authToken");
 const { exportRatingByPerformerFilter, formatEntry } = require('../../helpers/exportHelpers');
 
@@ -183,6 +184,63 @@ router.post("/get/usersong", authenticateToken, async (req, res) => {
     });
   } catch (err) {
     console.error("Error getting rating by user and song: ", err);
+    return res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+});
+
+// Route to get performers of the rated songs by user
+router.get("/get/performers", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const ratedSongsSet = new Set();
+    const ratings = await songRatingController.getRatingByUser(userId);
+    ratings.forEach((rating) => {
+      const songID = rating.SongInfo.SongID;
+      ratedSongsSet.add(songID);
+    });
+    const ratedSongs = Array.from(ratedSongsSet);
+    if (!ratedSongs || ratedSongs.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "User has not rated any songs",
+      });
+    }
+    //console.log("Rated songs: ", ratedSongs);
+
+    const performersSet = new Set();
+    for (const song of ratedSongs) {
+      const songPerformers = (await songPerformerController.getLinkBySong(song)).map((link) => link.PerformerInfo);
+    
+      // Add unique performers to the Set
+      songPerformers.forEach((performer) => {
+        performersSet.add(performer);
+      });
+    }
+    const performers = Array.from(performersSet);
+
+    if (!performers || performers.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "No performers found",
+      });
+    } else {
+      //console.log("Performers: ", performers);
+      return res.status(200).json({
+        status: "success",
+        code: 200,
+        message: "Performers of the rated songs by user retrieved",
+        data: performers,
+      });
+    }
+  } catch (err) {
+    console.error("Error getting performers of the rated songs by user: ", err);
     return res.status(500).json({
       status: "error",
       code: 500,
