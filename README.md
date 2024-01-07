@@ -2090,3 +2090,252 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
     "message": "", // Error message
 }
 ```
+
+### Playlist Routes
+
+#### Get All User Playlists
+
+```http
+  GET http://localhost:3000/playlist/getAllUserPlaylists
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Playlists retrieved successfully",
+    "data": [
+        {
+            "PlaylistID": 1,
+            "UserID": 4,
+            "Name": "Seksenler Bir Başka",
+            "DateAdded": "2024-01-07 20:44:02",
+            "Image": null
+        }
+    ]
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Create Playlist
+
+```http
+  POST http://localhost:3000/playlist/createPlaylist
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `playlistName`  | `string` | Name of the playlist |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Playlist created successfully",
+    "data": {
+        "PlaylistID": 3,
+        "Name": "00s Hits",
+        "UserID": 4,
+        "DateAdded": {
+            "fn": "NOW",
+            "args": []
+        },
+        "Image": null
+    }
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Delete Playlist
+
+```http
+  POST http://localhost:3000/playlist/deletePlaylist
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description         |
+| :-------- | :------- | :------------------ |
+| `playlistID`  | `int` | ID of the playlist |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Playlist deleted successfully",
+    "data": 1
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Add Song To Playlist
+
+```http
+  POST http://localhost:3000/playlist/addSongToPlaylist
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description         |
+| :-------- | :------- | :------------------ |
+| `playlistID`  | `int` | ID of the playlist |
+| `songID`  | `int` | ID of the song         |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Song added to playlist successfully",
+    "data": [] //playlistSong data
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Delete Song From Playlist
+
+```http
+  POST http://localhost:3000/playlist/deleteSongFromPlaylist
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description         |
+| :-------- | :------- | :------------------ |
+| `playlistID`  | `int` | ID of the playlist |
+| `songID`  | `int` | ID of the song         |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Song deleted from playlist successfully",
+    "data": 1
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Get All Songs For A Playlist
+
+```http
+  POST http://localhost:3000/playlist/getAllSongsForPlaylist
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description         |
+| :-------- | :------- | :------------------ |
+| `playlistID`  | `int` | ID of the playlist |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Songs retrieved successfully",
+    "data": [] // song data
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
