@@ -1,4 +1,6 @@
 const songModel = require('../models/song');
+const performerModel = require('../models/performer');
+const genreModel = require('../models/genre');
 const songRating = require('../models/songRating');
 const { Sequelize, Op } = require('sequelize');
 
@@ -12,6 +14,18 @@ async function getRatingById(ratingID) {
                 {
                     model: songModel,
                     as: 'SongInfo',
+                    include: [
+                        {
+                            model: performerModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                        {
+                            model: genreModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                    ],
                 },
             ],
         });
@@ -32,6 +46,18 @@ async function getRatingByUser(userID) {
                 {
                     model: songModel,
                     as: 'SongInfo',
+                    include: [
+                        {
+                            model: performerModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                        {
+                            model: genreModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                    ],
                 },
             ],
         });
@@ -52,6 +78,18 @@ async function getRatingBySong(songID) {
                 {
                     model: songModel,
                     as: 'SongInfo',
+                    include: [
+                        {
+                            model: performerModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                        {
+                            model: genreModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                    ],
                 },
             ],
         });
@@ -73,6 +111,18 @@ async function getRatingByUserSong(userID, songID) {
                 {
                     model: songModel,
                     as: 'SongInfo',
+                    include: [
+                        {
+                            model: performerModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                        {
+                            model: genreModel,
+                            attributes: ['Name'],
+                            through: { attributes: [] },
+                        },
+                    ],
                 },
             ],
         });
