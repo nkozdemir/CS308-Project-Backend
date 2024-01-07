@@ -284,6 +284,7 @@ async function getUserSongsByMonth(userId, monthDuration) {
 
       
       const songIds = userSongLinks.map(link => link.SongID);
+      const dates = userSongLinks.map(link => link.DateAdded);
 
       // Get user songs added in the last n months
       const songsInMonth = await songModel.findAll({
@@ -311,7 +312,13 @@ async function getUserSongsByMonth(userId, monthDuration) {
           ],
       });
 
-      return songsInMonth;
+      // Add DateAdded information to the result
+      const songsWithDate = songsInMonth.map((song, index) => ({
+        ...song.toJSON(),
+        DateAdded: dates[index],
+      }));
+
+    return songsWithDate;
   } catch (error) {
       console.error('Error getting user songs by month:', error);
       throw error;
