@@ -10,6 +10,15 @@ router.get('/getAllUserPlaylists', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const playlists = await playlistController.getPlaylistByUser(userId);
+
+    if (playlists.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'No playlist found for user',
+      });
+    }
+
     res.status(200).json({
       status: 'success',
       code: 200,
@@ -39,6 +48,7 @@ router.post('/createPlaylist', authenticateToken, async (req, res) => {
       });
     }
     const playlist = await playlistController.createPlaylist(playlistName, userId);
+    
     res.status(200).json({
       status: 'success',
       code: 200,
@@ -151,11 +161,29 @@ router.post('/getAllSongsForPlaylist', authenticateToken, async (req, res) => {
       });
     }
     const playlistSongs = await playlistSongController.getPlaylistSongByPlaylist(playlistID);
+
+    if (playlistSongs.length === 0) {
+        return res.status(404).json({
+            status: 'error',
+            code: 404,
+            message: 'No songs found for playlist',
+        });
+    }
+    
     const songs = [];
     for (const playlistSong of playlistSongs) {
       const song = await songController.getSongByID(playlistSong.SongID);
       songs.push(song);
     }
+
+    if (songs.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'No songs found for playlist',
+      });
+    }
+
     res.status(200).json({
       status: 'success',
       code: 200,
