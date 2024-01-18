@@ -52,13 +52,13 @@ router.post('/createPlaylist', authenticateToken, async (req, res) => {
       for (const songID of songIDs) {
         await playlistSongController.createPlaylistSong(playlist.PlaylistID, songID);
       }
-      res.status(200).json({
-        status: 'success',
-        code: 200,
-        message: 'Playlist created successfully',
-        data: playlist,
-      });
     }
+    res.status(200).json({
+    status: 'success',
+    code: 200,
+    message: 'Playlist created successfully',
+    data: playlist,
+    });
   } catch (error) {
     console.error('Error creating playlist:', error);
     res.status(500).json({
