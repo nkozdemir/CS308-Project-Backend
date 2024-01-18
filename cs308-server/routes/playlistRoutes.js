@@ -108,6 +108,7 @@ router.post('/deletePlaylist', authenticateToken, async (req, res) => {
         message: 'Invalid parameters. Playlist ID must be provided.',
       });
     }
+    await playlistSongController.deletePlaylistSongByPlaylist(playlistID);
     const playlist = await playlistController.deletePlaylist(playlistID);
     res.status(200).json({
       status: 'success',
