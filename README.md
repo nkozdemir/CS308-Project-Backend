@@ -2151,55 +2151,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `playlistName`  | `string` | Name of the playlist |
-
-##### Example Response
-
-```json
-{
-    "status": "success",
-    "code": 200,
-    "message": "Playlist created successfully",
-    "data": {
-        "PlaylistID": 3,
-        "Name": "00s Hits",
-        "UserID": 4,
-        "DateAdded": {
-            "fn": "NOW",
-            "args": []
-        },
-        "Image": null
-    }
-}
-```
-
-##### Example Error Response
-
-```json
-{
-    "status": "error",
-    "code": 500, // Error code (example)
-    "message": "", // Error message
-}
-```
-
-#### Create Playlist With Songs
-
-```http
-  POST http://localhost:3000/playlist/createPlaylistWithSongs
-```
-
-##### Header
-
-| Header | Description |
-| :-------- | :--------- |
-| `Authorization` | JWT Token |
-
-##### Request Body:
-
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `playlistName`  | `string` | Name of the playlist |
-| `songIDs`  | `int array` | Song ids of the playlist songs |
+| `songIDs`  | `int array` | Song ids of playlist songs (optional) |
 
 ##### Example Response
 
