@@ -125,26 +125,27 @@ router.post('/deletePlaylist', authenticateToken, async (req, res) => {
   }
 });
 
-// Route to add a song to a playlist
-router.post('/addSongToPlaylist', authenticateToken, async (req, res) => {
+// Route to add songs to a playlist
+router.post('/addSongsToPlaylist', authenticateToken, async (req, res) => {
   try {
-    const { playlistID, songID } = req.body;
-    if (!playlistID || !songID) {
+    const { playlistID, songIDs } = req.body;
+    if (!playlistID || !songIDs) {
       return res.status(400).json({
         status: 'error',
         code: 400,
-        message: 'Invalid parameters. Playlist ID and song ID must be provided.',
+        message: 'Invalid parameters. Playlist ID and song IDs must be provided.',
       });
     }
-    const playlistSong = await playlistSongController.createPlaylistSong(playlistID, songID);
+    for (const songID of songIDs) {
+      await playlistSongController.createPlaylistSong(playlistID, songID);
+    }
     res.status(200).json({
       status: 'success',
       code: 200,
-      message: 'Song added to playlist successfully',
-      data: playlistSong,
+      message: 'Songs added to playlist successfully',
     });
   } catch (error) {
-    console.error('Error adding song to playlist:', error);
+    console.error('Error adding songs to playlist:', error);
     res.status(500).json({
       status: 'error',
       code: 500,

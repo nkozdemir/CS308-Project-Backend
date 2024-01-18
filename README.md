@@ -2270,10 +2270,10 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 }
 ```
 
-#### Add Song To Playlist
+#### Add Songs To Playlist
 
 ```http
-  POST http://localhost:3000/playlist/addSongToPlaylist
+  POST http://localhost:3000/playlist/addSongsToPlaylist
 ```
 
 ##### Header
