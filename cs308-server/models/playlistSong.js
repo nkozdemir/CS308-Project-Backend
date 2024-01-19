@@ -17,6 +17,12 @@ const PlaylistSong = connection.define('PlaylistSong', {
     },
     }, {
     freezeTableName: true,
+    indexes: [
+        {
+            unique: true,
+            fields: ['PlaylistID', 'SongID'],
+        },
+    ],
 });
 
 module.exports = PlaylistSong;
