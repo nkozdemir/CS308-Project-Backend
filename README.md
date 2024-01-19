@@ -2048,49 +2048,6 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 
 ---
 
-### Performer Routes
-
-#### Get All Performers Of User Songs
-
-```http
-  GET http://localhost:3000/performer/getPerformer/user
-```
-
-##### Header
-
-| Header | Description |
-| :-------- | :--------- |
-| `Authorization` | JWT Token |
-
-##### Example Response
-
-```json
-{
-    "status": "success",
-    "code": 200,
-    "message": "Performers retrieved by user songs",
-    "data": [
-        {
-            "PerformerID": 70,
-            "Name": "JENNIE",
-            "SpotifyID": "250b0Wlc5Vk0CoUsaCY84M",
-            "Image": null
-        },
-        // Additional performer data...
-    ]
-}
-```
-
-##### Example Error Response
-
-```json
-{
-    "status": "error",
-    "code": 500, // Error code (example)
-    "message": "", // Error message
-}
-```
-
 ### Playlist Routes
 
 #### Get All User Playlists
@@ -2306,6 +2263,45 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 
 ```http
   POST http://localhost:3000/playlist/getAllSongsForPlaylist
+```
+
+##### Header
+
+| Header | Description |
+| :-------- | :--------- |
+| `Authorization` | JWT Token |
+
+##### Request Body:
+
+| Parameter | Type     | Description         |
+| :-------- | :------- | :------------------ |
+| `playlistID`  | `int` | ID of the playlist |
+
+##### Example Response
+
+```json
+{
+    "status": "success",
+    "code": 200,
+    "message": "Songs retrieved successfully",
+    "data": [] // song data
+}
+```
+
+##### Example Error Response
+
+```json
+{
+    "status": "error",
+    "code": 500, // Error code (example)
+    "message": "", // Error message
+}
+```
+
+#### Get Available Songs To Add, For A Playlist
+
+```http
+  POST http://localhost:3000/playlist/getSongsToAdd
 ```
 
 ##### Header

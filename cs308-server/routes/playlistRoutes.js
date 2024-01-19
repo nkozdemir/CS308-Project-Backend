@@ -3,6 +3,7 @@ const router = express.Router();
 const playlistController = require('../controllers/playlistController');
 const playlistSongController = require('../controllers/playlistSongController');
 const songController = require('../controllers/songController');
+const userSongController = require('../controllers/userSongController');
 const authenticateToken = require('../helpers/authToken');
 
 // Route to get all playlists for a user
@@ -198,6 +199,64 @@ router.post('/getAllSongsForPlaylist', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Error getting songs for playlist:', error);
+    res.status(500).json({
+      status: 'error',
+      code: 500,
+      message: 'Internal Server Error',
+    });
+  }
+});
+
+router.post('/getSongsToAdd', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { playlistID } = req.body;
+    if (!playlistID) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Invalid parameters. Playlist ID must be provided.',
+      });
+    }
+
+    const playlistSongs = (await playlistSongController.getPlaylistSongByPlaylist(playlistID)).map(playlistSong => playlistSong.SongID);
+
+    // Get user-song links for the user
+    const userSongLinks = await userSongController.getLinkByUser(userId);
+    // Extract song IDs from the user-song links
+    let songIds = userSongLinks.map(userSongLink => userSongLink.SongID);
+
+    // In songIds, remove the song IDs that are already in the playlist
+    for (const playlistSong of playlistSongs) {
+      const index = songIds.indexOf(playlistSong);
+      if (index > -1) {
+        songIds.splice(index, 1);
+      }
+    }
+
+    // Get the songs with songIds
+    const songs = [];
+    for (const songId of songIds) {
+      const song = await songController.getSongByID(songId);
+      songs.push(song);
+    }
+
+    if (!songs || songs.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'No songs found to add to playlist',
+      });
+    } else {
+      res.status(200).json({
+        status: 'success',
+        code: 200,
+        message: 'Songs retrieved successfully',
+        data: songs,
+      });
+    }
+  } catch (error) {
+    console.error('Error getting songs to add to playlist:', error);
     res.status(500).json({
       status: 'error',
       code: 500,
