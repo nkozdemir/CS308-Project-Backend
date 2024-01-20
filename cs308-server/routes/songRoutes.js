@@ -5,7 +5,8 @@ const userSongController = require('../controllers/userSongController');
 const performerController = require('../controllers/performerController'); 
 const songPerformerController = require('../controllers/songPerformerController'); 
 const genreController = require('../controllers/genreController'); 
-const songGenreController = require('../controllers/songGenreController'); 
+const songGenreController = require('../controllers/songGenreController');
+const playlistSongController = require('../controllers/playlistSongController');
 const { deleteSong, removeSongFromUser } = require('../helpers/dbHelpers');
 const { getArtistGenres, getArtistImages } = require('../helpers/spotifyHelpers');
 const authenticateToken = require('../helpers/authToken');
@@ -314,6 +315,7 @@ router.post('/deleteSong/User', authenticateToken, async (req, res) => {
     }
 
     const result = await removeSongFromUser(songId, userId);
+    await playlistSongController.deletePlaylistSongBySong(songId);
     res.status(200).json({
       status: 'success',
       code: 200,

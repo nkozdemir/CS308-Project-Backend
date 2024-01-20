@@ -56,9 +56,24 @@ async function deletePlaylistSongByPlaylist(playlistID) {
     }
 }
 
+async function deletePlaylistSongBySong(songID) {
+    try {
+        const playlistSong = await playlistSongModel.destroy({
+            where: {
+                SongID: songID,
+            },
+        });
+        return playlistSong;
+    } catch (error) {
+        console.error('Error deleting playlist song:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     createPlaylistSong,
     getPlaylistSongByPlaylist,
     deletePlaylistSong,
-    deletePlaylistSongByPlaylist
+    deletePlaylistSongByPlaylist,
+    deletePlaylistSongBySong,
 };
