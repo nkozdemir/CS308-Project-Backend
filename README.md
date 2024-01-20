@@ -33,6 +33,11 @@ To run this project, you will need to add the following environment variables to
 
 `DB_HOST`, `DB_USER`, `DB_PSWD`, `DB_NAME`, `DB_PORT`, `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REDIRECT_URI`, `SPOTIFY_REFRESH_TOKEN`  
 
+## Diagrams
+
+### Database Diagram
+![Database Diagram](./images/db-diagram-3.png)
+
 ## API Reference
 
 ### Authentication Routes
