@@ -7,6 +7,8 @@ const SongRatingController = require('../controllers/songRatingController.js');
 const PerformerRatingController = require('../controllers/performerRatingController.js');
 const UserSongController = require('../controllers/userSongController.js');
 const UserController = require('../controllers/userController.js');
+const playlistController = require('../controllers/playlistController.js');
+const playlistSongController = require('../controllers/playlistSongController.js');
 const ExternalSongController = require('../controllers/externalSongController.js')
 const externalDB  = require('../config/externalDb');
 
@@ -112,6 +114,8 @@ async function deleteSong(songID) {
     // Delete song from SongRating table
     await SongRatingController.deleteRatingBySong(songID);
 
+    await playlistSongController.deletePlaylistSongBySong(songID);
+
     // Delete song from Song table
     await SongController.deleteSong(songID);
 
@@ -137,6 +141,13 @@ async function removeSongFromUser(songID, userID) {
     // check if song is linked to other users
     const songLinks = await UserSongController.getLinkBySong(songID);
     await UserSongController.deleteUserSong(userID, songID);
+
+    // get all user playlists and delete all instances of the song from playlistsong table
+    const userPlaylists = await playlistController.getPlaylistByUser(userID);
+    for (const playlist of userPlaylists) {
+      await playlistSongController.deletePlaylistSong(playlist.PlaylistID, songID);
+    }
+
     if (songLinks.length > 1) return song;
 
     // Delete song from Song table
