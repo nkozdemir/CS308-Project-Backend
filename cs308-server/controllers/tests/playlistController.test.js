@@ -1,8 +1,8 @@
-const { createPlaylist, getPlaylistById } = require('./playlistController');
-const playlistModel = require('../models/playlist');
+const { createPlaylist, getPlaylistById } = require('../playlistController');
+const playlistModel = require('../../models/playlist');
 
 
-jest.mock('../models/playlist');
+jest.mock('../../models/playlist');
 jest.useFakeTimers()
 describe('createPlaylist', () => {
   it('should create a playlist with the given name and user ID', async () => {
