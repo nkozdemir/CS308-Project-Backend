@@ -2011,7 +2011,7 @@ Blinding Lights,"The Weeknd",After Hours,200000,"Synthwave, Pop, R&B",2019-11-29
 #### Search Users
 
 ```http
-  POST http://localhost:3000/user/search
+  GET http://localhost:3000/user/search
 ```
 
 ##### Header

@@ -24,20 +24,20 @@ router.get("/", authenticateToken, async (req, res) => {
 });
 
 router.get('/search', authenticateToken, async (req, res) => {
-    const { query } = req.query;
-
-    if (!query) {
-        return res.status(400).json({
-            status: 'error',
-            code: 404,
-            message: 'Query parameter is required'
-        });
-    }
-
     try {
+        const { query } = req.query;
+
+        if (!query) {
+            return res.status(400).json({
+                status: 'error',
+                code: 400,
+                message: 'Query parameter is required'
+            });
+        }
+
         const users = await userController.searchUsers(query, req.user.id);
-  
-        res.status(200).json({ 
+
+        return res.status(200).json({ 
             status: 'success',
             code: 200,
             message: 'Users retrieved successfully',
