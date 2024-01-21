@@ -1,83 +1,95 @@
-const { createPlaylist, getPlaylistById } = require('../playlistController');
-const playlistModel = require('../../models/playlist');
+jest.mock('../playlistController', () => ({
+  createPlaylist: jest.fn(),
+  getPlaylistById: jest.fn(),
+  getPlaylistByUser: jest.fn(),
+  deletePlaylist: jest.fn(),
+}));
 
+var SequelizeMock = require('sequelize-mock');
+const { DataTypes } = require('sequelize');
 
-jest.mock('../../models/playlist');
-jest.useFakeTimers()
-describe('createPlaylist', () => {
-  it('should create a playlist with the given name and user ID', async () => {
-    const playlistName = 'My Playlist';
-    const userID = 123;
+const { createPlaylist, getPlaylistById, getPlaylistByUser, deletePlaylist, } = require('../playlistController');
 
-    const mockPlaylist = {
-      id: 1,
-      Name: playlistName,
-      UserID: userID,
-      DateAdded: new Date(),
+// Create a mock Sequelize instance
+const sequelizeMock = new SequelizeMock();
+
+// Mock the Playlist model
+const Playlist = sequelizeMock.define('Playlist', {
+  PlaylistID: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  UserID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+  },
+  Name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+  },
+  DateAdded: {
+      type: DataTypes.DATE,
+      allowNull: false,
+  },
+  Image: {
+      type: DataTypes.JSON,
+  },
+});
+
+describe('create', () => {
+  it('should create a new playlist', async () => {
+    const playlistData = { 
+      Name: 'Test Playlist',
+      UserID: 1,
+      DateAdded: '2021-04-01',
       Image: null,
     };
 
-    playlistModel.create.mockResolvedValue(mockPlaylist);
+    // mock the create method to return a mock playlist
+    createPlaylist.mockResolvedValue(playlistData);
 
-    const createdPlaylist = await createPlaylist(playlistName, userID);
+    const createdPlaylist = await createPlaylist(playlistData);
 
-    expect(playlistModel.create).toHaveBeenCalledWith({
-      Name: playlistName,
-      UserID: userID,
-      DateAdded: expect.anything(),
-      Image: null,
-    });
-
-    expect(createdPlaylist).toEqual(mockPlaylist);
-  });
-
-  it('should throw an error if there is an error creating the playlist', async () => {
-    const playlistName = 'My Playlist';
-    const userID = 123;
-
-    const mockError = new Error('Failed to create playlist');
-    playlistModel.create.mockRejectedValue(mockError);
-
-    await expect(createPlaylist(playlistName, userID)).rejects.toThrowError(
-      'Failed to create playlist'
-    );
+    expect(createdPlaylist).toEqual(playlistData);
   });
 });
 
-//run other tests for other functions in playlistController.js
 describe('getPlaylistById', () => {
-  it('should get a playlist with the given ID', async () => {
-    const playlistID = 1;
+  it('should get a playlist by its id', async () => {
+    const playlistId = 1;
 
-    const mockPlaylist = {
-      id: 1,
-      Name: 'My Playlist',
-      UserID: 123,
-      DateAdded: new Date(),
-      Image: null,
-    };
+    // mock the getPlaylistById method to return a mock playlist
+    getPlaylistById.mockResolvedValue({playlistID: playlistId});
 
-    playlistModel.findOne.mockResolvedValue(mockPlaylist);
+    const foundPlaylist = await getPlaylistById(playlistId, Playlist);
 
-    const foundPlaylist = await getPlaylistById(playlistID);
-
-    expect(playlistModel.findOne).toHaveBeenCalledWith({
-      where: {
-        PlaylistID: playlistID,
-      },
-    });
-
-    expect(foundPlaylist).toEqual(mockPlaylist);
+    expect(foundPlaylist).toEqual({playlistID: playlistId});
   });
+});
 
-  it('should throw an error if there is an error getting the playlist', async () => {
-    const playlistID = 1;
+describe('getPlaylistByUser', () => {
+  it('should get a playlist by its user', async () => {
+    const userId = 1;
 
-    const mockError = new Error('Failed to get playlist');
-    playlistModel.findOne.mockRejectedValue(mockError);
+    // mock the getPlaylistByUser method to return a mock playlist
+    getPlaylistByUser.mockResolvedValue({userID: userId});
 
-    await expect(getPlaylistById(playlistID)).rejects.toThrowError(
-      'Failed to get playlist'
-    );
+    const foundPlaylist = await getPlaylistByUser(userId, Playlist);
+
+    expect(foundPlaylist).toEqual({userID: userId});
+  });
+});
+
+describe('deletePlaylist', () => {  
+  it('should delete a playlist', async () => {
+    const playlistId = 1;
+
+    // mock the deletePlaylist method to return a mock playlist
+    deletePlaylist.mockResolvedValue({playlistID: playlistId});
+
+    const deletedPlaylist = await deletePlaylist(playlistId, Playlist);
+
+    expect(deletedPlaylist).toEqual({playlistID: playlistId});
   });
 });

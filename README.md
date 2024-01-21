@@ -35,6 +35,9 @@ To run this project, you will need to add the following environment variables to
 
 ## Diagrams
 
+### Entity-Relationshiip Diagram
+![ER Diagram](./images/er-diagram.png)
+
 ### Database Diagram
 ![Database Diagram](./images/db-diagram-3.png)
 
