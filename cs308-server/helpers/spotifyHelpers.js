@@ -54,7 +54,7 @@ const searchSong = async (trackName, performerName, albumName) => {
 
     // Check if there are tracks in the response
     if (data.body.tracks && data.body.tracks.items.length > 0) {
-      const numberOfResults = 3;
+      const numberOfResults = 10;
 
       // Extract the first few tracks
       const trackResults = data.body.tracks.items.slice(0, numberOfResults);
