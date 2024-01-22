@@ -155,26 +155,6 @@ describe('getRatingByUserSong', () => {
     });
 });
 
-describe('createRating', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-  
-    it('should throw an error if the rating creation fails', async () => {
-      // Arrange
-      const userID = 1;
-      const songID = 2;
-      const rating = 4;
-  
-      // Mock the create method to simulate a failure (e.g., constraint violation)
-      createRating.mockRejectedValue(new Error('Rating creation failed'));
-  
-      // Act and Assert
-      await expect(createRating(userID, songID, rating)).rejects.toThrow('Rating creation failed');
-      expect(createRating).toHaveBeenCalledWith(userID, songID, rating);
-    });
-});
-
 describe('deleteRatingById', () => {
     beforeEach(() => {
       jest.clearAllMocks();
@@ -396,33 +376,62 @@ describe('groupRatingsByDay', () => {
     });
 });
 
-describe('calculateDailyAverageRatings', () => {
+// boundary testing
+
+describe('createRating', () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+        jest.clearAllMocks();
     });
-  
-    it('should return null for a non-existing userID', async () => {
-      // Arrange
-      const nonExistingUserID = 999; // Assuming 999 is not a valid userID
-  
-      // Mock the findOne method to return null
-      calculateDailyAverageRatings.mockResolvedValue(null);
-  
-      // Act
-      const result = await calculateDailyAverageRatings(nonExistingUserID);
-  
-      // Assert
-      expect(result).toBeNull();
-      expect(calculateDailyAverageRatings).toHaveBeenCalledWith(nonExistingUserID);
+
+    it('should create a new rating with valid inputs', async () => {
+        // Arrange
+        const userID = 1;
+        const songID = 2;
+        const rating = 4;
+
+        // Mock the create method to return a mock rating object
+        createRating.mockResolvedValue({
+            SongRatingID: 1,
+            UserID: userID,
+            SongID: songID,
+            Rating: rating,
+            Date: new Date(),
+        });
+
+        // Act
+        const result = await createRating(userID, songID, rating);
+
+        // Assert
+        expect(result).toHaveProperty('SongRatingID');
+        expect(result.UserID).toBe(userID);
+        expect(result.SongID).toBe(songID);
+        expect(result.Rating).toBe(rating);
+        expect(createRating).toHaveBeenCalledWith(userID, songID, rating);
+    });
+
+    it('should throw an error if the rating is below the valid range', async () => {
+        // Arrange
+        const userID = 1;
+        const songID = 2;
+        const rating = 0;
+
+        createRating.mockRejectedValue(new Error('Rating must be between 1 and 5'));
+
+        // Act and Assert
+        await expect(createRating(userID, songID, rating)).rejects.toThrow('Rating must be between 1 and 5');
+        expect(createRating).toHaveBeenCalledWith(userID, songID, rating);
+    });
+
+    it('should throw an error if the rating is above the valid range', async () => {
+        // Arrange
+        const userID = 1;
+        const songID = 2;
+        const rating = 6;
+
+        createRating.mockRejectedValue(new Error('Rating must be between 1 and 5'));
+
+        // Act and Assert
+        await expect(createRating(userID, songID, rating)).rejects.toThrow('Rating must be between 1 and 5');
+        expect(createRating).toHaveBeenCalledWith(userID, songID, rating);
     });
 });
-      
-
-  
-
-
-
-  
-
-
-

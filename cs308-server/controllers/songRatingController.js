@@ -135,12 +135,18 @@ async function getRatingByUserSong(userID, songID) {
 
 async function createRating(userID, songID, rating) {
     try {
+        // Check if the rating is within the valid range (1 to 5)
+        if (rating < 1 || rating > 5) {
+            throw new Error('Rating must be between 1 and 5');
+        }
+
         const newRating = await songRating.create({
             UserID: userID,
             SongID: songID,
             Rating: rating,
             Date: Sequelize.fn('NOW'),
         });
+
         return newRating;
     } catch (error) {
         console.error('Error creating song rating:', error);
