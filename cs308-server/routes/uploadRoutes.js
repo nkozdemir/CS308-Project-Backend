@@ -91,6 +91,15 @@ router.post('/', authenticateToken, upload.single('file'), async (req, res) => {
     // Further processing with the extracted fields
     console.log('Extracted Fields:', parsedData);
 
+    // if file is empty
+    if (!parsedData || parsedData.length === 0) {
+      return res.status(400).send({
+        status: 'error',
+        code: 400,
+        message: 'File is empty',
+      });
+    }
+
     await addSongFromFile(userId, parsedData);
 
     res.status(200).send({
